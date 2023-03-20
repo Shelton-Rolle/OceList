@@ -1,4 +1,6 @@
 import { RepositoryCheckbox } from '@/components/RepoCheckbox';
+import CreateProjects from '@/database/CreateProjects';
+import CreateUser from '@/database/CreateUser';
 import { GetGithubUserRepos } from '@/firebase/auth/gitHubAuth/octokit';
 import { RootState } from '@/redux/store';
 import { useEffect, useState } from 'react';
@@ -16,7 +18,13 @@ export default function ProfileSetup() {
             .catch((err) => console.error(err));
     }
 
-    async function FinalizeProfileSetup() {}
+    async function FinalizeProfileSetup() {
+        // Create Project Instances of each project in the database
+        await CreateProjects(Object.values(user?.projects)).then(async () => {
+            await CreateUser(user);
+        });
+        // Create User instance of the user data in the database
+    }
 
     useEffect(() => {
         UpdateRepos(user);

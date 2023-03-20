@@ -16,6 +16,7 @@ export default function index() {
                     const userObject = {
                         ...user,
                         token,
+                        projects: {},
                     };
                     // Possible that the user email will be null (https://stackoverflow.com/questions/35373995/github-user-email-is-null-despite-useremail-scope)
 
