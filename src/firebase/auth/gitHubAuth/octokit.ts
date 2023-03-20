@@ -37,11 +37,45 @@ export async function GetGithubUserRepos(
         .request('GET /users/{username}/repos', {
             username,
         })
-        .then((res) => {
-            data = res?.data;
+        .then(async (res) => {
+            const repoData = res?.data;
+            const updatedRepoData: any[] = [];
+
+            for (let i = 0; i < repoData.length; i++) {
+                const repo = repoData[i];
+
+                await GetGithubRepoIssues(token, repo.owner.login, repo.name)
+                    .then((res) => {
+                        const updatedRepo = { ...repo, issues: res };
+                        updatedRepoData.push(updatedRepo);
+                    })
+                    .catch((err) => console.error(err));
+            }
+
+            data = updatedRepoData;
         })
         .catch((err) => {
             console.error(err);
+        });
+
+    return data;
+}
+
+export async function GetGithubRepoIssues(
+    token: string,
+    ownerLogin: string,
+    repoName: string
+) {
+    let data: any[] = [];
+    const octokit = OctokitInit(token);
+
+    await octokit
+        .request('GET /repos/{owner}/{repo}/issues', {
+            owner: ownerLogin,
+            repo: repoName,
+        })
+        .then((res) => {
+            data = res?.data;
         });
 
     return data;

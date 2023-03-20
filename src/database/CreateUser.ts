@@ -10,7 +10,5 @@ export default async function CreateUser(user: any) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
-    })
-        .then((res) => console.log('Res: ', res))
-        .catch((err) => console.error(err));
+    });
 }
