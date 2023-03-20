@@ -5,8 +5,10 @@ import { GetGithubUserRepos } from '@/firebase/auth/gitHubAuth/octokit';
 import { RootState } from '@/redux/store';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
 
 export default function ProfileSetup() {
+    const router = useRouter();
     const { user } = useSelector((state: RootState) => state?.user);
 
     // This will be an array of Projects
@@ -21,7 +23,9 @@ export default function ProfileSetup() {
     async function FinalizeProfileSetup() {
         // Create Project Instances of each project in the database
         await CreateProjects(Object.values(user?.projects)).then(async () => {
-            await CreateUser(user);
+            await CreateUser(user).then(() => {
+                router.push(`/profile/${user?.login}`);
+            });
         });
         // Create User instance of the user data in the database
     }
