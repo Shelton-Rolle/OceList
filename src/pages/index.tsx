@@ -1,6 +1,14 @@
 import Head from 'next/head';
+import auth from '@/firebase/auth/authInit';
+import { onAuthStateChanged } from 'firebase/auth';
 
 export default function Home() {
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            console.log('Current User: ', user);
+        }
+    });
+
     return (
         <>
             <Head>
