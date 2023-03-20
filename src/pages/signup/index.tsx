@@ -12,18 +12,22 @@ export default function index() {
     async function SignupWithGitHub() {
         await AuthenticateWithGitHub()
             .then((token) =>
-                GetGitHubUser(token!).then((user) => {
+                GetGitHubUser(token!).then((user: any) => {
+                    const userObject = {
+                        ...user,
+                        token,
+                    };
                     // Possible that the user email will be null (https://stackoverflow.com/questions/35373995/github-user-email-is-null-despite-useremail-scope)
 
                     if ((user as any)?.email) {
                         // Generate a temporary password for the user
                         // Save user data to redux user object
-                        dispatch(update(user));
+                        dispatch(update(userObject));
                         // Navigate to /signup/profile-setup
                         router.push('/signup/profile-setup');
                     } else {
                         // Save user data to redux user object
-                        dispatch(update(user));
+                        dispatch(update(userObject));
                         router.push('/signup/require-email');
                     }
                 })

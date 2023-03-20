@@ -8,7 +8,8 @@ function OctokitInit(token: string) {
     return octokit;
 }
 
-export async function GetGitHubUser(token: string) {
+// This should return a Promise<User>
+export async function GetGitHubUser(token: string): Promise<any> {
     let user;
     const octokit = OctokitInit(token);
 
@@ -24,15 +25,24 @@ export async function GetGitHubUser(token: string) {
     return user;
 }
 
-// User users' username to get repos
-// await octokit
-//     .request('GET /users/{username}/repos', {
-//         username: res?.data?.login,
-//     })
-//     .then((res) => {
-//         // Log the  users repos
-//         console.log('Repos: ', res);
-//     })
-//     .catch((err) => {
-//         console.error(err);
-//     });
+// This should return a Promise<Project[]>
+export async function GetGithubUserRepos(
+    token: string,
+    username: string
+): Promise<any[]> {
+    let data: any[] = [];
+    const octokit = OctokitInit(token);
+
+    await octokit
+        .request('GET /users/{username}/repos', {
+            username,
+        })
+        .then((res) => {
+            data = res?.data;
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+
+    return data;
+}

@@ -1,6 +1,6 @@
 import { update } from '@/redux/slices/userSlice';
 import { RootState } from '@/redux/store';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
