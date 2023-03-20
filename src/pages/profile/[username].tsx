@@ -9,5 +9,6 @@ export default function ProfilePage() {
         console.log('Redux User Object: ', user);
     }, [user]);
 
+    // This page should get and display the data of the user whos username is in the url
     return <div>User Profile Page</div>;
 }

@@ -9,5 +9,6 @@ export default function Profile() {
         console.log('Redux User Object: ', user);
     }, [user]);
 
+    // This page should display the data of the logged in user
     return <div>Profile Page</div>;
 }
