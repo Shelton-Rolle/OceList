@@ -5,7 +5,7 @@ import {
     User,
     updateEmail,
     signOut,
-    updateProfile,
+    updatePassword,
 } from 'firebase/auth';
 import { IGithubUser } from '@/pages/signup';
 
@@ -13,6 +13,7 @@ interface IAuthContext {
     currentUser: User | null;
     githubData: IGithubUser | null;
     updateUserEmail: (email: string) => void;
+    updateUserPassword: (password: string) => void;
     logout: () => void;
     setGithubData: (data: IGithubUser) => void;
 }
@@ -21,6 +22,7 @@ const AuthContext = createContext<IAuthContext>({
     currentUser: null,
     githubData: null,
     updateUserEmail(email) {},
+    updateUserPassword(password) {},
     logout() {},
     setGithubData(data) {},
 });
@@ -44,6 +46,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         await signOut(auth);
     }
 
+    async function updateUserPassword(password: string) {
+        await updatePassword(currentUser!, password);
+    }
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -58,6 +64,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         currentUser,
         githubData,
         updateUserEmail,
+        updateUserPassword,
         logout,
         setGithubData,
     };
