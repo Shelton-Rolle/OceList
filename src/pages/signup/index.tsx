@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
 import { IGithubUser } from '@/types/interfaces';
+import { GithubUserObject } from '@/types/dataObjects';
 
 export default function index() {
     const { setGithubData } = useAuth();
@@ -13,7 +14,8 @@ export default function index() {
         await AuthenticateWithGitHub()
             .then(({ token }) =>
                 GetGitHubUser(token!).then((user) => {
-                    const { html_url, id, login, public_repos } = user;
+                    const userData: GithubUserObject = user!;
+                    const { html_url, id, login, public_repos } = userData;
 
                     const userObject: IGithubUser = {
                         html_url,

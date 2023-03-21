@@ -9,6 +9,7 @@ interface GithubPermissions {
 }
 
 export interface GithubUserObject {
+    email: string;
     avatar_url: string;
     events_url: string;
     followers_url: string;
@@ -27,6 +28,7 @@ export interface GithubUserObject {
     subscriptions_url: string;
     type: string;
     url: string;
+    public_repos: number;
 }
 
 export interface Issue {
