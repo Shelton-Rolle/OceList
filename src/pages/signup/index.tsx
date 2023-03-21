@@ -26,12 +26,12 @@ export default function index() {
                         projects: {},
                     };
 
+                    setGithubData(userObject);
+
                     if (user?.email) {
                         // Generate a temporary password for the user
-                        setGithubData(userObject);
                         router.push('/signup/profile-setup');
                     } else {
-                        setGithubData(userObject);
                         router.push('/signup/require-email');
                     }
                 })
