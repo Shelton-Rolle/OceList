@@ -1,13 +1,13 @@
 import Head from 'next/head';
-import auth from '@/firebase/auth/authInit';
-import { onAuthStateChanged } from 'firebase/auth';
+import { useAuth } from '@/context/AuthContext';
+import { useEffect } from 'react';
 
 export default function Home() {
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            console.log('Current User: ', user);
-        }
-    });
+    const { currentUser, logout } = useAuth();
+
+    useEffect(() => {
+        console.log('Current User: ', currentUser);
+    }, [currentUser]);
 
     return (
         <>
@@ -22,6 +22,7 @@ export default function Home() {
             </Head>
             <main>
                 <h1>Landing Page</h1>
+                <button onClick={logout}>Logout</button>
             </main>
         </>
     );
