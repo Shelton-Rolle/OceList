@@ -1,4 +1,6 @@
-export default async function CreateUser(user: any) {
+import { IUser } from '@/types/dataObjects';
+
+export default async function CreateUser(user: IUser) {
     const data = {
         apiKey: 'test123456',
         user,

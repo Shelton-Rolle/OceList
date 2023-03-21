@@ -1,8 +1,9 @@
+import { Project } from '@/types/dataObjects';
 import CreateIssues from './CreateIssues';
 
-export default async function CreateProjects(projects: any[]) {
+export default async function CreateProjects(projects: Project[]) {
     // Create Issue Instances for each issue in each projects
-    await projects.map(async (project: any) => {
+    await projects.map(async (project: Project) => {
         await CreateIssues(project?.issues);
     });
 

@@ -3,15 +3,7 @@ import { GetGitHubUser } from '@/firebase/auth/gitHubAuth/octokit';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
-
-export interface IGithubUser {
-    html_url: string | null;
-    id: number | null;
-    login: string | null;
-    public_repos: number | null;
-    token: string | undefined;
-    projects: any | null;
-}
+import { IGithubUser } from '@/types/interfaces';
 
 export default function index() {
     const { setGithubData } = useAuth();

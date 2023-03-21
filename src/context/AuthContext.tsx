@@ -7,16 +7,7 @@ import {
     signOut,
     updatePassword,
 } from 'firebase/auth';
-import { IGithubUser } from '@/pages/signup';
-
-interface IAuthContext {
-    currentUser: User | null;
-    githubData: IGithubUser | null;
-    updateUserEmail: (email: string) => void;
-    updateUserPassword: (password: string) => void;
-    logout: () => void;
-    setGithubData: (data: IGithubUser) => void;
-}
+import { IAuthContext, IGithubUser } from '@/types/interfaces';
 
 const AuthContext = createContext<IAuthContext>({
     currentUser: null,

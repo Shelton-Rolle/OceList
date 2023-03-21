@@ -1,10 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { IGithubUser } from '@/pages/signup';
-
-interface RepositoryCheckboxProps {
-    repo: any;
-}
+import { RepositoryCheckboxProps } from '@/types/props';
+import { IGithubUser } from '@/types/interfaces';
 
 export const RepositoryCheckbox = ({ repo }: RepositoryCheckboxProps) => {
     const { githubData, setGithubData } = useAuth();

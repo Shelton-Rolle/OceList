@@ -1,4 +1,6 @@
-export default async function CreateIssues(issues: any[]) {
+import { Issue } from '@/types/dataObjects';
+
+export default async function CreateIssues(issues: Issue[]) {
     const data = {
         apiKey: 'test123456',
         issues,

@@ -1,3 +1,4 @@
+import { GithubUserObject, Issue, Project } from '@/types/dataObjects';
 import { Octokit } from 'octokit';
 
 function OctokitInit(token: string) {
@@ -9,7 +10,9 @@ function OctokitInit(token: string) {
 }
 
 // This should return a Promise<User>
-export async function GetGitHubUser(token: string): Promise<any> {
+export async function GetGitHubUser(
+    token: string
+): Promise<GithubUserObject | undefined> {
     let user;
     const octokit = OctokitInit(token);
 
@@ -29,8 +32,8 @@ export async function GetGitHubUser(token: string): Promise<any> {
 export async function GetGithubUserRepos(
     token: string,
     username: string
-): Promise<any[]> {
-    let data: any[] = [];
+): Promise<Project[]> {
+    let data: Project[] = [];
     const octokit = OctokitInit(token);
 
     await octokit
