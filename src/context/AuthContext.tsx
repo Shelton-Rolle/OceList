@@ -51,7 +51,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
             if (user) {
                 setCurrentUser(user);
                 await GetUser(user?.uid).then((userData) => {
-                    console.log('HEYOOO: ', userData);
                     setCurrentUserData(userData!);
                 });
             }

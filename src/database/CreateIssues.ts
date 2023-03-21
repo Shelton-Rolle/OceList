@@ -1,9 +1,36 @@
 import { Issue } from '@/types/dataObjects';
 
+interface DatabaseIssueObject {
+    id: number;
+    title: string;
+    body: string;
+    repoId: number;
+    state: string;
+}
+
 export default async function CreateIssues(issues: Issue[]) {
+    const issueData: DatabaseIssueObject[] = [];
+    for (let i = 0; i < issues.length; i++) {
+        const { id, title, body, repository_url, state } = issues[i];
+
+        await fetch(repository_url)
+            .then((res) => res.json())
+            .then((data) => {
+                const repoId = data?.id;
+                issueData.push({
+                    id,
+                    title,
+                    body,
+                    repoId,
+                    state,
+                });
+            })
+            .catch((err) => console.error(err));
+    }
+
     const data = {
         apiKey: 'test123456',
-        issues,
+        issues: issueData,
     };
 
     await fetch('http://localhost:3001/issues/create', {
