@@ -1,34 +1,43 @@
 import AuthenticateWithGitHub from '@/firebase/auth/gitHubAuth/auth';
 import { GetGitHubUser } from '@/firebase/auth/gitHubAuth/octokit';
-import { update } from '@/redux/slices/userSlice';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useDispatch } from 'react-redux';
+import { useAuth } from '@/context/AuthContext';
+
+export interface IGithubUser {
+    html_url: string | null;
+    id: number | null;
+    login: string | null;
+    public_repos: number | null;
+    token: string | undefined;
+    projects: any | null;
+}
 
 export default function index() {
+    const { setGithubData } = useAuth();
     const router = useRouter();
-    const dispatch = useDispatch();
 
     async function SignupWithGitHub() {
         await AuthenticateWithGitHub()
-            .then((token) =>
-                GetGitHubUser(token!).then((user: any) => {
-                    const userObject = {
-                        ...user,
+            .then(({ token }) =>
+                GetGitHubUser(token!).then((user) => {
+                    const { html_url, id, login, public_repos } = user;
+
+                    const userObject: IGithubUser = {
+                        html_url,
+                        id,
+                        login,
+                        public_repos,
                         token,
                         projects: {},
                     };
-                    // Possible that the user email will be null (https://stackoverflow.com/questions/35373995/github-user-email-is-null-despite-useremail-scope)
 
-                    if ((user as any)?.email) {
+                    if (user?.email) {
                         // Generate a temporary password for the user
-                        // Save user data to redux user object
-                        dispatch(update(userObject));
-                        // Navigate to /signup/profile-setup
+                        setGithubData(userObject);
                         router.push('/signup/profile-setup');
                     } else {
-                        // Save user data to redux user object
-                        dispatch(update(userObject));
+                        setGithubData(userObject);
                         router.push('/signup/require-email');
                     }
                 })

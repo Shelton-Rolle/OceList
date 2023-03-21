@@ -1,17 +1,28 @@
 import { useContext, useEffect, useState, createContext } from 'react';
 import auth from '@/firebase/auth/authInit';
-import { onAuthStateChanged, User, updateEmail, signOut } from 'firebase/auth';
+import {
+    onAuthStateChanged,
+    User,
+    updateEmail,
+    signOut,
+    updateProfile,
+} from 'firebase/auth';
+import { IGithubUser } from '@/pages/signup';
 
 interface IAuthContext {
     currentUser: User | null;
+    githubData: IGithubUser | null;
     updateUserEmail: (email: string) => void;
     logout: () => void;
+    setGithubData: (data: IGithubUser) => void;
 }
 
 const AuthContext = createContext<IAuthContext>({
     currentUser: null,
+    githubData: null,
     updateUserEmail(email) {},
     logout() {},
+    setGithubData(data) {},
 });
 
 interface AuthProviderProps {
@@ -24,7 +35,7 @@ export function useAuth() {
 
 export function AuthProvider({ children }: AuthProviderProps) {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
-
+    const [githubData, setGithubData] = useState<IGithubUser | null>(null);
     async function updateUserEmail(email: string) {
         await updateEmail(currentUser!, email);
     }
@@ -45,8 +56,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const value: IAuthContext = {
         currentUser,
+        githubData,
         updateUserEmail,
         logout,
+        setGithubData,
     };
 
     return (

@@ -1,23 +1,14 @@
-import { update } from '@/redux/slices/userSlice';
-import { RootState } from '@/redux/store';
 import { FormEvent, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
 
 export default function RequireEmail() {
     const { updateUserEmail } = useAuth();
     const router = useRouter();
-    const dispatch = useDispatch();
     const [email, setEmail] = useState<string>();
-    const { user } = useSelector((state: RootState) => state?.user);
 
     async function HandleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-
-        const updatedUser = { ...user, email };
-        await dispatch(update(updatedUser));
         await updateUserEmail(email!);
 
         router.push('/signup/profile-setup');

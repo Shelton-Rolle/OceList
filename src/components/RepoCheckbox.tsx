@@ -1,21 +1,18 @@
-import { update } from '@/redux/slices/userSlice';
-import { RootState } from '@/redux/store';
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
+import { useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { IGithubUser } from '@/pages/signup';
 
 interface RepositoryCheckboxProps {
     repo: any;
 }
 
 export const RepositoryCheckbox = ({ repo }: RepositoryCheckboxProps) => {
+    const { githubData, setGithubData } = useAuth();
     const [checked, setChecked] = useState<boolean>(false);
-    const { user } = useSelector((state: RootState) => state?.user);
-    const dispatch = useDispatch();
 
     async function UpdateUserProjects(currentCheckedValue: boolean) {
-        let userData;
-        const projects = { ...user?.projects };
+        let data: IGithubUser = githubData!;
+        const projects = { ...githubData?.projects };
 
         if (currentCheckedValue) {
             projects[`${repo.id}`] = repo;
@@ -23,12 +20,12 @@ export const RepositoryCheckbox = ({ repo }: RepositoryCheckboxProps) => {
             delete projects[`${repo.id}`];
         }
 
-        userData = {
-            ...user,
+        data = {
+            ...data,
             projects,
         };
 
-        dispatch(update(userData));
+        setGithubData(data);
     }
 
     return (

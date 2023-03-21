@@ -2,37 +2,47 @@ import { RepositoryCheckbox } from '@/components/RepoCheckbox';
 import CreateProjects from '@/database/CreateProjects';
 import CreateUser from '@/database/CreateUser';
 import { GetGithubUserRepos } from '@/firebase/auth/gitHubAuth/octokit';
-import { RootState } from '@/redux/store';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
+import { useAuth } from '@/context/AuthContext';
 
 export default function ProfileSetup() {
+    const { currentUser, githubData } = useAuth();
     const router = useRouter();
-    const { user } = useSelector((state: RootState) => state?.user);
 
     // This will be an array of Projects
     const [repos, setRepos] = useState<any[]>();
 
-    async function UpdateRepos(user: any) {
-        await GetGithubUserRepos(user?.token, user?.login)
+    async function UpdateRepos() {
+        await GetGithubUserRepos(githubData?.token!, githubData?.login!)
             .then((res) => setRepos(res))
             .catch((err) => console.error(err));
     }
 
     async function FinalizeProfileSetup() {
         // Create Project Instances of each project in the database
-        await CreateProjects(Object.values(user?.projects)).then(async () => {
-            await CreateUser(user).then(() => {
-                router.push(`/profile/${user?.login}`);
-            });
-        });
+        await CreateProjects(Object.values(githubData?.projects)).then(
+            async () => {
+                const fullUser = {
+                    ...currentUser,
+                    ...githubData,
+                };
+
+                await CreateUser(fullUser).then(() => {
+                    router.push(`/profile/${githubData?.login}`);
+                });
+            }
+        );
         // Create User instance of the user data in the database
     }
 
     useEffect(() => {
-        UpdateRepos(user);
-    }, [user]);
+        console.log('Current User: ', currentUser);
+    }, [currentUser]);
+
+    useEffect(() => {
+        UpdateRepos();
+    }, []);
 
     return (
         <div>
