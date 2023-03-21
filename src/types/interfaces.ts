@@ -1,4 +1,5 @@
 import { User } from 'firebase/auth';
+import { IUser } from './dataObjects';
 
 export interface IGithubUser {
     html_url: string | null;
@@ -11,6 +12,7 @@ export interface IGithubUser {
 
 export interface IAuthContext {
     currentUser: User | null;
+    currentUserData: IUser | null;
     githubData: IGithubUser | null;
     updateUserEmail: (email: string) => void;
     updateUserPassword: (password: string) => void;

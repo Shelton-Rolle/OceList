@@ -3,11 +3,13 @@ import { useAuth } from '@/context/AuthContext';
 import { useEffect } from 'react';
 
 export default function Home() {
-    const { currentUser, logout } = useAuth();
+    const { currentUser, githubData, currentUserData, logout } = useAuth();
 
     useEffect(() => {
         console.log('Current User: ', currentUser);
-    }, [currentUser]);
+        console.log('Github Data: ', githubData);
+        console.log('Current User Database Data: ', currentUserData);
+    }, [currentUser, githubData, currentUserData]);
 
     return (
         <>
