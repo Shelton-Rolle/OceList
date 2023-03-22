@@ -8,6 +8,8 @@ import { FormEvent, useState } from 'react';
 import auth from '@/firebase/auth/authInit';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import GetUser from '@/database/GetUser';
+import { FirebaseError } from 'firebase/app';
+import Head from 'next/head';
 
 export default function index() {
     const [email, setEmail] = useState<string>();
@@ -30,8 +32,9 @@ export default function index() {
                     setErrors(['unknown-credentials']);
                 });
             })
-            .catch((err) => {
-                console.error(err);
+            .catch((error) => {
+                const { code } = error;
+                setErrors([code]);
             });
     }
 
@@ -57,28 +60,44 @@ export default function index() {
     }
 
     return (
-        <div>
-            <form onSubmit={(e) => LoginWithEmail(e)}>
-                <input
-                    type="text"
-                    placeholder="Email"
-                    className="p-4 border border-black rounded-sm"
-                    onChange={(e) => setEmail(e.target.value)}
+        <>
+            <Head>
+                <title>Login</title>
+                <meta name="description" content="Login page" />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
                 />
-                <input
-                    type="text"
-                    placeholder="Password"
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
+            <main>
+                {errors.map((error, index) => (
+                    <p className="p-4 font-bold" key={index}>
+                        {error}
+                    </p>
+                ))}
+                <form onSubmit={(e) => LoginWithEmail(e)}>
+                    <input
+                        type="text"
+                        placeholder="Email"
+                        className="p-4 border border-black rounded-sm"
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <input
+                        type="text"
+                        placeholder="Password"
+                        className="p-4 border border-black rounded-sm"
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <button type="submit">Login</button>
+                </form>
+                <button
                     className="p-4 border border-black rounded-sm"
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <button type="submit">Login</button>
-            </form>
-            <button
-                className="p-4 border border-black rounded-sm"
-                onClick={LoginWithGithub}
-            >
-                Login With Github
-            </button>
-        </div>
+                    onClick={LoginWithGithub}
+                >
+                    Login With Github
+                </button>
+            </main>
+        </>
     );
 }

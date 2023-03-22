@@ -11,6 +11,7 @@ import auth from '@/firebase/auth/authInit';
 import CreateUser from '@/database/CreateUser';
 
 export default function index() {
+    const [errors, setErrors] = useState<any[]>([]);
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -20,17 +21,23 @@ export default function index() {
     async function SignupWithEmailAndPassword(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        createUserWithEmailAndPassword(auth, email, password)
-            .then(async (credentials) => {
-                const user = credentials?.user;
-                await CreateUser({
-                    ...user,
-                    login: username,
-                }).then(() => {
-                    router.push('/');
-                });
-            })
-            .catch((err) => console.error(err));
+        try {
+            await createUserWithEmailAndPassword(auth, email, password).then(
+                async (credentials) => {
+                    const user = credentials?.user;
+                    await CreateUser({
+                        ...user,
+                        login: username,
+                    }).then(() => {
+                        router.push('/');
+                    });
+                }
+            );
+        } catch (error: any) {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            setErrors([errorCode, errorMessage]);
+        }
     }
 
     async function SignupWithGitHub() {
@@ -73,6 +80,9 @@ export default function index() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main>
+                {errors.map((error) => (
+                    <p className="p-4 font-bold">{error}</p>
+                ))}
                 <form onSubmit={(e) => SignupWithEmailAndPassword(e)}>
                     <input
                         type="text"
