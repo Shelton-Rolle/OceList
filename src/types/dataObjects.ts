@@ -1,3 +1,4 @@
+import { DatabaseProjectData } from '@/database/CreateProjects';
 import { User, UserMetadata } from 'firebase/auth';
 
 interface GithubPermissions {
@@ -143,10 +144,10 @@ export interface IUser {
     login?: string | null;
     metadata?: UserMetadata | null;
     photoURL?: string | null;
-    projects?: Project[] | null;
+    projects?: Project[] | DatabaseProjectData[] | null;
     providerId?: string | null;
     public_repos?: number | null;
     token?: string | null;
     uid?: string | null;
-    password: string;
+    password?: string;
 }

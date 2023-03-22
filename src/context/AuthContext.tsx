@@ -19,6 +19,7 @@ const AuthContext = createContext<IAuthContext>({
     updateUserPassword(password) {},
     logout() {},
     setGithubData(data) {},
+    setCurrentUserData(data) {},
 });
 
 interface AuthProviderProps {
@@ -71,6 +72,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         updateUserPassword,
         logout,
         setGithubData,
+        setCurrentUserData,
     };
 
     return (

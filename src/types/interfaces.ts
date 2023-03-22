@@ -18,4 +18,5 @@ export interface IAuthContext {
     updateUserPassword: (password: string) => void;
     logout: () => void;
     setGithubData: (data: IGithubUser) => void;
+    setCurrentUserData: (data: IUser) => void;
 }
