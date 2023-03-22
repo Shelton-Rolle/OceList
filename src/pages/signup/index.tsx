@@ -29,7 +29,6 @@ export default function index() {
                     setGithubData(userObject);
 
                     if (user?.email) {
-                        // Generate a temporary password for the user
                         router.push('/signup/profile-setup');
                     } else {
                         router.push('/signup/require-email');
