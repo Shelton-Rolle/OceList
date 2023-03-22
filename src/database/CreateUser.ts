@@ -3,14 +3,15 @@ import { IUser } from '@/types/dataObjects';
 import { DatabaseProjectData } from './CreateProjects';
 
 export default async function CreateUser(user: IUser) {
-    const { projects } = user;
-    const updatedProjects: DatabaseProjectData[] = await MutateProjectObjects(
-        projects!
-    );
+    let projects: DatabaseProjectData[] = [];
+
+    if (user?.projects) {
+        projects = await MutateProjectObjects(user?.projects);
+    }
 
     const updatedUser = {
         ...user,
-        projects: updatedProjects,
+        projects,
     };
 
     const data = {

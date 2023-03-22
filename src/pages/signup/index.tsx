@@ -5,10 +5,33 @@ import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
 import { IGithubUser } from '@/types/interfaces';
 import { GithubUserObject } from '@/types/dataObjects';
+import { FormEvent, useState } from 'react';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import auth from '@/firebase/auth/authInit';
+import CreateUser from '@/database/CreateUser';
 
 export default function index() {
+    const [username, setUsername] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
     const { setGithubData } = useAuth();
     const router = useRouter();
+
+    async function SignupWithEmailAndPassword(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(async (credentials) => {
+                const user = credentials?.user;
+                await CreateUser({
+                    ...user,
+                    login: username,
+                }).then(() => {
+                    router.push('/');
+                });
+            })
+            .catch((err) => console.error(err));
+    }
 
     async function SignupWithGitHub() {
         await AuthenticateWithGitHub()
@@ -50,6 +73,24 @@ export default function index() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main>
+                <form onSubmit={(e) => SignupWithEmailAndPassword(e)}>
+                    <input
+                        type="text"
+                        placeholder="Username"
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                    <input
+                        type="text"
+                        placeholder="Email"
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <input
+                        type="text"
+                        placeholder="Password"
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <button type="submit">Signup</button>
+                </form>
                 <button
                     className="p-4 border border-black rounded-sm"
                     onClick={SignupWithGitHub}
