@@ -23,7 +23,7 @@ export default function index() {
                         login,
                         public_repos,
                         token,
-                        projects: {},
+                        projects: [],
                     };
 
                     setGithubData(userObject);
