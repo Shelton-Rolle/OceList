@@ -35,7 +35,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const [currentUserData, setCurrentUserData] = useState<IUser | null>(null);
 
     async function updateUserEmail(email: string) {
-        await updateEmail(currentUser!, email);
+        await updateEmail(currentUser!, email).catch((error) => {
+            return {
+                error,
+            };
+        });
     }
 
     async function logout() {

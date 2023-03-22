@@ -32,6 +32,7 @@ export default function ProfileSetup() {
                 const fullUser: IUser = {
                     ...currentUser,
                     ...githubData,
+                    password,
                 };
 
                 await CreateUser(fullUser).then(() => {
@@ -40,10 +41,6 @@ export default function ProfileSetup() {
             }
         );
     }
-
-    useEffect(() => {
-        console.log('Current User: ', currentUser);
-    }, [currentUser]);
 
     useEffect(() => {
         UpdateRepos();
