@@ -11,7 +11,6 @@ export default async function GetUser(uid: string): Promise<IUser | undefined> {
     )
         .then((res: any) => res.json())
         .then((response) => {
-            console.log('Response: ', response);
             userData = response?.data;
         })
         .catch((err) => console.error(err));
