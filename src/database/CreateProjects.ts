@@ -1,7 +1,8 @@
+import MutateProjectObjects from '@/helpers/MutateProjectObjects';
 import { Project } from '@/types/dataObjects';
 import CreateIssues from './CreateIssues';
 
-interface DatabaseProjectData {
+export interface DatabaseProjectData {
     id: number;
     name: string;
     owner: any;
@@ -14,23 +15,25 @@ export default async function CreateProjects(projects: Project[]) {
         await CreateIssues(project?.issues);
     });
 
-    const projectData: DatabaseProjectData[] = [];
-    for (let i = 0; i < projects.length; i++) {
-        const { id, name, owner, languages_url } = projects[i];
+    const projectData: DatabaseProjectData[] = await MutateProjectObjects(
+        projects
+    );
+    // for (let i = 0; i < projects.length; i++) {
+    //     const { id, name, owner, languages_url } = projects[i];
 
-        await fetch(languages_url)
-            .then((res) => res.json())
-            .then((langs) => {
-                const languages = Object.keys(langs);
-                projectData.push({
-                    id,
-                    name,
-                    owner,
-                    languages,
-                });
-            })
-            .catch((err) => console.error(err));
-    }
+    //     await fetch(languages_url)
+    //         .then((res) => res.json())
+    //         .then((langs) => {
+    //             const languages = Object.keys(langs);
+    //             projectData.push({
+    //                 id,
+    //                 name,
+    //                 owner,
+    //                 languages,
+    //             });
+    //         })
+    //         .catch((err) => console.error(err));
+    // }
 
     const data = {
         apiKey: 'test123456',

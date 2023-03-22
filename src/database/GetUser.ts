@@ -1,6 +1,7 @@
-export default async function GetUser(uid: string) {
-    console.log('YOOO');
-    let userData;
+import { IUser } from '@/types/dataObjects';
+
+export default async function GetUser(uid: string): Promise<IUser | undefined> {
+    let userData: IUser | undefined;
     const data = {
         apiKey: 'test123456',
     };

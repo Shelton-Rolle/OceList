@@ -6,10 +6,10 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
 import { IUser, Project } from '@/types/dataObjects';
-import { User } from 'firebase/auth';
+import GenerateTemporaryPassword from '@/helpers/GenerateTemporaryPassword';
 
 export default function ProfileSetup() {
-    const { currentUser, githubData } = useAuth();
+    const { currentUser, githubData, updateUserPassword } = useAuth();
     const router = useRouter();
 
     // This will be an array of Projects
@@ -22,6 +22,10 @@ export default function ProfileSetup() {
     }
 
     async function FinalizeProfileSetup() {
+        // Generate a temporary password for the user
+        const password = GenerateTemporaryPassword();
+        updateUserPassword(password);
+
         // Create Project Instances of each project in the database
         await CreateProjects(Object.values(githubData?.projects)).then(
             async () => {
@@ -35,7 +39,6 @@ export default function ProfileSetup() {
                 });
             }
         );
-        // Create User instance of the user data in the database
     }
 
     useEffect(() => {

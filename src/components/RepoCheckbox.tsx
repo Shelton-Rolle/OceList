@@ -9,12 +9,13 @@ export const RepositoryCheckbox = ({ repo }: RepositoryCheckboxProps) => {
 
     async function UpdateUserProjects(currentCheckedValue: boolean) {
         let data: IGithubUser = githubData!;
-        const projects = { ...githubData?.projects };
+        const projects = [...githubData?.projects];
 
         if (currentCheckedValue) {
-            projects[`${repo.id}`] = repo;
+            projects.push(repo);
         } else {
-            delete projects[`${repo.id}`];
+            const index = projects.indexOf(repo);
+            projects.splice(index, 1);
         }
 
         data = {
