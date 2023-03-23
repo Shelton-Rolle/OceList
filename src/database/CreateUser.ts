@@ -1,6 +1,5 @@
 import MutateProjectObjects from '@/helpers/MutateProjectObjects';
-import { IUser, Project } from '@/types/dataObjects';
-import { DatabaseProjectData } from './CreateProjects';
+import { DatabaseProjectData, IUser, Project } from '@/types/dataObjects';
 
 export default async function CreateUser(user: IUser) {
     let result: { created: boolean; errors: string[] } | undefined;

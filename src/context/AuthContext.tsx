@@ -10,21 +10,20 @@ import {
 import { IAuthContext, IGithubUser } from '@/types/interfaces';
 import { IUser } from '@/types/dataObjects';
 import GetUser from '@/database/GetUser';
+import { AuthProviderProps } from '@/types/props';
 
 const AuthContext = createContext<IAuthContext>({
     currentUser: null,
     currentUserData: null,
     githubData: null,
-    updateUserEmail(email) {},
+    updateUserEmail: async (email) => {
+        return undefined;
+    },
     updateUserPassword(password) {},
     logout() {},
     setGithubData(data) {},
     setCurrentUserData(data) {},
 });
-
-interface AuthProviderProps {
-    children: string | JSX.Element | JSX.Element[];
-}
 
 export function useAuth() {
     return useContext(AuthContext);
@@ -35,12 +34,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const [githubData, setGithubData] = useState<IGithubUser | null>(null);
     const [currentUserData, setCurrentUserData] = useState<IUser | null>(null);
 
-    async function updateUserEmail(email: string) {
+    async function updateUserEmail(email: string): Promise<string | undefined> {
+        let errorCode: string;
+
         await updateEmail(currentUser!, email).catch((error) => {
-            return {
-                error,
-            };
+            errorCode = error.code;
         });
+
+        return errorCode!;
     }
 
     async function logout() {

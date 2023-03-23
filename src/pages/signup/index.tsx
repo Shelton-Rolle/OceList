@@ -52,10 +52,10 @@ export default function index() {
 
                     const userObject: IGithubUser = {
                         html_url,
-                        id,
+                        githubId: id,
                         login,
                         public_repos,
-                        token,
+                        githubToken: token,
                         projects: [],
                     };
 

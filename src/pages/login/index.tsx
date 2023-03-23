@@ -20,7 +20,6 @@ export default function index() {
 
     async function LoginWithEmail(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-
         signInWithEmailAndPassword(auth, email!, password!)
             .then(async (credentials) => {
                 const { uid } = credentials?.user;
@@ -46,10 +45,10 @@ export default function index() {
 
                 const userObject: IGithubUser = {
                     html_url,
-                    id,
+                    githubId: id,
                     login,
                     public_repos,
-                    token,
+                    githubToken: token,
                     projects: [],
                 };
 

@@ -1,8 +1,9 @@
 import Head from 'next/head';
 import { useAuth } from '@/context/AuthContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
+    const [file, setFile] = useState<any>();
     const { currentUser, githubData, currentUserData, logout } = useAuth();
 
     useEffect(() => {

@@ -1,9 +1,8 @@
 import MutateProjectObjects from '@/helpers/MutateProjectObjects';
-import { IUser, Project } from '@/types/dataObjects';
-import { DatabaseProjectData } from './CreateProjects';
+import { DatabaseProjectData, IUser, Project } from '@/types/dataObjects';
 
 export default async function UpdateUser(user: IUser) {
-    let result;
+    let result: { updated: boolean; errors: string[] } | undefined;
 
     let projects: DatabaseProjectData[] = [];
 
@@ -31,7 +30,6 @@ export default async function UpdateUser(user: IUser) {
     })
         .then((res) => res.json())
         .then((res) => {
-            console.log('res: ', res);
             result = res;
         })
         .catch((err) => console.error(err));

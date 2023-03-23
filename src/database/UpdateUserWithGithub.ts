@@ -1,6 +1,5 @@
 import MutateProjectObjects from '@/helpers/MutateProjectObjects';
-import { IUser, Project } from '@/types/dataObjects';
-import { DatabaseProjectData } from './CreateProjects';
+import { DatabaseProjectData, IUser, Project } from '@/types/dataObjects';
 
 export default async function UpdateUserWithGithubData(user: IUser) {
     let result;
