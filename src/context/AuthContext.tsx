@@ -19,6 +19,7 @@ const AuthContext = createContext<IAuthContext>({
     updateUserPassword(password) {},
     logout() {},
     setGithubData(data) {},
+    setCurrentUserData(data) {},
 });
 
 interface AuthProviderProps {
@@ -35,7 +36,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const [currentUserData, setCurrentUserData] = useState<IUser | null>(null);
 
     async function updateUserEmail(email: string) {
-        await updateEmail(currentUser!, email);
+        await updateEmail(currentUser!, email).catch((error) => {
+            return {
+                error,
+            };
+        });
     }
 
     async function logout() {
@@ -67,6 +72,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         updateUserPassword,
         logout,
         setGithubData,
+        setCurrentUserData,
     };
 
     return (

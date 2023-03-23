@@ -15,7 +15,7 @@ export default function index() {
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const { setGithubData } = useAuth();
+    const { setGithubData, setCurrentUserData } = useAuth();
     const router = useRouter();
 
     async function SignupWithEmailAndPassword(e: FormEvent<HTMLFormElement>) {
@@ -28,8 +28,11 @@ export default function index() {
                     await CreateUser({
                         ...user,
                         login: username,
-                    }).then(() => {
-                        router.push('/');
+                    }).then(({ result, user }) => {
+                        if (result?.created) {
+                            setCurrentUserData(user);
+                            router.push(`/profile/${username}`);
+                        }
                     });
                 }
             );

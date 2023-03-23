@@ -2,8 +2,9 @@ import MutateProjectObjects from '@/helpers/MutateProjectObjects';
 import { IUser, Project } from '@/types/dataObjects';
 import { DatabaseProjectData } from './CreateProjects';
 
-export default async function CreateUser(user: IUser) {
-    let result: { created: boolean; errors: string[] } | undefined;
+export default async function UpdateUser(user: IUser) {
+    let result;
+
     let projects: DatabaseProjectData[] = [];
 
     if (user?.projects) {
@@ -17,10 +18,11 @@ export default async function CreateUser(user: IUser) {
 
     const data = {
         apiKey: 'test123456',
-        user: updatedUser,
+        userId: user?.uid,
+        updatedData: updatedUser,
     };
 
-    await fetch('http://localhost:3001/users/create', {
+    await fetch('http://localhost:3001/users/update', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -29,9 +31,10 @@ export default async function CreateUser(user: IUser) {
     })
         .then((res) => res.json())
         .then((res) => {
+            console.log('res: ', res);
             result = res;
         })
         .catch((err) => console.error(err));
 
-    return { result, user: updatedUser };
+    return { result };
 }
