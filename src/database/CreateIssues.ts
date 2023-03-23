@@ -1,13 +1,4 @@
-import { Issue } from '@/types/dataObjects';
-
-interface DatabaseIssueObject {
-    id: number;
-    title: string;
-    body: string;
-    repoId: number;
-    repoName: string;
-    state: string;
-}
+import { DatabaseIssueObject, Issue } from '@/types/dataObjects';
 
 export default async function CreateIssues(issues: Issue[]) {
     const issueData: DatabaseIssueObject[] = [];

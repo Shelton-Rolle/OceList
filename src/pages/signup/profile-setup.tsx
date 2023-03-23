@@ -18,7 +18,7 @@ export default function ProfileSetup() {
     const [repos, setRepos] = useState<Project[]>();
 
     async function UpdateRepos() {
-        await GetGithubUserRepos(githubData?.token!, githubData?.login!)
+        await GetGithubUserRepos(githubData?.githubToken!, githubData?.login!)
             .then((res) => setRepos(res))
             .catch((err) => console.error(err));
     }

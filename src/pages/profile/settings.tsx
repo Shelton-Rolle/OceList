@@ -3,7 +3,11 @@ import { useAuth } from '@/context/AuthContext';
 import Image from 'next/image';
 import { FormEvent, useEffect, useState } from 'react';
 import UpdateUser from '@/database/UpdateUser';
-import { GithubUserObject, IUser } from '@/types/dataObjects';
+import {
+    DatabaseProjectData,
+    GithubUserObject,
+    IUser,
+} from '@/types/dataObjects';
 import { useRouter } from 'next/router';
 import AuthenticateWithGitHub from '@/firebase/auth/gitHubAuth/auth';
 import { GetGitHubUser } from '@/firebase/auth/gitHubAuth/octokit';
@@ -15,10 +19,12 @@ import {
     reauthenticateWithCredential,
     reauthenticateWithPopup,
     sendPasswordResetEmail,
+    unlink,
 } from 'firebase/auth';
 import auth from '@/firebase/auth/authInit';
 import githubProvider from '@/firebase/auth/gitHubAuth/githubInit';
 import UploadImage from '@/firebase/storage/UploadImage';
+import RemoveProjects from '@/database/RemoveProjects';
 
 const defaultImage =
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAMFBMVEW6urr////o6Oi3t7f8/Py/v7/39/fHx8fExMTt7e3MzMzj4+PS0tLy8vLX19fa2tr1LdARAAACdElEQVR4nO2aXXeDIAxAwYCA8vH//+2k1m511RIk2tOT+7BzthfuAklJqBAMwzAMwzAMwzDfB4AQ2hpjrJ5/OX19m1yvZEb1LtmTHUCnXj7TJ32eA+hRyf+o8TSHuP7/H3GIZywPottYP9MJ8jCA3QpA3ocpDJZYAcyOwLwThlQB9KsjuAoE7Xl8F4FbFCgFOlkQg+k4UgGxIAKZSLUPBYfgHgZNIwBjqYAciYJQKJAhWb84BBmaIJRk4gJJRhqEgJSmvQBqE2i2waEMQnsB3ZdWg4zq25cEixGYFGxrARhQAlIOrQ/CBxh4pIH/QoPLd0GYq3NhqgcoA4J6IALKgKAmXv+5gDyK7Q/iBOpzgWB9IVB3JBIDjTCguSyDK+hXZhzRXbm4KBGUo5nihKRqF0RpVSKoRgtQdFFSlEOMorJEUox+Fd5fE5pfDNYKw/5GKNoI3BTs3nEM1IOs2WE7KQnT8FnBvB4pdrRjtGdMtz4OqiNoVncA0L579HGq77w+f8A/rWgHH2P0g73ifeFuMS0N9KPkzwYyV60LQt+emfJDk17+dNLqdoijC+pvPioV3BgHTW4BYPwY7u9bz+Vg/hlGb+gkpuxLoWCyHZIlSQ8AX963Bd88EAAJ2Tunxg4et/7NwbdbHixulrjgWl0WIOIDcA9Dk6eO/ffFdzR5f6zbgQV3tcBxBTgqcLSLhXRYQMp0QAE9RHzNkRYCNz/bor6TLX7hfEd9WcANMbepffdCD7O3qexmG2TiQm1GNhOofIMF3APjPlUdZbNMyFRlA3KUvU9dW3/kU3lN3dcy2IAN2IAN2IAN2IAN2IAN2IAN2OBygx/3Xx6T8g+yzwAAAABJRU5ErkJggg==';
@@ -114,14 +120,14 @@ export default function Settings() {
 
                 GetGitHubUser(oauthAccessToken!).then((user) => {
                     const userData: GithubUserObject = user!;
-                    const { html_url, id, login, public_repos } = userData;
+                    const { html_url, id, public_repos, login } = userData;
 
                     const userObject: IGithubUser = {
-                        html_url,
-                        id,
                         login,
+                        html_url,
+                        githubId: id,
                         public_repos,
-                        token: oauthAccessToken,
+                        githubToken: oauthAccessToken,
                         projects: [],
                     };
 
@@ -130,6 +136,32 @@ export default function Settings() {
                 });
             }
         );
+    }
+
+    async function DisconnectGithub() {
+        await unlink(currentUser!, 'github.com')
+            .then(async () => {
+                const userData: IUser = {
+                    ...currentUserData,
+                    providerData: currentUser?.providerData,
+                    html_url: null,
+                    githubId: null,
+                    projects: [],
+                    public_repos: null,
+                    githubToken: null,
+                };
+                await UpdateUser(userData).then(async ({ result }) => {
+                    if (result?.updated) {
+                        console.log('Github Disconnected!');
+                        await RemoveProjects(
+                            currentUserData?.projects as DatabaseProjectData[]
+                        );
+                    }
+                });
+            })
+            .catch((error) => {
+                console.log('Error Code: ', error.code);
+            });
     }
 
     useEffect(() => {
@@ -145,6 +177,10 @@ export default function Settings() {
 
         setProfileChanged(detectedChanges);
     }, [username, avatar]);
+
+    useEffect(() => {
+        console.log('Current User: ', currentUser);
+    }, [currentUser]);
 
     useEffect(() => {
         let isConnected = false;
@@ -326,11 +362,14 @@ export default function Settings() {
                         <section className="flex flex-col gap-4">
                             <h2 className="text-2xl font-bold">Connections</h2>
                             <button
-                                disabled={isGithubConnected}
-                                onClick={ConnectGithub}
+                                onClick={
+                                    isGithubConnected
+                                        ? DisconnectGithub
+                                        : ConnectGithub
+                                }
                             >
                                 {isGithubConnected
-                                    ? 'Github Connected'
+                                    ? 'Disconnect Github'
                                     : 'Connect GitHub'}
                             </button>
                         </section>

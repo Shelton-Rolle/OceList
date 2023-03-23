@@ -1,5 +1,21 @@
-import { DatabaseProjectData } from '@/database/CreateProjects';
 import { User, UserMetadata } from 'firebase/auth';
+
+export interface DatabaseIssueObject {
+    id: number;
+    title: string;
+    body: string;
+    repoId: number;
+    repoName: string;
+    state: string;
+}
+
+export interface DatabaseProjectData {
+    id: number;
+    name: string;
+    owner: any;
+    languages: string[];
+    issues?: DatabaseIssueObject[];
+}
 
 interface GithubPermissions {
     admin: boolean;
@@ -139,14 +155,22 @@ export interface IUser {
     email?: string | undefined | null;
     emailVerified?: boolean | undefined;
     html_url?: string | null;
-    id?: number | null;
+    githubId?: number | null;
     isAnonymous?: boolean | null;
     login?: string | null;
     metadata?: UserMetadata | null;
     photoURL?: string | null;
     projects?: Project[] | DatabaseProjectData[] | null;
     providerId?: string | null;
+    providerData?: ProviderData[];
     public_repos?: number | null;
-    token?: string | null;
+    githubToken?: string | null;
     uid?: string | null;
+}
+
+interface ProviderData {
+    uid?: string;
+    providerId?: string | null;
+    email?: string | null;
+    photoURL?: string | null;
 }
