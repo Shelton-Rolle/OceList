@@ -9,9 +9,11 @@ import { IUser, Project } from '@/types/dataObjects';
 import UpdateUserWithGithubData from '@/database/UpdateUserWithGithub';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import auth from '@/firebase/auth/authInit';
+import GenerateTemporaryPassword from '@/helpers/GenerateTemporaryPassword';
 
 export default function ProfileSetup() {
-    const { currentUser, githubData, currentUserData } = useAuth();
+    const { currentUser, githubData, currentUserData, updateUserPassword } =
+        useAuth();
     const router = useRouter();
 
     // This will be an array of Projects
@@ -25,8 +27,8 @@ export default function ProfileSetup() {
 
     async function FinalizeProfileSetup() {
         // Create Project Instances of each project in the database
-        await CreateProjects(Object.values(githubData?.projects)).then(
-            async () => {
+        await CreateProjects(Object.values(githubData?.projects))
+            .then(async () => {
                 const fullUser: IUser = {
                     ...currentUser,
                     ...githubData,
@@ -45,22 +47,19 @@ export default function ProfileSetup() {
                             console.log('Connecting GitHub Error: ', error);
                         });
                 } else {
+                    // Generate a temporary password for the user
+                    const password = GenerateTemporaryPassword();
+                    await updateUserPassword(password);
+
                     // Code for signing up with github
                     await CreateUser(fullUser).then(async ({ result }) => {
-                        await sendPasswordResetEmail(auth, currentUser?.email!)
-                            .then(() => {
-                                router.push(`/profile/${githubData?.login}`);
-                            })
-                            .catch((error) => {
-                                console.log(
-                                    'GitHub Signup Password Reset Error Code: ',
-                                    error.code
-                                );
-                            });
+                        router.push(`/profile/${githubData?.login}`);
                     });
                 }
-            }
-        );
+            })
+            .catch((error) => {
+                console.log('Finalize Profile Error: ', error);
+            });
     }
 
     useEffect(() => {
