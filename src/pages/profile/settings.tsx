@@ -152,10 +152,15 @@ export default function Settings() {
                 };
                 await UpdateUser(userData).then(async ({ result }) => {
                     if (result?.updated) {
-                        console.log('Github Disconnected!');
                         await RemoveProjects(
                             currentUserData?.projects as DatabaseProjectData[]
-                        );
+                        ).then((result: any) => {
+                            if (result?.deleted) {
+                                router.reload();
+                            } else {
+                                console.log('errors: ', result.errors);
+                            }
+                        });
                     }
                 });
             })

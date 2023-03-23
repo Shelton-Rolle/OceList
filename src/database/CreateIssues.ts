@@ -3,14 +3,14 @@ import { DatabaseIssueObject, Issue } from '@/types/dataObjects';
 export default async function CreateIssues(issues: Issue[]) {
     const issueData: DatabaseIssueObject[] = [];
     for (let i = 0; i < issues.length; i++) {
-        const { id, title, body, repository_url, state } = issues[i];
+        const { title, body, repository_url, state } = issues[i];
 
         await fetch(repository_url)
             .then((res) => res.json())
             .then((data) => {
                 const { id, name } = data;
                 issueData.push({
-                    id,
+                    id: issues[i].id,
                     title,
                     body,
                     repoId: id,
