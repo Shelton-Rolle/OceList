@@ -48,9 +48,28 @@ export default function Settings() {
     }
 
     async function ConnectGithub() {
-        await linkWithPopup(currentUser!, githubProvider).then((result) => {
-            console.log('Link Results: ', result);
-        });
+        await linkWithPopup(currentUser!, githubProvider).then(
+            ({ _tokenResponse }: any) => {
+                const { oauthAccessToken } = _tokenResponse;
+
+                GetGitHubUser(oauthAccessToken!).then((user) => {
+                    const userData: GithubUserObject = user!;
+                    const { html_url, id, login, public_repos } = userData;
+
+                    const userObject: IGithubUser = {
+                        html_url,
+                        id,
+                        login,
+                        public_repos,
+                        token: oauthAccessToken,
+                        projects: [],
+                    };
+
+                    setGithubData(userObject);
+                    router.push('/signup/profile-setup');
+                });
+            }
+        );
         // await AuthenticateWithGitHub().then(({ token }) => {
         //     GetGitHubUser(token!).then((user) => {
         //         const userData: GithubUserObject = user!;

@@ -5,6 +5,7 @@ interface DatabaseIssueObject {
     title: string;
     body: string;
     repoId: number;
+    repoName: string;
     state: string;
 }
 
@@ -16,12 +17,13 @@ export default async function CreateIssues(issues: Issue[]) {
         await fetch(repository_url)
             .then((res) => res.json())
             .then((data) => {
-                const repoId = data?.id;
+                const { id, name } = data;
                 issueData.push({
                     id,
                     title,
                     body,
-                    repoId,
+                    repoId: id,
+                    repoName: name,
                     state,
                 });
             })

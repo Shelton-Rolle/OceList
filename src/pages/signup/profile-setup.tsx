@@ -7,9 +7,11 @@ import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
 import { IUser, Project } from '@/types/dataObjects';
 import GenerateTemporaryPassword from '@/helpers/GenerateTemporaryPassword';
+import UpdateUserWithGithubData from '@/database/UpdateUserWithGithub';
 
 export default function ProfileSetup() {
-    const { currentUser, githubData, updateUserPassword } = useAuth();
+    const { currentUser, githubData, updateUserPassword, currentUserData } =
+        useAuth();
     const router = useRouter();
 
     // This will be an array of Projects
@@ -22,6 +24,7 @@ export default function ProfileSetup() {
     }
 
     async function FinalizeProfileSetup() {
+        console.log('Current Database Data: ', currentUserData);
         // Generate a temporary password for the user
         const password = GenerateTemporaryPassword();
         updateUserPassword(password);
@@ -35,9 +38,19 @@ export default function ProfileSetup() {
                     password,
                 };
 
-                await CreateUser(fullUser).then(() => {
+                if (currentUserData) {
+                    await UpdateUserWithGithubData(fullUser).then(
+                        ({ result }) => {
+                            console.log('Update Request Result: ', result);
+                        }
+                    );
+                    router.push(`/profile/${currentUserData?.login}`);
+                } else {
+                    await CreateUser(fullUser).then(({ result }) => {
+                        console.log('Create Request Reesult: ', result);
+                    });
                     router.push(`/profile/${githubData?.login}`);
-                });
+                }
             }
         );
     }
