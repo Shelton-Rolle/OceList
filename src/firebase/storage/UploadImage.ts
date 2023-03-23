@@ -2,10 +2,10 @@ import { ref, uploadBytes } from 'firebase/storage';
 import GetImageURL from './GetImage';
 import storage from './storageInit';
 
-export default async function UploadImage(file: any) {
+export default async function UploadImage(file: any, uid: string) {
     let imageURL;
     const { name } = file;
-    const imageRef = ref(storage, `images/${name}`);
+    const imageRef = ref(storage, `images/avatars/${uid}`);
 
     await uploadBytes(imageRef, file).then(async (snapshot) => {
         if (snapshot) {

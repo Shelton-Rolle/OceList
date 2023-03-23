@@ -36,7 +36,7 @@ export default function Settings() {
         let newAvatarURL: string | undefined;
 
         if (avatar) {
-            await UploadImage(avatar).then((url) => {
+            await UploadImage(avatar, currentUser?.uid!).then((url) => {
                 newAvatarURL = url;
             });
         }

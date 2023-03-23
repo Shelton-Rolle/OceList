@@ -14,14 +14,6 @@ export default function Home() {
     //     console.log('Current User Database Data: ', currentUserData);
     // }, [currentUser, githubData, currentUserData]);
 
-    async function FileSubmit(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-
-        await UploadImage(file).then((url) => {
-            console.log('File URL: ', url);
-        });
-    }
-
     return (
         <>
             <Head>
@@ -40,18 +32,6 @@ export default function Home() {
                     <a href={`/profile/${currentUserData?.login}`}>Profile</a>
                 </div>
                 <button onClick={logout}>Logout</button>
-                <br />
-                <br />
-                <form onSubmit={FileSubmit}>
-                    <input
-                        type="file"
-                        accept="images/jpg images/jpeg images/png"
-                        onChange={(e) =>
-                            setFile(e.target.files && e.target.files[0])
-                        }
-                    />
-                    <button type="submit">Upload</button>
-                </form>
             </main>
         </>
     );
