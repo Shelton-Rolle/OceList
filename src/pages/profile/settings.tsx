@@ -96,10 +96,10 @@ export default function Settings() {
         );
 
         await reauthenticateWithCredential(currentUser!, credentials)
-            .then(async () => {
+            .then(() => {
                 console.log('Done');
                 // Once ReAuthenticated, we should take the new entered email address and re-run the UpdateEmail function
-                await UpdateEmail();
+                UpdateEmail();
             })
             .catch((error) => {
                 setReAuthenticateErrors([error.code]);
