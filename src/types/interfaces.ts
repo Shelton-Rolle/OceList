@@ -19,4 +19,5 @@ export interface IAuthContext {
     logout: () => void;
     setGithubData: (data: IGithubUser) => void;
     setCurrentUserData: (data: IUser) => void;
+    DeleteAccount: () => Promise<string | undefined>;
 }

@@ -37,6 +37,7 @@ export default function Settings() {
         updateUserEmail,
         logout,
         setGithubData,
+        DeleteAccount,
     } = useAuth();
 
     const [previousEmail, setPreviousEmail] = useState<string>();
@@ -52,6 +53,8 @@ export default function Settings() {
     );
     const [reAuthenticateNotifications, setReAuthenticateNotifications] =
         useState<string[]>([]);
+    const [requiresReAuthenticate, setRequiresReAuthenticate] =
+        useState<boolean>(false);
 
     async function UpdateProfile(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -84,15 +87,24 @@ export default function Settings() {
         // If the email was changed, update the email on the users auth profile before updating the database
         if (email && email !== currentUserData?.email) {
             const error = await updateUserEmail(email!);
-            if (error) console.log('YO Error Code: ', error);
 
             if (error == 'auth/requires-recent-login') {
-                setShowPasswordModal(true);
+                setRequiresReAuthenticate(true);
             } else {
                 await UpdateUser(updatedUser).then(() => {
                     router.reload();
                 });
             }
+        }
+    }
+
+    async function deleteUserAccount() {
+        const error = await DeleteAccount();
+
+        if (error == 'auth/requires-recent-login') {
+            setRequiresReAuthenticate(true);
+        } else {
+            await DeleteAccount();
         }
     }
 
@@ -105,8 +117,7 @@ export default function Settings() {
 
         await reauthenticateWithCredential(currentUser!, credentials)
             .then(() => {
-                // Once ReAuthenticated, re-run the UpdateEmail function
-                UpdateEmail();
+                router.reload();
             })
             .catch((error) => {
                 setReAuthenticateErrors([error.code]);
@@ -272,11 +283,58 @@ export default function Settings() {
                         </section>
                         <section>
                             <h2>Contact Info</h2>
-                            <div
-                                className={`p-4 outline outline-2 outline-black ${
-                                    showPasswordModal ? 'block' : 'hidden'
-                                }`}
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    UpdateEmail();
+                                }}
                             >
+                                <label htmlFor="email">
+                                    Email:
+                                    <input
+                                        type="text"
+                                        id="email"
+                                        placeholder={currentUserData?.email!}
+                                        onChange={(e) =>
+                                            setEmail(e.target.value)
+                                        }
+                                        className="p-2 rounded-sm outline outline-2 outline-gray-400"
+                                    />
+                                </label>
+                                <button
+                                    className="border border-black rounded-sm p-2"
+                                    type="submit"
+                                >
+                                    Update Email
+                                </button>
+                            </form>
+                        </section>
+                        <section className="flex flex-col gap-4">
+                            <h2 className="text-2xl font-bold">Connections</h2>
+                            <button
+                                onClick={
+                                    isGithubConnected
+                                        ? DisconnectGithub
+                                        : ConnectGithub
+                                }
+                            >
+                                {isGithubConnected
+                                    ? 'Disconnect Github'
+                                    : 'Connect GitHub'}
+                            </button>
+                        </section>
+                        <section className="flex flex-col gap-4">
+                            <h2 className="text-2xl font-bold">Danger</h2>
+                            <button onClick={logout}>Logout</button>
+                            <button onClick={deleteUserAccount}>
+                                Delete Account
+                            </button>
+                        </section>
+                        {requiresReAuthenticate && (
+                            <div>
+                                <h1>
+                                    You need to re-authenticate to complete that
+                                </h1>
                                 {reAuthenticateErrors.includes(
                                     'auth/wrong-password'
                                 ) && (
@@ -338,51 +396,7 @@ export default function Settings() {
                                     </button>
                                 </form>
                             </div>
-                            <form
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    UpdateEmail();
-                                }}
-                            >
-                                <label htmlFor="email">
-                                    Email:
-                                    <input
-                                        type="text"
-                                        id="email"
-                                        placeholder={currentUserData?.email!}
-                                        onChange={(e) =>
-                                            setEmail(e.target.value)
-                                        }
-                                        className="p-2 rounded-sm outline outline-2 outline-gray-400"
-                                    />
-                                </label>
-                                <button
-                                    className="border border-black rounded-sm p-2"
-                                    type="submit"
-                                >
-                                    Update Email
-                                </button>
-                            </form>
-                        </section>
-                        <section className="flex flex-col gap-4">
-                            <h2 className="text-2xl font-bold">Connections</h2>
-                            <button
-                                onClick={
-                                    isGithubConnected
-                                        ? DisconnectGithub
-                                        : ConnectGithub
-                                }
-                            >
-                                {isGithubConnected
-                                    ? 'Disconnect Github'
-                                    : 'Connect GitHub'}
-                            </button>
-                        </section>
-                        <section className="flex flex-col gap-4">
-                            <h2 className="text-2xl font-bold">Danger</h2>
-                            <button onClick={logout}>Logout</button>
-                            <button>Delete Account</button>
-                        </section>
+                        )}
                     </>
                 ) : (
                     <div>Loading</div>
