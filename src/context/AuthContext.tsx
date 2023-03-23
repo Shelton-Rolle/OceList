@@ -15,7 +15,9 @@ const AuthContext = createContext<IAuthContext>({
     currentUser: null,
     currentUserData: null,
     githubData: null,
-    updateUserEmail(email) {},
+    updateUserEmail: async (email) => {
+        return undefined;
+    },
     updateUserPassword(password) {},
     logout() {},
     setGithubData(data) {},
@@ -35,12 +37,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const [githubData, setGithubData] = useState<IGithubUser | null>(null);
     const [currentUserData, setCurrentUserData] = useState<IUser | null>(null);
 
-    async function updateUserEmail(email: string) {
-        await updateEmail(currentUser!, email).catch((error) => {
-            return {
-                error,
-            };
-        });
+    async function updateUserEmail(email: string): Promise<string | undefined> {
+        let errorCode: string;
+
+        await updateEmail(currentUser!, email)
+            .then(() => {
+                console.log('Worked!');
+            })
+            .catch((error) => {
+                errorCode = error.code;
+            });
+
+        return errorCode!;
     }
 
     async function logout() {

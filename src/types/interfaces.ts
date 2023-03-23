@@ -14,7 +14,7 @@ export interface IAuthContext {
     currentUser: User | null;
     currentUserData: IUser | null;
     githubData: IGithubUser | null;
-    updateUserEmail: (email: string) => void;
+    updateUserEmail: (email: string) => Promise<string | undefined>;
     updateUserPassword: (password: string) => void;
     logout: () => void;
     setGithubData: (data: IGithubUser) => void;

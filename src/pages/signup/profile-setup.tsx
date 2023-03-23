@@ -8,6 +8,8 @@ import { useAuth } from '@/context/AuthContext';
 import { IUser, Project } from '@/types/dataObjects';
 import GenerateTemporaryPassword from '@/helpers/GenerateTemporaryPassword';
 import UpdateUserWithGithubData from '@/database/UpdateUserWithGithub';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import auth from '@/firebase/auth/authInit';
 
 export default function ProfileSetup() {
     const { currentUser, githubData, updateUserPassword, currentUserData } =
@@ -25,9 +27,6 @@ export default function ProfileSetup() {
 
     async function FinalizeProfileSetup() {
         console.log('Current Database Data: ', currentUserData);
-        // Generate a temporary password for the user
-        const password = GenerateTemporaryPassword();
-        updateUserPassword(password);
 
         // Create Project Instances of each project in the database
         await CreateProjects(Object.values(githubData?.projects)).then(
@@ -35,10 +34,12 @@ export default function ProfileSetup() {
                 const fullUser: IUser = {
                     ...currentUser,
                     ...githubData,
-                    password,
                 };
 
                 if (currentUserData) {
+                    fullUser.photoURL = currentUserData?.photoURL;
+                    fullUser.login = currentUserData?.login;
+                    // Code for connecting github to current account
                     await UpdateUserWithGithubData(fullUser).then(
                         ({ result }) => {
                             console.log('Update Request Result: ', result);
@@ -46,10 +47,16 @@ export default function ProfileSetup() {
                     );
                     router.push(`/profile/${currentUserData?.login}`);
                 } else {
-                    await CreateUser(fullUser).then(({ result }) => {
+                    // Code for signing up with github
+                    await CreateUser(fullUser).then(async ({ result }) => {
                         console.log('Create Request Reesult: ', result);
+                        await sendPasswordResetEmail(
+                            auth,
+                            currentUser?.email!
+                        ).then(() => {
+                            router.push(`/profile/${githubData?.login}`);
+                        });
                     });
-                    router.push(`/profile/${githubData?.login}`);
                 }
             }
         );

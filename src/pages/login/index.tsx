@@ -20,7 +20,6 @@ export default function index() {
 
     async function LoginWithEmail(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-
         signInWithEmailAndPassword(auth, email!, password!)
             .then(async (credentials) => {
                 const { uid } = credentials?.user;

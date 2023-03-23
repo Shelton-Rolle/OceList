@@ -8,7 +8,14 @@ import { useRouter } from 'next/router';
 import AuthenticateWithGitHub from '@/firebase/auth/gitHubAuth/auth';
 import { GetGitHubUser } from '@/firebase/auth/gitHubAuth/octokit';
 import { IGithubUser } from '@/types/interfaces';
-import { linkWithPopup } from 'firebase/auth';
+import {
+    EmailAuthCredential,
+    EmailAuthProvider,
+    linkWithPopup,
+    reauthenticateWithCredential,
+    reauthenticateWithPopup,
+    sendPasswordResetEmail,
+} from 'firebase/auth';
 import auth from '@/firebase/auth/authInit';
 import githubProvider from '@/firebase/auth/gitHubAuth/githubInit';
 import UploadImage from '@/firebase/storage/UploadImage';
@@ -25,12 +32,19 @@ export default function Settings() {
         logout,
         setGithubData,
     } = useAuth();
+    const [previousEmail, setPreviousEmail] = useState<string>();
+    const [userPassword, setUserPassword] = useState<string>();
+    const [showPasswordModal, setShowPasswordModal] = useState<boolean>(false);
     const [avatar, setAvatar] = useState<any>();
     const [username, setUsername] = useState<string>();
     const [email, setEmail] = useState<string>();
     const [profileChanged, setProfileChanged] = useState<boolean>(false);
     const [isGithubConnected, setIsGithubConnected] = useState<boolean>();
-
+    const [reAuthenticateErrors, setReAuthenticateErrors] = useState<string[]>(
+        []
+    );
+    const [reAuthenticateNotifications, setReAuthenticateNotifications] =
+        useState<string[]>([]);
     async function UpdateProfile(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         let newAvatarURL: string | undefined;
@@ -41,22 +55,57 @@ export default function Settings() {
             });
         }
 
-        // If the email was changed, update the email on the users auth profile before updating the database
-        if (email && email !== currentUserData?.email) {
-            updateUserEmail(email!);
-        }
-
         // Create a clone of the currentUserData object with the updated data and update the database
         const updatedUser: IUser = {
             ...currentUserData!,
             photoURL: avatar ? newAvatarURL : currentUserData?.photoURL,
-            email: email ? email : currentUserData?.email,
             login: username ? username : currentUserData?.login,
         };
 
         await UpdateUser(updatedUser).then(() => {
             router.reload();
         });
+    }
+
+    async function UpdateEmail() {
+        const updatedUser: IUser = {
+            ...currentUserData!,
+            email: email ? email : currentUserData?.email,
+        };
+
+        // If the email was changed, update the email on the users auth profile before updating the database
+        if (email && email !== currentUserData?.email) {
+            const error = await updateUserEmail(email!);
+            if (error) console.log('YO Error Code: ', error);
+
+            if (error == 'auth/requires-recent-login') {
+                setShowPasswordModal(true);
+            } else {
+                await UpdateUser(updatedUser).then(() => {
+                    router.reload();
+                });
+            }
+        }
+    }
+
+    async function ReAuthenticate(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        const credentials = EmailAuthProvider.credential(
+            previousEmail!,
+            userPassword!
+        );
+
+        await reauthenticateWithCredential(currentUser!, credentials)
+            .then(async () => {
+                console.log('Done');
+                // Once ReAuthenticated, we should take the new entered email address and re-run the UpdateEmail function
+                await UpdateEmail();
+            })
+            .catch((error) => {
+                setReAuthenticateErrors([error.code]);
+                console.log('Re Authenticate Error Code: ', error.code);
+                console.log('Re Authenticate Error Message: ', error.message);
+            });
     }
 
     async function ConnectGithub() {
@@ -82,24 +131,6 @@ export default function Settings() {
                 });
             }
         );
-        // await AuthenticateWithGitHub().then(({ token }) => {
-        //     GetGitHubUser(token!).then((user) => {
-        //         const userData: GithubUserObject = user!;
-        //         const { html_url, id, login, public_repos } = userData;
-
-        //         const userObject: IGithubUser = {
-        //             html_url,
-        //             id,
-        //             login,
-        //             public_repos,
-        //             token,
-        //             projects: [],
-        //         };
-
-        //         setGithubData(userObject);
-        //         router.push('/signup/profile-setup');
-        //     });
-        // });
     }
 
     useEffect(() => {
@@ -109,16 +140,12 @@ export default function Settings() {
             detectedChanges = true;
         }
 
-        if (email && email !== '') {
-            detectedChanges = true;
-        }
-
         if (avatar) {
             detectedChanges = true;
         }
 
         setProfileChanged(detectedChanges);
-    }, [username, email, avatar]);
+    }, [username, avatar]);
 
     useEffect(() => {
         let isConnected = false;
@@ -191,6 +218,93 @@ export default function Settings() {
                                         className="p-2 rounded-sm outline outline-2 outline-gray-400"
                                     />
                                 </label>
+                                <button
+                                    type="submit"
+                                    disabled={!profileChanged}
+                                    className={`outline outline-2  w-36 rounded-sm ${
+                                        profileChanged
+                                            ? 'outline-black text-black'
+                                            : 'outline-gray-400 text-gray-400'
+                                    }`}
+                                >
+                                    Save
+                                </button>
+                            </form>
+                        </section>
+                        <section>
+                            <h2>Contact Info</h2>
+                            <div
+                                className={`p-4 outline outline-2 outline-black ${
+                                    showPasswordModal ? 'block' : 'hidden'
+                                }`}
+                            >
+                                {reAuthenticateErrors.includes(
+                                    'auth/wrong-password'
+                                ) && (
+                                    <div>
+                                        <p>incorrect password</p>
+                                        <button
+                                            onClick={async () => {
+                                                await sendPasswordResetEmail(
+                                                    auth,
+                                                    currentUser?.email!
+                                                ).then(() => {
+                                                    setReAuthenticateNotifications(
+                                                        ['email-sent']
+                                                    );
+                                                });
+                                            }}
+                                            className="text-blue-500"
+                                        >
+                                            Reset Password
+                                        </button>
+                                    </div>
+                                )}
+                                {reAuthenticateNotifications.includes(
+                                    'email-sent'
+                                ) && (
+                                    <p className="text-green-500">Email Sent</p>
+                                )}
+                                <form
+                                    className="flex flex-col items-start"
+                                    onSubmit={ReAuthenticate}
+                                >
+                                    <label htmlFor="previousEmail">
+                                        Enter Previous Email:{' '}
+                                        <input
+                                            type="text"
+                                            id="previousEmail"
+                                            placeholder="previous email"
+                                            onChange={(e) =>
+                                                setPreviousEmail(e.target.value)
+                                            }
+                                        />
+                                    </label>
+                                    <label htmlFor="password">
+                                        Enter Password:{' '}
+                                        <input
+                                            type="text"
+                                            id="password"
+                                            placeholder="password"
+                                            onChange={(e) =>
+                                                setUserPassword(e.target.value)
+                                            }
+                                        />
+                                    </label>
+                                    <button
+                                        className="border border-black rounded-sm p-2"
+                                        type="submit"
+                                    >
+                                        Update
+                                    </button>
+                                </form>
+                            </div>
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    UpdateEmail();
+                                }}
+                            >
                                 <label htmlFor="email">
                                     Email:
                                     <input
@@ -204,15 +318,10 @@ export default function Settings() {
                                     />
                                 </label>
                                 <button
+                                    className="border border-black rounded-sm p-2"
                                     type="submit"
-                                    disabled={!profileChanged}
-                                    className={`outline outline-2  w-36 rounded-sm ${
-                                        profileChanged
-                                            ? 'outline-black text-black'
-                                            : 'outline-gray-400 text-gray-400'
-                                    }`}
                                 >
-                                    Save
+                                    Update Email
                                 </button>
                             </form>
                         </section>

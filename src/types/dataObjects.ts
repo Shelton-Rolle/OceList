@@ -149,5 +149,4 @@ export interface IUser {
     public_repos?: number | null;
     token?: string | null;
     uid?: string | null;
-    password?: string;
 }

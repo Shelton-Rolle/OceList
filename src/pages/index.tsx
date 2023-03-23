@@ -8,11 +8,11 @@ export default function Home() {
     const [file, setFile] = useState<any>();
     const { currentUser, githubData, currentUserData, logout } = useAuth();
 
-    // useEffect(() => {
-    //     console.log('Current User: ', currentUser);
-    //     console.log('Github Data: ', githubData);
-    //     console.log('Current User Database Data: ', currentUserData);
-    // }, [currentUser, githubData, currentUserData]);
+    useEffect(() => {
+        console.log('Current User: ', currentUser);
+        console.log('Github Data: ', githubData);
+        console.log('Current User Database Data: ', currentUserData);
+    }, [currentUser, githubData, currentUserData]);
 
     return (
         <>
