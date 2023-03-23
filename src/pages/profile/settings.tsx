@@ -32,6 +32,7 @@ export default function Settings() {
         logout,
         setGithubData,
     } = useAuth();
+
     const [previousEmail, setPreviousEmail] = useState<string>();
     const [userPassword, setUserPassword] = useState<string>();
     const [showPasswordModal, setShowPasswordModal] = useState<boolean>(false);
@@ -45,6 +46,7 @@ export default function Settings() {
     );
     const [reAuthenticateNotifications, setReAuthenticateNotifications] =
         useState<string[]>([]);
+
     async function UpdateProfile(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         let newAvatarURL: string | undefined;
@@ -97,14 +99,11 @@ export default function Settings() {
 
         await reauthenticateWithCredential(currentUser!, credentials)
             .then(() => {
-                console.log('Done');
-                // Once ReAuthenticated, we should take the new entered email address and re-run the UpdateEmail function
+                // Once ReAuthenticated, re-run the UpdateEmail function
                 UpdateEmail();
             })
             .catch((error) => {
                 setReAuthenticateErrors([error.code]);
-                console.log('Re Authenticate Error Code: ', error.code);
-                console.log('Re Authenticate Error Message: ', error.message);
             });
     }
 
@@ -149,7 +148,6 @@ export default function Settings() {
 
     useEffect(() => {
         let isConnected = false;
-        console.log('Current User: ', currentUser);
         currentUser?.providerData.map((provider) => {
             if (provider?.providerId === 'github.com') {
                 isConnected = true;

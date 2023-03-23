@@ -1,8 +1,6 @@
 import Head from 'next/head';
 import { useAuth } from '@/context/AuthContext';
-import { FormEvent, useEffect, useState } from 'react';
-import UploadImage from '@/firebase/storage/UploadImage';
-import GetImageURL from '@/firebase/storage/GetImage';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
     const [file, setFile] = useState<any>();

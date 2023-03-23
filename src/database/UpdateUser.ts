@@ -31,7 +31,6 @@ export default async function UpdateUser(user: IUser) {
     })
         .then((res) => res.json())
         .then((res) => {
-            console.log('res: ', res);
             result = res;
         })
         .catch((err) => console.error(err));

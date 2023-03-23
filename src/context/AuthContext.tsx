@@ -10,6 +10,7 @@ import {
 import { IAuthContext, IGithubUser } from '@/types/interfaces';
 import { IUser } from '@/types/dataObjects';
 import GetUser from '@/database/GetUser';
+import { AuthProviderProps } from '@/types/props';
 
 const AuthContext = createContext<IAuthContext>({
     currentUser: null,
@@ -24,10 +25,6 @@ const AuthContext = createContext<IAuthContext>({
     setCurrentUserData(data) {},
 });
 
-interface AuthProviderProps {
-    children: string | JSX.Element | JSX.Element[];
-}
-
 export function useAuth() {
     return useContext(AuthContext);
 }
@@ -40,13 +37,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     async function updateUserEmail(email: string): Promise<string | undefined> {
         let errorCode: string;
 
-        await updateEmail(currentUser!, email)
-            .then(() => {
-                console.log('Worked!');
-            })
-            .catch((error) => {
-                errorCode = error.code;
-            });
+        await updateEmail(currentUser!, email).catch((error) => {
+            errorCode = error.code;
+        });
 
         return errorCode!;
     }

@@ -6,14 +6,12 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
 import { IUser, Project } from '@/types/dataObjects';
-import GenerateTemporaryPassword from '@/helpers/GenerateTemporaryPassword';
 import UpdateUserWithGithubData from '@/database/UpdateUserWithGithub';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import auth from '@/firebase/auth/authInit';
 
 export default function ProfileSetup() {
-    const { currentUser, githubData, updateUserPassword, currentUserData } =
-        useAuth();
+    const { currentUser, githubData, currentUserData } = useAuth();
     const router = useRouter();
 
     // This will be an array of Projects
@@ -26,8 +24,6 @@ export default function ProfileSetup() {
     }
 
     async function FinalizeProfileSetup() {
-        console.log('Current Database Data: ', currentUserData);
-
         // Create Project Instances of each project in the database
         await CreateProjects(Object.values(githubData?.projects)).then(
             async () => {
@@ -40,22 +36,27 @@ export default function ProfileSetup() {
                     fullUser.photoURL = currentUserData?.photoURL;
                     fullUser.login = currentUserData?.login;
                     // Code for connecting github to current account
-                    await UpdateUserWithGithubData(fullUser).then(
-                        ({ result }) => {
+                    await UpdateUserWithGithubData(fullUser)
+                        .then(({ result }) => {
                             console.log('Update Request Result: ', result);
-                        }
-                    );
-                    router.push(`/profile/${currentUserData?.login}`);
+                            router.push(`/profile/${currentUserData?.login}`);
+                        })
+                        .catch((error) => {
+                            console.log('Connecting GitHub Error: ', error);
+                        });
                 } else {
                     // Code for signing up with github
                     await CreateUser(fullUser).then(async ({ result }) => {
-                        console.log('Create Request Reesult: ', result);
-                        await sendPasswordResetEmail(
-                            auth,
-                            currentUser?.email!
-                        ).then(() => {
-                            router.push(`/profile/${githubData?.login}`);
-                        });
+                        await sendPasswordResetEmail(auth, currentUser?.email!)
+                            .then(() => {
+                                router.push(`/profile/${githubData?.login}`);
+                            })
+                            .catch((error) => {
+                                console.log(
+                                    'GitHub Signup Password Reset Error Code: ',
+                                    error.code
+                                );
+                            });
                     });
                 }
             }
