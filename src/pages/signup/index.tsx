@@ -30,12 +30,14 @@ export default function index() {
                         login: username,
                     }).then(({ result, user }) => {
                         if (result?.created) {
-                            const error = UpdateProfile(
-                                username,
-                                process.env.NEXT_PUBLIC_DEFAULT_IMAGE
-                            );
                             setCurrentUserData(user);
-                            router.push(`/profile/${username}`);
+                            router.push(
+                                {
+                                    pathname: '/signup/callback',
+                                    query: { username },
+                                },
+                                '/signup/callback'
+                            );
                         }
                     });
                 }

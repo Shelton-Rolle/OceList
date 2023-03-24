@@ -59,7 +59,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     async function UpdateProfile(displayName?: string, photoURL?: string) {
         let errorCode: string | undefined;
-
+        console.log('Currently Usering User: ', currentUser);
         await updateProfile(currentUser!, {
             displayName,
             photoURL,
