@@ -27,9 +27,7 @@ export default function Home() {
                 <h1>Landing Page</h1>
 
                 <div>
-                    <a href={`/profile/${currentUserData?.displayName}`}>
-                        Profile
-                    </a>
+                    <a href={`/${currentUserData?.displayName}`}>Profile</a>
                 </div>
                 <button onClick={logout}>Logout</button>
             </main>

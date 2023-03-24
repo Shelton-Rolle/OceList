@@ -46,9 +46,7 @@ export default function ProfileSetup() {
                     await UpdateUserWithGithubData(fullUser)
                         .then(({ result }) => {
                             console.log('Update Request Result: ', result);
-                            router.push(
-                                `/profile/${currentUserData?.displayName}`
-                            );
+                            router.push(`/${currentUserData?.displayName}`);
                         })
                         .catch((error) => {
                             console.log('Connecting GitHub Error: ', error);
@@ -65,7 +63,7 @@ export default function ProfileSetup() {
 
                     // Code for signing up with github
                     await CreateUser(fullUser).then(async ({ result }) => {
-                        router.push(`/profile/${githubData?.login}`);
+                        router.push(`/${githubData?.login}`);
                     });
                 }
             })

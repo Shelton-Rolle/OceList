@@ -24,7 +24,7 @@ export default function index() {
             .then(async (credentials) => {
                 const user = credentials?.user;
                 if (user) {
-                    router.push(`/profile/${user?.displayName}`);
+                    router.push(`/${user?.displayName}`);
                 }
                 setErrors(['unknown-credentials']);
             })
