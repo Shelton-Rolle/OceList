@@ -59,7 +59,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     async function UpdateProfile(displayName?: string, photoURL?: string) {
         let errorCode: string | undefined;
-
+        console.log('Currently Usering User: ', currentUser);
         await updateProfile(currentUser!, {
             displayName,
             photoURL,
@@ -97,18 +97,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
         return errorCode;
     }
 
+    async function UpdateCurrentUserData() {
+        await GetUser(currentUser?.displayName!).then((userData) => {
+            console.log('User-Data: ', userData);
+            setCurrentUserData(userData!);
+        });
+    }
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 setCurrentUser(user);
-                await GetUser(user?.uid).then((userData) => {
-                    setCurrentUserData(userData!);
-                });
             }
         });
 
         return unsubscribe;
     }, []);
+
+    useEffect(() => {
+        console.log('Current-User: ', currentUser);
+        UpdateCurrentUserData();
+    }, [currentUser]);
 
     const value: IAuthContext = {
         currentUser,

@@ -1,9 +1,7 @@
 import { useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/router';
 
 export default function ProfilePage() {
-    const router = useRouter();
     const { currentUser, githubData, currentUserData } = useAuth();
 
     useEffect(() => {

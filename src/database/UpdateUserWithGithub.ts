@@ -16,7 +16,7 @@ export default async function UpdateUserWithGithubData(user: IUser) {
 
     const data = {
         apiKey: 'test123456',
-        userId: user?.uid,
+        displayName: user?.displayName,
         updatedData: updatedUser,
     };
 

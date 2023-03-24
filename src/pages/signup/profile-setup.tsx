@@ -39,38 +39,34 @@ export default function ProfileSetup() {
                     ...githubData,
                 };
 
-                const error = await UpdateProfile(
-                    githubData?.login!,
-                    githubData?.avatar_url!
-                );
-
-                if (error) {
-                    console.log('Update Profile Error: ', error);
-                } else {
-                    if (currentUserData) {
-                        fullUser.photoURL = currentUserData?.photoURL;
-                        fullUser.login = currentUserData?.login;
-                        // Code for connecting github to current account
-                        await UpdateUserWithGithubData(fullUser)
-                            .then(({ result }) => {
-                                console.log('Update Request Result: ', result);
-                                router.push(
-                                    `/profile/${currentUserData?.login}`
-                                );
-                            })
-                            .catch((error) => {
-                                console.log('Connecting GitHub Error: ', error);
-                            });
-                    } else {
-                        // Generate a temporary password for the user
-                        const password = GenerateTemporaryPassword();
-                        await updateUserPassword(password);
-
-                        // Code for signing up with github
-                        await CreateUser(fullUser).then(async ({ result }) => {
-                            router.push(`/profile/${githubData?.login}`);
+                if (currentUserData) {
+                    fullUser.photoURL = currentUserData?.photoURL;
+                    fullUser.displayName = currentUserData?.displayName;
+                    // Code for connecting github to current account
+                    await UpdateUserWithGithubData(fullUser)
+                        .then(({ result }) => {
+                            console.log('Update Request Result: ', result);
+                            router.push(
+                                `/profile/${currentUserData?.displayName}`
+                            );
+                        })
+                        .catch((error) => {
+                            console.log('Connecting GitHub Error: ', error);
                         });
-                    }
+                } else {
+                    const error = await UpdateProfile(
+                        githubData?.login!,
+                        githubData?.avatar_url!
+                    );
+
+                    // Generate a temporary password for the user
+                    const password = GenerateTemporaryPassword();
+                    await updateUserPassword(password);
+
+                    // Code for signing up with github
+                    await CreateUser(fullUser).then(async ({ result }) => {
+                        router.push(`/profile/${githubData?.login}`);
+                    });
                 }
             })
             .catch((error) => {

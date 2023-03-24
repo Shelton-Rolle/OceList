@@ -17,7 +17,7 @@ export default async function UpdateUser(user: IUser) {
 
     const data = {
         apiKey: 'test123456',
-        userId: user?.uid,
+        displayName: user?.displayName,
         updatedData: updatedUser,
     };
 
