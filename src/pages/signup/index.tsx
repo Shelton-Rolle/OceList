@@ -21,32 +21,28 @@ export default function index() {
     async function SignupWithEmailAndPassword(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        try {
-            await createUserWithEmailAndPassword(auth, email, password).then(
-                async (credentials) => {
-                    const user = credentials?.user;
-                    await CreateUser({
-                        ...user,
-                        login: username,
-                    }).then(({ result, user }) => {
-                        if (result?.created) {
-                            setCurrentUserData(user);
-                            router.push(
-                                {
-                                    pathname: '/signup/callback',
-                                    query: { username },
-                                },
-                                '/signup/callback'
-                            );
-                        }
-                    });
-                }
-            );
-        } catch (error: any) {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            setErrors([errorCode, errorMessage]);
-        }
+        await createUserWithEmailAndPassword(auth, email, password)
+            .then(async (credentials) => {
+                const user = credentials?.user;
+                await CreateUser({
+                    ...user,
+                    displayName: username,
+                }).then(({ result, user }) => {
+                    if (result?.created) {
+                        setCurrentUserData(user);
+                        router.push(
+                            {
+                                pathname: '/signup/callback',
+                                query: { username },
+                            },
+                            '/signup/callback'
+                        );
+                    }
+                });
+            })
+            .catch((error) => {
+                console.log('--- Error Code: ', error.code);
+            });
     }
 
     async function SignupWithGitHub() {

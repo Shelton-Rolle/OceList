@@ -77,7 +77,7 @@ export interface IUser {
     html_url?: string | null;
     githubId?: number | null;
     isAnonymous?: boolean | null;
-    login?: string | null;
+    displayName?: string | null;
     metadata?: UserMetadata | null;
     photoURL?: string | null;
     projects?: Project[] | DatabaseProjectData[] | null;

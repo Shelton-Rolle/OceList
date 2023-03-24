@@ -40,7 +40,6 @@ export default function Settings() {
 
     const [previousEmail, setPreviousEmail] = useState<string>();
     const [userPassword, setUserPassword] = useState<string>();
-    const [showPasswordModal, setShowPasswordModal] = useState<boolean>(false);
     const [avatar, setAvatar] = useState<any>();
     const [username, setUsername] = useState<string>();
     const [email, setEmail] = useState<string>();
@@ -59,7 +58,7 @@ export default function Settings() {
         let newAvatarURL: string | undefined;
 
         if (avatar) {
-            await UploadImage(avatar, currentUser?.uid!).then((url) => {
+            await UploadImage(avatar, currentUser?.displayName!).then((url) => {
                 newAvatarURL = url;
             });
         }
@@ -68,7 +67,7 @@ export default function Settings() {
         const updatedUser: IUser = {
             ...currentUserData!,
             photoURL: avatar ? newAvatarURL : currentUser?.photoURL,
-            login: username ? username : currentUser?.displayName,
+            displayName: username ? username : currentUser?.displayName,
         };
 
         await UpdateProfile(
@@ -199,7 +198,8 @@ export default function Settings() {
 
     useEffect(() => {
         console.log('Current User: ', currentUser);
-    }, [currentUser]);
+        console.log('Current User Data: ', currentUserData);
+    }, [currentUser, currentUserData]);
 
     useEffect(() => {
         let isConnected = false;

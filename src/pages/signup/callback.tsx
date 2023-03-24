@@ -4,26 +4,38 @@ import { useRouter } from 'next/router';
 
 export default function callback() {
     const router = useRouter();
-    const { UpdateProfile } = useAuth();
+    const { UpdateProfile, currentUser, currentUserData } = useAuth();
 
     async function HandleCallback() {
+        let error;
         const { username } = router?.query;
 
-        const error = await UpdateProfile(
+        error = await UpdateProfile(
             username as string,
             process.env.NEXT_PUBLIC_DEFAULT_IMAGE
         );
 
-        if (error) {
-            console.log('Profile Update ERROR: ', error);
-        } else {
-            router.push(`/profile/${username}`);
-        }
+        return error;
     }
 
     useEffect(() => {
-        HandleCallback();
+        HandleCallback()
+            .then((error) => {
+                if (error) {
+                    console.log('Profile Update ERROR: ', error);
+                } else {
+                    router.push(`/profile/${currentUser?.displayName}`);
+                }
+            })
+            .catch((error) => {
+                console.log('CALLBACK ERRORRR: ', error);
+            });
     }, []);
+
+    useEffect(() => {
+        console.log('CUrrent User: ', currentUser);
+        console.log('Current USer Data: ', currentUserData);
+    }, [currentUser, currentUserData]);
 
     return <div>callback</div>;
 }

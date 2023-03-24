@@ -101,7 +101,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 setCurrentUser(user);
-                await GetUser(user?.uid).then((userData) => {
+                await GetUser(user?.displayName!).then((userData) => {
                     setCurrentUserData(userData!);
                 });
             }

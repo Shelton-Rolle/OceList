@@ -49,13 +49,13 @@ export default function ProfileSetup() {
                 } else {
                     if (currentUserData) {
                         fullUser.photoURL = currentUserData?.photoURL;
-                        fullUser.login = currentUserData?.login;
+                        fullUser.displayName = currentUserData?.displayName;
                         // Code for connecting github to current account
                         await UpdateUserWithGithubData(fullUser)
                             .then(({ result }) => {
                                 console.log('Update Request Result: ', result);
                                 router.push(
-                                    `/profile/${currentUserData?.login}`
+                                    `/profile/${currentUserData?.displayName}`
                                 );
                             })
                             .catch((error) => {
