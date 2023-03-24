@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { GetServerSideProps } from 'next';
+import GetUser from '@/database/GetUser';
 
 interface ProfilePageProps {
     profileName: string;
@@ -21,37 +22,55 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
         }
     }, [currentUser]);
 
+    useEffect(() => {
+        console.log('HERE IS OUR USER DATA: ', data);
+    }, []);
+
     return (
-        <div>
-            {isCurrentUser === undefined ? (
-                <p>Loading</p>
+        <>
+            {data === null ? (
+                <h1>User Not Found</h1>
             ) : (
-                <>
-                    {isCurrentUser ? (
-                        <>
-                            <h1>This is the profile of the logged in user</h1>
-                            <p>{currentUser?.displayName}</p>
-                        </>
+                <div>
+                    {isCurrentUser === undefined ? (
+                        <p>Loading</p>
                     ) : (
                         <>
-                            <h1>This is the profile of a different user</h1>
-                            <p>{profileName}</p>
+                            {isCurrentUser ? (
+                                <>
+                                    <h1>
+                                        This is the profile of the logged in
+                                        user
+                                    </h1>
+                                    <p>{currentUser?.displayName}</p>
+                                </>
+                            ) : (
+                                <>
+                                    <h1>
+                                        This is the profile of a different user
+                                    </h1>
+                                    <p>{profileName}</p>
+                                </>
+                            )}
+                            <a href="/profile/settings">Settings</a>
                         </>
                     )}
-                    <a href="/profile/settings">Settings</a>
-                </>
+                </div>
             )}
-        </div>
+        </>
     );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const params = context?.params;
+    const username: string = params?.username as string;
+
+    const data = await GetUser(username);
 
     return {
         props: {
-            profileName: params?.username,
-            data: { name: 'Hello' },
+            profileName: username,
+            data,
         },
     };
 };
