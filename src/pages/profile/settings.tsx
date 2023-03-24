@@ -26,9 +26,6 @@ import githubProvider from '@/firebase/auth/gitHubAuth/githubInit';
 import UploadImage from '@/firebase/storage/UploadImage';
 import RemoveProjects from '@/database/RemoveProjects';
 
-const defaultImage =
-    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAMFBMVEW6urr////o6Oi3t7f8/Py/v7/39/fHx8fExMTt7e3MzMzj4+PS0tLy8vLX19fa2tr1LdARAAACdElEQVR4nO2aXXeDIAxAwYCA8vH//+2k1m511RIk2tOT+7BzthfuAklJqBAMwzAMwzAMwzDfB4AQ2hpjrJ5/OX19m1yvZEb1LtmTHUCnXj7TJ32eA+hRyf+o8TSHuP7/H3GIZywPottYP9MJ8jCA3QpA3ocpDJZYAcyOwLwThlQB9KsjuAoE7Xl8F4FbFCgFOlkQg+k4UgGxIAKZSLUPBYfgHgZNIwBjqYAciYJQKJAhWb84BBmaIJRk4gJJRhqEgJSmvQBqE2i2waEMQnsB3ZdWg4zq25cEixGYFGxrARhQAlIOrQ/CBxh4pIH/QoPLd0GYq3NhqgcoA4J6IALKgKAmXv+5gDyK7Q/iBOpzgWB9IVB3JBIDjTCguSyDK+hXZhzRXbm4KBGUo5nihKRqF0RpVSKoRgtQdFFSlEOMorJEUox+Fd5fE5pfDNYKw/5GKNoI3BTs3nEM1IOs2WE7KQnT8FnBvB4pdrRjtGdMtz4OqiNoVncA0L579HGq77w+f8A/rWgHH2P0g73ifeFuMS0N9KPkzwYyV60LQt+emfJDk17+dNLqdoijC+pvPioV3BgHTW4BYPwY7u9bz+Vg/hlGb+gkpuxLoWCyHZIlSQ8AX963Bd88EAAJ2Tunxg4et/7NwbdbHixulrjgWl0WIOIDcA9Dk6eO/ffFdzR5f6zbgQV3tcBxBTgqcLSLhXRYQMp0QAE9RHzNkRYCNz/bor6TLX7hfEd9WcANMbepffdCD7O3qexmG2TiQm1GNhOofIMF3APjPlUdZbNMyFRlA3KUvU9dW3/kU3lN3dcy2IAN2IAN2IAN2IAN2IAN2IAN2OBygx/3Xx6T8g+yzwAAAABJRU5ErkJggg==';
-
 export default function Settings() {
     const router = useRouter();
     const {
@@ -37,6 +34,8 @@ export default function Settings() {
         updateUserEmail,
         logout,
         setGithubData,
+        DeleteAccount,
+        UpdateProfile,
     } = useAuth();
 
     const [previousEmail, setPreviousEmail] = useState<string>();
@@ -52,8 +51,10 @@ export default function Settings() {
     );
     const [reAuthenticateNotifications, setReAuthenticateNotifications] =
         useState<string[]>([]);
+    const [requiresReAuthenticate, setRequiresReAuthenticate] =
+        useState<boolean>(false);
 
-    async function UpdateProfile(e: FormEvent<HTMLFormElement>) {
+    async function UpdateUserProfile(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         let newAvatarURL: string | undefined;
 
@@ -66,33 +67,47 @@ export default function Settings() {
         // Create a clone of the currentUserData object with the updated data and update the database
         const updatedUser: IUser = {
             ...currentUserData!,
-            photoURL: avatar ? newAvatarURL : currentUserData?.photoURL,
-            login: username ? username : currentUserData?.login,
+            photoURL: avatar ? newAvatarURL : currentUser?.photoURL,
+            login: username ? username : currentUser?.displayName,
         };
 
-        await UpdateUser(updatedUser).then(() => {
-            router.reload();
+        await UpdateProfile(
+            username ? username : currentUser?.displayName!,
+            avatar ? newAvatarURL : currentUser?.photoURL!
+        ).then((error) => {
+            UpdateUser(updatedUser).then(() => {
+                router.reload();
+            });
         });
     }
 
     async function UpdateEmail() {
         const updatedUser: IUser = {
             ...currentUserData!,
-            email: email ? email : currentUserData?.email,
+            email: email ? email : currentUser?.email,
         };
 
         // If the email was changed, update the email on the users auth profile before updating the database
-        if (email && email !== currentUserData?.email) {
+        if (email && email !== currentUser?.email) {
             const error = await updateUserEmail(email!);
-            if (error) console.log('YO Error Code: ', error);
 
             if (error == 'auth/requires-recent-login') {
-                setShowPasswordModal(true);
+                setRequiresReAuthenticate(true);
             } else {
                 await UpdateUser(updatedUser).then(() => {
                     router.reload();
                 });
             }
+        }
+    }
+
+    async function deleteUserAccount() {
+        const error = await DeleteAccount();
+
+        if (error == 'auth/requires-recent-login') {
+            setRequiresReAuthenticate(true);
+        } else {
+            await DeleteAccount();
         }
     }
 
@@ -105,8 +120,7 @@ export default function Settings() {
 
         await reauthenticateWithCredential(currentUser!, credentials)
             .then(() => {
-                // Once ReAuthenticated, re-run the UpdateEmail function
-                UpdateEmail();
+                router.reload();
             })
             .catch((error) => {
                 setReAuthenticateErrors([error.code]);
@@ -210,23 +224,24 @@ export default function Settings() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main>
-                {currentUserData ? (
+                {currentUser ? (
                     <>
                         <h1>Settings</h1>
 
                         <section className="flex flex-col gap-2">
                             <h2 className="text-2xl font-bold">Edit Profile</h2>
                             <form
-                                onSubmit={UpdateProfile}
+                                onSubmit={UpdateUserProfile}
                                 className="flex flex-col gap-4"
                             >
                                 <label htmlFor="avatar">
                                     {/* Having the image in the label allows the user to click it to open the file explorer */}
                                     <Image
                                         src={
-                                            currentUserData?.photoURL
-                                                ? currentUserData?.photoURL!
-                                                : defaultImage
+                                            currentUser?.photoURL
+                                                ? currentUser?.photoURL!
+                                                : process.env
+                                                      .NEXT_PUBLIC_DEFAULT_IMAGE!
                                         }
                                         alt="avatar"
                                         width={250}
@@ -250,7 +265,7 @@ export default function Settings() {
                                     <input
                                         type="text"
                                         id="username"
-                                        placeholder={currentUserData?.login!}
+                                        placeholder={currentUser?.displayName!}
                                         onChange={(e) =>
                                             setUsername(e.target.value)
                                         }
@@ -272,11 +287,58 @@ export default function Settings() {
                         </section>
                         <section>
                             <h2>Contact Info</h2>
-                            <div
-                                className={`p-4 outline outline-2 outline-black ${
-                                    showPasswordModal ? 'block' : 'hidden'
-                                }`}
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    UpdateEmail();
+                                }}
                             >
+                                <label htmlFor="email">
+                                    Email:
+                                    <input
+                                        type="text"
+                                        id="email"
+                                        placeholder={currentUser?.email!}
+                                        onChange={(e) =>
+                                            setEmail(e.target.value)
+                                        }
+                                        className="p-2 rounded-sm outline outline-2 outline-gray-400"
+                                    />
+                                </label>
+                                <button
+                                    className="border border-black rounded-sm p-2"
+                                    type="submit"
+                                >
+                                    Update Email
+                                </button>
+                            </form>
+                        </section>
+                        <section className="flex flex-col gap-4">
+                            <h2 className="text-2xl font-bold">Connections</h2>
+                            <button
+                                onClick={
+                                    isGithubConnected
+                                        ? DisconnectGithub
+                                        : ConnectGithub
+                                }
+                            >
+                                {isGithubConnected
+                                    ? 'Disconnect Github'
+                                    : 'Connect GitHub'}
+                            </button>
+                        </section>
+                        <section className="flex flex-col gap-4">
+                            <h2 className="text-2xl font-bold">Danger</h2>
+                            <button onClick={logout}>Logout</button>
+                            <button onClick={deleteUserAccount}>
+                                Delete Account
+                            </button>
+                        </section>
+                        {requiresReAuthenticate && (
+                            <div>
+                                <h1>
+                                    You need to re-authenticate to complete that
+                                </h1>
                                 {reAuthenticateErrors.includes(
                                     'auth/wrong-password'
                                 ) && (
@@ -338,51 +400,7 @@ export default function Settings() {
                                     </button>
                                 </form>
                             </div>
-                            <form
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    UpdateEmail();
-                                }}
-                            >
-                                <label htmlFor="email">
-                                    Email:
-                                    <input
-                                        type="text"
-                                        id="email"
-                                        placeholder={currentUserData?.email!}
-                                        onChange={(e) =>
-                                            setEmail(e.target.value)
-                                        }
-                                        className="p-2 rounded-sm outline outline-2 outline-gray-400"
-                                    />
-                                </label>
-                                <button
-                                    className="border border-black rounded-sm p-2"
-                                    type="submit"
-                                >
-                                    Update Email
-                                </button>
-                            </form>
-                        </section>
-                        <section className="flex flex-col gap-4">
-                            <h2 className="text-2xl font-bold">Connections</h2>
-                            <button
-                                onClick={
-                                    isGithubConnected
-                                        ? DisconnectGithub
-                                        : ConnectGithub
-                                }
-                            >
-                                {isGithubConnected
-                                    ? 'Disconnect Github'
-                                    : 'Connect GitHub'}
-                            </button>
-                        </section>
-                        <section className="flex flex-col gap-4">
-                            <h2 className="text-2xl font-bold">Danger</h2>
-                            <button onClick={logout}>Logout</button>
-                            <button>Delete Account</button>
-                        </section>
+                        )}
                     </>
                 ) : (
                     <div>Loading</div>

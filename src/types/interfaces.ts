@@ -8,6 +8,7 @@ export interface IGithubUser {
     public_repos?: number | null;
     githubToken?: string | undefined;
     projects?: any | null;
+    avatar_url?: string | null;
 }
 
 export interface IAuthContext {
@@ -19,4 +20,9 @@ export interface IAuthContext {
     logout: () => void;
     setGithubData: (data: IGithubUser) => void;
     setCurrentUserData: (data: IUser) => void;
+    DeleteAccount: () => Promise<string | undefined>;
+    UpdateProfile: (
+        displayName?: string,
+        photoURL?: string
+    ) => Promise<string | undefined>;
 }

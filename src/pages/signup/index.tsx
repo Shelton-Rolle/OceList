@@ -15,7 +15,7 @@ export default function index() {
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const { setGithubData, setCurrentUserData } = useAuth();
+    const { setGithubData, setCurrentUserData, UpdateProfile } = useAuth();
     const router = useRouter();
 
     async function SignupWithEmailAndPassword(e: FormEvent<HTMLFormElement>) {
@@ -30,6 +30,10 @@ export default function index() {
                         login: username,
                     }).then(({ result, user }) => {
                         if (result?.created) {
+                            const error = UpdateProfile(
+                                username,
+                                process.env.NEXT_PUBLIC_DEFAULT_IMAGE
+                            );
                             setCurrentUserData(user);
                             router.push(`/profile/${username}`);
                         }
@@ -46,9 +50,10 @@ export default function index() {
     async function SignupWithGitHub() {
         await AuthenticateWithGitHub()
             .then(({ token }) =>
-                GetGitHubUser(token!).then((user) => {
+                GetGitHubUser(token!).then(async (user) => {
                     const userData: GithubUserObject = user!;
-                    const { html_url, id, login, public_repos } = userData;
+                    const { html_url, id, login, public_repos, avatar_url } =
+                        userData;
 
                     const userObject: IGithubUser = {
                         html_url,
@@ -57,6 +62,7 @@ export default function index() {
                         public_repos,
                         githubToken: token,
                         projects: [],
+                        avatar_url,
                     };
 
                     setGithubData(userObject);

@@ -13,17 +13,19 @@ export default async function MutateProjectObjects(
         const { id, name, owner, languages_url, issues } = projects[i];
         const issueData: DatabaseIssueObject[] = [];
 
-        await issues.map((issue) => {
-            const { id, body, state, title } = issue;
-            issueData.push({
-                id,
-                body,
-                state,
-                title,
-                repoId: projects[i].id,
-                repoName: name,
+        if (issues) {
+            await issues.map((issue) => {
+                const { id, body, state, title } = issue;
+                issueData.push({
+                    id,
+                    body,
+                    state,
+                    title,
+                    repoId: projects[i].id,
+                    repoName: name,
+                });
             });
-        });
+        }
 
         await fetch(languages_url)
             .then((res) => res.json())
