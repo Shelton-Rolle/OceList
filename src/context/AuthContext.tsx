@@ -97,18 +97,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
         return errorCode;
     }
 
+    async function UpdateCurrentUserData() {
+        await GetUser(currentUser?.displayName!).then((userData) => {
+            console.log('User-Data: ', userData);
+            setCurrentUserData(userData!);
+        });
+    }
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 setCurrentUser(user);
-                await GetUser(user?.displayName!).then((userData) => {
-                    setCurrentUserData(userData!);
-                });
             }
         });
 
         return unsubscribe;
     }, []);
+
+    useEffect(() => {
+        console.log('Current-User: ', currentUser);
+        UpdateCurrentUserData();
+    }, [currentUser]);
 
     const value: IAuthContext = {
         currentUser,
