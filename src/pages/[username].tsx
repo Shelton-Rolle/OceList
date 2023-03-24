@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { GetServerSideProps } from 'next';
 import GetUser from '@/database/GetUser';
+import CurrentUserProfile from '@/components/CurrentUserProfile';
+import ExternalUserProfile from '@/components/ExternalUserProfile';
 
 interface ProfilePageProps {
     profileName: string;
@@ -22,33 +24,17 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
         }
     }, [currentUser]);
 
-    useEffect(() => {
-        console.log('HERE IS OUR USER DATA: ', data);
-    }, []);
-
     return (
         <>
             {data === null ? (
                 <h1>User Not Found</h1>
             ) : (
                 <div>
-                    <>
-                        {isCurrentUser ? (
-                            <>
-                                <h1>
-                                    This is the profile of the logged in user
-                                </h1>
-                                <p>{currentUser?.displayName}</p>
-                                <a href="/profile/settings">Settings</a>
-                            </>
-                        ) : (
-                            <>
-                                <h1>This is the profile of a different user</h1>
-                                <p>{profileName}</p>
-                                <a href="/">Home</a>
-                            </>
-                        )}
-                    </>
+                    {isCurrentUser ? (
+                        <CurrentUserProfile data={data} />
+                    ) : (
+                        <ExternalUserProfile data={data} />
+                    )}
                 </div>
             )}
         </>
