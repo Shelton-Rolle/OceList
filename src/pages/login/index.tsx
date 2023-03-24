@@ -22,14 +22,11 @@ export default function index() {
         e.preventDefault();
         signInWithEmailAndPassword(auth, email!, password!)
             .then(async (credentials) => {
-                const { uid } = credentials?.user;
-                await GetUser(uid).then((user) => {
-                    if (user) {
-                        router.push(`/profile/${user?.login}`);
-                    }
-
-                    setErrors(['unknown-credentials']);
-                });
+                const user = credentials?.user;
+                if (user) {
+                    router.push(`/profile/${user?.displayName}`);
+                }
+                setErrors(['unknown-credentials']);
             })
             .catch((error) => {
                 const { code } = error;
