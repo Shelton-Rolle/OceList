@@ -12,8 +12,13 @@ import auth from '@/firebase/auth/authInit';
 import GenerateTemporaryPassword from '@/helpers/GenerateTemporaryPassword';
 
 export default function ProfileSetup() {
-    const { currentUser, githubData, currentUserData, updateUserPassword } =
-        useAuth();
+    const {
+        currentUser,
+        githubData,
+        currentUserData,
+        updateUserPassword,
+        UpdateProfile,
+    } = useAuth();
     const router = useRouter();
 
     // This will be an array of Projects
@@ -34,27 +39,38 @@ export default function ProfileSetup() {
                     ...githubData,
                 };
 
-                if (currentUserData) {
-                    fullUser.photoURL = currentUserData?.photoURL;
-                    fullUser.login = currentUserData?.login;
-                    // Code for connecting github to current account
-                    await UpdateUserWithGithubData(fullUser)
-                        .then(({ result }) => {
-                            console.log('Update Request Result: ', result);
-                            router.push(`/profile/${currentUserData?.login}`);
-                        })
-                        .catch((error) => {
-                            console.log('Connecting GitHub Error: ', error);
-                        });
-                } else {
-                    // Generate a temporary password for the user
-                    const password = GenerateTemporaryPassword();
-                    await updateUserPassword(password);
+                const error = await UpdateProfile(
+                    githubData?.login!,
+                    githubData?.avatar_url!
+                );
 
-                    // Code for signing up with github
-                    await CreateUser(fullUser).then(async ({ result }) => {
-                        router.push(`/profile/${githubData?.login}`);
-                    });
+                if (error) {
+                    console.log('Update Profile Error: ', error);
+                } else {
+                    if (currentUserData) {
+                        fullUser.photoURL = currentUserData?.photoURL;
+                        fullUser.login = currentUserData?.login;
+                        // Code for connecting github to current account
+                        await UpdateUserWithGithubData(fullUser)
+                            .then(({ result }) => {
+                                console.log('Update Request Result: ', result);
+                                router.push(
+                                    `/profile/${currentUserData?.login}`
+                                );
+                            })
+                            .catch((error) => {
+                                console.log('Connecting GitHub Error: ', error);
+                            });
+                    } else {
+                        // Generate a temporary password for the user
+                        const password = GenerateTemporaryPassword();
+                        await updateUserPassword(password);
+
+                        // Code for signing up with github
+                        await CreateUser(fullUser).then(async ({ result }) => {
+                            router.push(`/profile/${githubData?.login}`);
+                        });
+                    }
                 }
             })
             .catch((error) => {

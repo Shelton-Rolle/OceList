@@ -7,6 +7,7 @@ import {
     signOut,
     updatePassword,
     deleteUser,
+    updateProfile,
 } from 'firebase/auth';
 import { IAuthContext, IGithubUser } from '@/types/interfaces';
 import { IUser } from '@/types/dataObjects';
@@ -19,16 +20,13 @@ const AuthContext = createContext<IAuthContext>({
     currentUser: null,
     currentUserData: null,
     githubData: null,
-    updateUserEmail: async (email) => {
-        return undefined;
-    },
+    updateUserEmail: async (email) => undefined,
     updateUserPassword(password) {},
     logout() {},
     setGithubData(data) {},
     setCurrentUserData(data) {},
-    DeleteAccount: async () => {
-        return undefined;
-    },
+    DeleteAccount: async () => undefined,
+    UpdateProfile: async (displayName, photoURL) => undefined,
 });
 
 export function useAuth() {
@@ -57,6 +55,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     async function updateUserPassword(password: string) {
         await updatePassword(currentUser!, password);
+    }
+
+    async function UpdateProfile(displayName?: string, photoURL?: string) {
+        let errorCode: string | undefined;
+
+        await updateProfile(currentUser!, {
+            displayName,
+            photoURL,
+        })
+            .then(() => {
+                console.log('Updated Profile!');
+            })
+            .catch((error) => {
+                console.log('Something went wrong: ', error.code);
+                console.log(error);
+                errorCode = error.code;
+            });
+
+        return errorCode;
     }
 
     async function DeleteAccount(): Promise<string | undefined> {
@@ -103,6 +120,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setGithubData,
         setCurrentUserData,
         DeleteAccount,
+        UpdateProfile,
     };
 
     return (
