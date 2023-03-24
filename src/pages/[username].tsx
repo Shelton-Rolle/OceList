@@ -32,29 +32,23 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                 <h1>User Not Found</h1>
             ) : (
                 <div>
-                    {isCurrentUser === undefined ? (
-                        <p>Loading</p>
-                    ) : (
-                        <>
-                            {isCurrentUser ? (
-                                <>
-                                    <h1>
-                                        This is the profile of the logged in
-                                        user
-                                    </h1>
-                                    <p>{currentUser?.displayName}</p>
-                                </>
-                            ) : (
-                                <>
-                                    <h1>
-                                        This is the profile of a different user
-                                    </h1>
-                                    <p>{profileName}</p>
-                                </>
-                            )}
-                            <a href="/profile/settings">Settings</a>
-                        </>
-                    )}
+                    <>
+                        {isCurrentUser ? (
+                            <>
+                                <h1>
+                                    This is the profile of the logged in user
+                                </h1>
+                                <p>{currentUser?.displayName}</p>
+                                <a href="/profile/settings">Settings</a>
+                            </>
+                        ) : (
+                            <>
+                                <h1>This is the profile of a different user</h1>
+                                <p>{profileName}</p>
+                                <a href="/">Home</a>
+                            </>
+                        )}
+                    </>
                 </div>
             )}
         </>
