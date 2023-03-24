@@ -162,6 +162,7 @@ export default function Settings() {
                     projects: [],
                     public_repos: null,
                     githubToken: null,
+                    assignedIssues: [],
                 };
                 await UpdateUser(userData).then(async ({ result }) => {
                     if (result?.updated) {

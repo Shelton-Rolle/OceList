@@ -1,7 +1,10 @@
 import { RepositoryCheckbox } from '@/components/RepoCheckbox';
 import CreateProjects from '@/database/CreateProjects';
 import CreateUser from '@/database/CreateUser';
-import { GetGithubUserRepos } from '@/firebase/auth/gitHubAuth/octokit';
+import {
+    GetGitHubUserIssues,
+    GetGithubUserRepos,
+} from '@/firebase/auth/gitHubAuth/octokit';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
@@ -34,9 +37,13 @@ export default function ProfileSetup() {
         // Create Project Instances of each project in the database
         await CreateProjects(Object.values(githubData?.projects))
             .then(async () => {
+                const assignedIssues = await GetGitHubUserIssues(
+                    githubData?.githubToken!
+                );
                 const fullUser: IUser = {
                     ...currentUser,
                     ...githubData,
+                    assignedIssues,
                 };
 
                 if (currentUserData) {

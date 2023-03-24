@@ -86,6 +86,7 @@ export interface IUser {
     public_repos?: number | null;
     githubToken?: string | null;
     uid?: string | null;
+    assignedIssues?: Issue[];
 }
 
 export interface Project {
