@@ -101,3 +101,26 @@ export async function GetGithubRepoIssues(
 
     return data;
 }
+
+export async function GetGitHubRepository(
+    token: string,
+    owner: string,
+    repo: string
+) {
+    let data;
+    const octokit = OctokitInit(token);
+
+    await octokit
+        .request('GET /repos/{owner}/{repo}}', {
+            owner,
+            repo,
+        })
+        .then((res) => {
+            data = res?.data;
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+
+    return data;
+}
