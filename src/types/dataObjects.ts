@@ -71,6 +71,23 @@ export interface Issue {
     user: GithubUserObject;
 }
 
+export interface IUser {
+    email?: string | undefined | null;
+    emailVerified?: boolean | undefined;
+    html_url?: string | null;
+    githubId?: number | null;
+    isAnonymous?: boolean | null;
+    login?: string | null;
+    metadata?: UserMetadata | null;
+    photoURL?: string | null;
+    projects?: Project[] | DatabaseProjectData[] | null;
+    providerId?: string | null;
+    providerData?: ProviderData[];
+    public_repos?: number | null;
+    githubToken?: string | null;
+    uid?: string | null;
+}
+
 export interface Project {
     allow_forking?: boolean | undefined;
     archive_url: string;
@@ -149,23 +166,6 @@ export interface Project {
     watchers: number;
     watchers_count: number;
     web_commit_signoff_required: boolean;
-}
-
-export interface IUser {
-    email?: string | undefined | null;
-    emailVerified?: boolean | undefined;
-    html_url?: string | null;
-    githubId?: number | null;
-    isAnonymous?: boolean | null;
-    login?: string | null;
-    metadata?: UserMetadata | null;
-    photoURL?: string | null;
-    projects?: Project[] | DatabaseProjectData[] | null;
-    providerId?: string | null;
-    providerData?: ProviderData[];
-    public_repos?: number | null;
-    githubToken?: string | null;
-    uid?: string | null;
 }
 
 interface ProviderData {
