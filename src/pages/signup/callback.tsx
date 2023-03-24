@@ -1,41 +1,38 @@
 import { useAuth } from '@/context/AuthContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
 export default function callback() {
+    const [callPush, setCallPush] = useState<boolean>(false);
     const router = useRouter();
-    const { UpdateProfile, currentUser, currentUserData } = useAuth();
+    const { UpdateProfile, currentUser } = useAuth();
 
     async function HandleCallback() {
-        let error;
         const { username } = router?.query;
 
-        error = await UpdateProfile(
+        await UpdateProfile(
             username as string,
             process.env.NEXT_PUBLIC_DEFAULT_IMAGE
-        );
-
-        return error;
-    }
-
-    useEffect(() => {
-        HandleCallback()
+        )
             .then((error) => {
                 if (error) {
                     console.log('Profile Update ERROR: ', error);
                 } else {
-                    router.push(`/profile/${currentUser?.displayName}`);
+                    setCallPush(true);
                 }
             })
             .catch((error) => {
                 console.log('CALLBACK ERRORRR: ', error);
             });
+    }
+
+    useEffect(() => {
+        HandleCallback();
     }, []);
 
     useEffect(() => {
-        console.log('CUrrent User: ', currentUser);
-        console.log('Current USer Data: ', currentUserData);
-    }, [currentUser, currentUserData]);
+        if (callPush) router.push(`/profile/${currentUser?.displayName}`);
+    }, [callPush]);
 
     return <div>callback</div>;
 }
