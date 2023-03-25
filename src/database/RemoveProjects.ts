@@ -10,7 +10,6 @@ export default async function RemoveProjects(projects: DatabaseProjectData[]) {
         });
 
         const data = {
-            apiKey: 'test123456',
             projects,
         };
 

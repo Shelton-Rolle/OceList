@@ -15,7 +15,6 @@ export default async function CreateUser(user: IUser) {
     };
 
     const data = {
-        apiKey: 'test123456',
         user: updatedUser,
     };
 

@@ -5,7 +5,6 @@ export default async function RemoveIssues(issues: DatabaseIssueObject[]) {
 
     if (issues) {
         const data = {
-            apiKey: 'test123456',
             issues,
         };
 

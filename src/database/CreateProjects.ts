@@ -9,11 +9,10 @@ export default async function CreateProjects(projects: Project[]) {
     });
 
     const data = {
-        apiKey: 'test123456',
         projects,
     };
 
-    await fetch('http://localhost:3001/projects/create', {
+    await fetch('/api/projects/create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

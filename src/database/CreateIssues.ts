@@ -18,11 +18,10 @@ export default async function CreateIssues(issues: Issue[]) {
     }
 
     const data = {
-        apiKey: 'test123456',
         issues: issueData,
     };
 
-    await fetch('http://localhost:3001/issues/create', {
+    await fetch('/api/issues/create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
