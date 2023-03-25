@@ -1,14 +1,55 @@
 import GetProject from '@/database/GetProject';
+import { GithubUserObject } from '@/types/dataObjects';
+import { ProjectPageProps } from '@/types/props';
 import { GetServerSideProps } from 'next';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-export default function ProjectPage({ projectId, project }: any) {
+export default function ProjectPage({ projectId, project }: ProjectPageProps) {
+    const [contributors, setContributors] = useState<GithubUserObject[]>();
+    // We can fetch any repo data we need that we dont have using the provided links in the project as seen below where we fetch the contributors
+    async function fetchContributors() {
+        await fetch(project?.contributors_url!)
+            .then((res) => res.json())
+            .then((res) => setContributors(res));
+    }
+
     useEffect(() => {
         console.log('Project Id: ', projectId);
         console.log('Data: ', project);
+        fetchContributors();
     }, []);
 
-    return <div>Project Page</div>;
+    return (
+        <div>
+            <h1>{project?.name}</h1>
+            <p>Owner: {project?.owner?.login}</p>
+            <a href={project?.html_url}>Repo Link</a>
+            {project?.homepage && <a href={project?.homepage}>Repo Homepage</a>}
+            {contributors?.map((contributor, index) => (
+                <p key={index}>Contributor: {contributor?.login}</p>
+            ))}
+            <section className="flex items-center gap-7 my-16">
+                <p>{project?.forks_count} Forks</p>
+                <p>{project?.stargazers_count} Stars</p>
+                <p>{project?.watchers_count} Watchers</p>
+            </section>
+
+            <section>
+                {project?.issues?.map((issue, index) => (
+                    <div
+                        key={index}
+                        className="outline outline-2 outline-black my-3 p-5 max-w-xs"
+                    >
+                        <h4 className="text-lg font-bold">{issue?.title}</h4>
+                        <p>{issue?.body}</p>
+                        <p className="text-gray-400 text-sm">
+                            {issue?.user?.login}
+                        </p>
+                    </div>
+                ))}
+            </section>
+        </div>
+    );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {

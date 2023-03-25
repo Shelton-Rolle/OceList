@@ -1,6 +1,8 @@
+import { Project } from '@/types/dataObjects';
+
 export default async function GetProject(
     projectId: string
-): Promise<{ data: any; errors: string[] } | undefined> {
+): Promise<{ data: Project[] | undefined; errors: string[] } | undefined> {
     let result;
 
     const data = {

@@ -14,3 +14,8 @@ export interface CurrentUserProfileProps {
 export interface RepositoryCheckboxProps {
     repo: Project;
 }
+
+export interface ProjectPageProps {
+    projectId: string;
+    project: Project;
+}
