@@ -5,6 +5,7 @@ import MutateProjectObjects from '@/helpers/MutateProjectObjects';
 import { DatabaseProjectData, IUser, Project } from '@/types/dataObjects';
 import { CurrentUserProfileProps } from '@/types/props';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { ModalProjectCheckbox } from './ModalProjectCheckbox';
@@ -18,7 +19,6 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
     const [openProjectModal, setOpenProjectModal] = useState<boolean>(false);
 
     async function AddNewProjects() {
-        console.log('New Projects: ', newProjects);
         await CreateProjects(newProjects).then(async () => {
             const updatedUserProjectsArray: DatabaseProjectData[] = [];
 
@@ -51,7 +51,6 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
     }
 
     useEffect(() => {
-        console.log('HERE IS OUR USER DATA: ', data);
         setProjectsList(data?.projects as DatabaseProjectData[]);
     }, []);
 
@@ -62,15 +61,8 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
                     setModalProjects(res);
                 }
             );
-            console.log('Modal Is Open');
-        } else {
-            console.log('Modal Is Closed');
         }
     }, [openProjectModal]);
-
-    useEffect(() => {
-        console.log('New Projects: ', newProjects);
-    }, [newProjects]);
 
     return (
         <div>
@@ -133,11 +125,11 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
                                 key={index}
                                 className="outline outline-2 outline-black my-3 p-5 max-w-md"
                             >
-                                <a href={`/projects/${project?.id}`}>
+                                <Link href={`/projects/${project?.id}`}>
                                     <h4 className="text-lg font-bold">
                                         {project?.name}
                                     </h4>
-                                </a>
+                                </Link>
                                 <p>{project?.owner?.login}</p>
                                 <div className="flex gap-4 items-center">
                                     {project?.languages?.map(

@@ -1,4 +1,5 @@
 import { ExternalUserProfileProps } from '@/types/props';
+import Link from 'next/link';
 import { useEffect } from 'react';
 
 export default function ExternalUserProfile({
@@ -12,7 +13,7 @@ export default function ExternalUserProfile({
         <div>
             <h1>This is the profile of a different user</h1>
             <p>{data?.displayName}</p>
-            <a href="/">Home</a>
+            <Link href="/">Home</Link>
         </div>
     );
 }
