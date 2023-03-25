@@ -6,6 +6,8 @@ import CurrentUserProfile from '@/components/CurrentUserProfile';
 import ExternalUserProfile from '@/components/ExternalUserProfile';
 import Head from 'next/head';
 import { PageLayout } from '@/layouts/PageLayout';
+import database from '@/firebase/database/databaseInit';
+import { ref, get, child } from 'firebase/database';
 
 interface ProfilePageProps {
     profileName: string;
@@ -58,7 +60,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const params = context?.params;
     const username: string = params?.username as string;
 
-    const data = await GetUser(username);
+    const data = await get(child(ref(database), `users/${username}`))
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                return snapshot.val();
+            } else {
+                return null;
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+        });
 
     return {
         props: {

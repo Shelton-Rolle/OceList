@@ -18,7 +18,7 @@ export default function ProfileSetup() {
     const {
         currentUser,
         githubData,
-        currentUserData,
+        setCurrentUserData,
         updateUserPassword,
         UpdateProfile,
     } = useAuth();
@@ -57,6 +57,7 @@ export default function ProfileSetup() {
 
                     // Code for signing up with github
                     await CreateUser(fullUser).then(async ({ result }) => {
+                        setCurrentUserData(fullUser);
                         router.push(`/${githubData?.login}`);
                     });
                 });

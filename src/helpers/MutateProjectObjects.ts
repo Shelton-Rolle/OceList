@@ -21,19 +21,19 @@ export default async function MutateProjectObjects(
                     body,
                     state,
                     title,
-                    repoId: projects[i].id,
-                    repoName: name,
+                    repoId: projects[i].id!,
+                    repoName: name!,
                 });
             });
         }
 
-        await fetch(languages_url)
+        await fetch(languages_url!)
             .then((res) => res.json())
             .then((langs) => {
                 const languages = Object.keys(langs);
                 mutatedProjects?.push({
-                    id,
-                    name,
+                    id: id!,
+                    name: name!,
                     owner,
                     languages,
                     issues: issueData,

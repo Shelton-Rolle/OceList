@@ -105,7 +105,7 @@ export default function Settings() {
         if (error == 'auth/requires-recent-login') {
             setRequiresReAuthenticate(true);
         } else {
-            await DeleteAccount();
+            router.push('/');
         }
     }
 

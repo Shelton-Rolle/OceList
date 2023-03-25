@@ -14,7 +14,7 @@ export default async function RemoveProjects(projects: DatabaseProjectData[]) {
             projects,
         };
 
-        await fetch('http://localhost:3001/projects/delete', {
+        await fetch('/api/projects/delete', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -22,7 +22,11 @@ export default async function RemoveProjects(projects: DatabaseProjectData[]) {
             body: JSON.stringify(data),
         })
             .then((res) => res.json())
-            .then((res) => (result = res));
+            .then((res) => (result = res))
+            .catch((error) => {
+                console.log('Projects Remove Error');
+                console.error(error);
+            });
     } else {
         console.log('No Projects To Remove');
     }

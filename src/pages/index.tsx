@@ -6,17 +6,10 @@ import { PageLayout } from '@/layouts/PageLayout';
 export default function Home() {
     const { currentUser, githubData, currentUserData, logout } = useAuth();
 
-    async function fetchTest() {
-        await fetch('/api/test')
-            .then((res) => res.json())
-            .then((res) => console.log('TEST API RES: ', res));
-    }
-
     useEffect(() => {
         // console.log('Current User: ', currentUser);
         // console.log('Github Data: ', githubData);
         // console.log('Current User Database Data: ', currentUserData);
-        fetchTest();
     }, [currentUser, githubData, currentUserData]);
 
     return (

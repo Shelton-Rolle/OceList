@@ -79,9 +79,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     async function DeleteAccount(): Promise<string | undefined> {
         let errorCode: string | undefined;
 
+        console.log('Current USER Data: ', currentUserData);
+
         await deleteUser(currentUser!)
-            .then(async () => {
-                await RemoveUser(currentUserData!).then(async (result: any) => {
+            .then(() => {
+                console.log('Current USER: ', currentUser);
+                console.log('Current USer DatA: ', currentUserData);
+                RemoveUser(currentUserData!).then(async (result: any) => {
                     if (result?.deleted) {
                         setCurrentUserData(null);
                         router.push('/');
@@ -89,7 +93,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 });
             })
             .catch((error) => {
-                console.log('Initial Error Code: ', error.code);
                 errorCode = error.code;
             });
 
@@ -97,7 +100,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     async function UpdateCurrentUserData() {
-        await GetUser(currentUser?.displayName!).then((userData) => {
+        GetUser(currentUser?.displayName!).then((userData) => {
             setCurrentUserData(userData!);
         });
     }
