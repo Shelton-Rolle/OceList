@@ -1,7 +1,7 @@
 import { DatabaseIssueObject, Issue } from '@/types/dataObjects';
 
 export default async function CreateIssues(issues: Issue[]) {
-    const issueData: DatabaseIssueObject[] = [];
+    const issueData: any[] = [];
     for (let i = 0; i < issues.length; i++) {
         const { title, body, repository_url, state } = issues[i];
 
@@ -10,12 +10,8 @@ export default async function CreateIssues(issues: Issue[]) {
             .then((data) => {
                 const { id, name } = data;
                 issueData.push({
-                    id: issues[i].id,
-                    title,
-                    body,
-                    repoId: id,
-                    repoName: name,
-                    state,
+                    ...issues[i],
+                    project: data,
                 });
             })
             .catch((err) => console.error(err));

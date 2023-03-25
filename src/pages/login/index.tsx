@@ -10,29 +10,11 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import GetUser from '@/database/GetUser';
 import { FirebaseError } from 'firebase/app';
 import Head from 'next/head';
+import { PageLayout } from '@/layouts/PageLayout';
 
-export default function index() {
-    const [email, setEmail] = useState<string>();
-    const [password, setPassword] = useState<string>();
-    const [errors, setErrors] = useState<string[]>([]);
+export default function Login() {
     const router = useRouter();
     const { setGithubData } = useAuth();
-
-    async function LoginWithEmail(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-        signInWithEmailAndPassword(auth, email!, password!)
-            .then(async (credentials) => {
-                const user = credentials?.user;
-                if (user) {
-                    router.push(`/profile/${user?.displayName}`);
-                }
-                setErrors(['unknown-credentials']);
-            })
-            .catch((error) => {
-                const { code } = error;
-                setErrors([code]);
-            });
-    }
 
     async function LoginWithGithub() {
         await AuthenticateWithGitHub().then(({ token }) => {
@@ -66,34 +48,14 @@ export default function index() {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main>
-                {errors.map((error, index) => (
-                    <p className="p-4 font-bold" key={index}>
-                        {error}
-                    </p>
-                ))}
-                <form onSubmit={(e) => LoginWithEmail(e)}>
-                    <input
-                        type="text"
-                        placeholder="Email"
-                        className="p-4 border border-black rounded-sm"
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <input
-                        type="text"
-                        placeholder="Password"
-                        className="p-4 border border-black rounded-sm"
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <button type="submit">Login</button>
-                </form>
+            <PageLayout>
                 <button
                     className="p-4 border border-black rounded-sm"
                     onClick={LoginWithGithub}
                 >
                     Login With Github
                 </button>
-            </main>
+            </PageLayout>
         </>
     );
 }

@@ -82,7 +82,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         await deleteUser(currentUser!)
             .then(async () => {
                 await RemoveUser(currentUserData!).then(async (result: any) => {
-                    console.log('Remove Result: ', result);
                     if (result?.deleted) {
                         setCurrentUserData(null);
                         router.push('/');
@@ -99,7 +98,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     async function UpdateCurrentUserData() {
         await GetUser(currentUser?.displayName!).then((userData) => {
-            console.log('User-Data: ', userData);
             setCurrentUserData(userData!);
         });
     }
@@ -115,7 +113,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }, []);
 
     useEffect(() => {
-        console.log('Current-User: ', currentUser);
         UpdateCurrentUserData();
     }, [currentUser]);
 

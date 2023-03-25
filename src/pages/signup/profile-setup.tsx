@@ -1,7 +1,10 @@
 import { RepositoryCheckbox } from '@/components/RepoCheckbox';
 import CreateProjects from '@/database/CreateProjects';
 import CreateUser from '@/database/CreateUser';
-import { GetGithubUserRepos } from '@/firebase/auth/gitHubAuth/octokit';
+import {
+    GetGitHubUserIssues,
+    GetGithubUserRepos,
+} from '@/firebase/auth/gitHubAuth/octokit';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
@@ -34,40 +37,29 @@ export default function ProfileSetup() {
         // Create Project Instances of each project in the database
         await CreateProjects(Object.values(githubData?.projects))
             .then(async () => {
+                const assignedIssues = await GetGitHubUserIssues(
+                    githubData?.githubToken!
+                );
                 const fullUser: IUser = {
                     ...currentUser,
                     ...githubData,
+                    assignedIssues,
                 };
 
-                if (currentUserData) {
-                    fullUser.photoURL = currentUserData?.photoURL;
-                    fullUser.displayName = currentUserData?.displayName;
-                    // Code for connecting github to current account
-                    await UpdateUserWithGithubData(fullUser)
-                        .then(({ result }) => {
-                            console.log('Update Request Result: ', result);
-                            router.push(
-                                `/profile/${currentUserData?.displayName}`
-                            );
-                        })
-                        .catch((error) => {
-                            console.log('Connecting GitHub Error: ', error);
-                        });
-                } else {
-                    const error = await UpdateProfile(
-                        githubData?.login!,
-                        githubData?.avatar_url!
-                    );
-
+                await UpdateProfile(
+                    githubData?.login!,
+                    githubData?.avatar_url!
+                ).then(async () => {
+                    fullUser.displayName = githubData?.login!;
                     // Generate a temporary password for the user
                     const password = GenerateTemporaryPassword();
                     await updateUserPassword(password);
 
                     // Code for signing up with github
                     await CreateUser(fullUser).then(async ({ result }) => {
-                        router.push(`/profile/${githubData?.login}`);
+                        router.push(`/${githubData?.login}`);
                     });
-                }
+                });
             })
             .catch((error) => {
                 console.log('Finalize Profile Error: ', error);

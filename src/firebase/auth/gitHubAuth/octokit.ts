@@ -28,6 +28,24 @@ export async function GetGitHubUser(
     return user;
 }
 
+export async function GetGitHubUserIssues(
+    token: string
+): Promise<Issue[] | undefined> {
+    let issues;
+    const octokit = OctokitInit(token);
+
+    await octokit
+        .request('GET /issues')
+        .then(async (res) => {
+            issues = res?.data;
+        })
+        .catch((error) => {
+            console.log('Get Github Issues Error: ', error);
+        });
+
+    return issues;
+}
+
 // This should return a Promise<Project[]>
 export async function GetGithubUserRepos(
     token: string,
@@ -79,6 +97,29 @@ export async function GetGithubRepoIssues(
         })
         .then((res) => {
             data = res?.data;
+        });
+
+    return data;
+}
+
+export async function GetGitHubRepository(
+    token: string,
+    owner: string,
+    repo: string
+) {
+    let data;
+    const octokit = OctokitInit(token);
+
+    await octokit
+        .request('GET /repos/{owner}/{repo}', {
+            owner,
+            repo,
+        })
+        .then((res) => {
+            data = res?.data;
+        })
+        .catch((error) => {
+            console.error(error);
         });
 
     return data;

@@ -1,9 +1,9 @@
 import Head from 'next/head';
 import { useAuth } from '@/context/AuthContext';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { PageLayout } from '@/layouts/PageLayout';
 
 export default function Home() {
-    const [file, setFile] = useState<any>();
     const { currentUser, githubData, currentUserData, logout } = useAuth();
 
     useEffect(() => {
@@ -23,16 +23,14 @@ export default function Home() {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main>
+            <PageLayout>
                 <h1>Landing Page</h1>
 
                 <div>
-                    <a href={`/profile/${currentUserData?.displayName}`}>
-                        Profile
-                    </a>
+                    <a href={`/${currentUserData?.displayName}`}>Profile</a>
                 </div>
                 <button onClick={logout}>Logout</button>
-            </main>
+            </PageLayout>
         </>
     );
 }

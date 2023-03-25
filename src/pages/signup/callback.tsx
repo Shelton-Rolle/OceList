@@ -31,7 +31,7 @@ export default function callback() {
     }, []);
 
     useEffect(() => {
-        if (callPush) router.push(`/profile/${currentUser?.displayName}`);
+        if (callPush) router.push(`/${currentUser?.displayName}`);
     }, [callPush]);
 
     return <div>callback</div>;

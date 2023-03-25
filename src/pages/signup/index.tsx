@@ -9,41 +9,16 @@ import { FormEvent, useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import auth from '@/firebase/auth/authInit';
 import CreateUser from '@/database/CreateUser';
+import { PageLayout } from '@/layouts/PageLayout';
 
-export default function index() {
-    const [errors, setErrors] = useState<any[]>([]);
-    const [username, setUsername] = useState<string>('');
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const { setGithubData, setCurrentUserData, UpdateProfile } = useAuth();
+export default function Signup() {
+    const {
+        setGithubData,
+        setCurrentUserData,
+        UpdateProfile,
+        updateUserEmail,
+    } = useAuth();
     const router = useRouter();
-
-    async function SignupWithEmailAndPassword(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-
-        await createUserWithEmailAndPassword(auth, email, password)
-            .then(async (credentials) => {
-                const user = credentials?.user;
-                await CreateUser({
-                    ...user,
-                    displayName: username,
-                }).then(({ result, user }) => {
-                    if (result?.created) {
-                        setCurrentUserData(user);
-                        router.push(
-                            {
-                                pathname: '/signup/callback',
-                                query: { username },
-                            },
-                            '/signup/callback'
-                        );
-                    }
-                });
-            })
-            .catch((error) => {
-                console.log('--- Error Code: ', error.code);
-            });
-    }
 
     async function SignupWithGitHub() {
         await AuthenticateWithGitHub()
@@ -66,7 +41,9 @@ export default function index() {
                     setGithubData(userObject);
 
                     if (user?.email) {
-                        router.push('/signup/profile-setup');
+                        await updateUserEmail(user?.email).then(() => {
+                            router.push('/signup/profile-setup');
+                        });
                     } else {
                         router.push('/signup/require-email');
                     }
@@ -86,35 +63,14 @@ export default function index() {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main>
-                {errors.map((error) => (
-                    <p className="p-4 font-bold">{error}</p>
-                ))}
-                <form onSubmit={(e) => SignupWithEmailAndPassword(e)}>
-                    <input
-                        type="text"
-                        placeholder="Username"
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-                    <input
-                        type="text"
-                        placeholder="Email"
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <input
-                        type="text"
-                        placeholder="Password"
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <button type="submit">Signup</button>
-                </form>
+            <PageLayout>
                 <button
                     className="p-4 border border-black rounded-sm"
                     onClick={SignupWithGitHub}
                 >
                     Github Signup
                 </button>
-            </main>
+            </PageLayout>
         </>
     );
 }
