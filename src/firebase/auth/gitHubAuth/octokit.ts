@@ -111,7 +111,7 @@ export async function GetGitHubRepository(
     const octokit = OctokitInit(token);
 
     await octokit
-        .request('GET /repos/{owner}/{repo}}', {
+        .request('GET /repos/{owner}/{repo}', {
             owner,
             repo,
         })

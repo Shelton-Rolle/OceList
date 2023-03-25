@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import { useAuth } from '@/context/AuthContext';
 import { useEffect } from 'react';
+import { GetGitHubRepository } from '@/firebase/auth/gitHubAuth/octokit';
 
 export default function Home() {
     const { currentUser, githubData, currentUserData, logout } = useAuth();

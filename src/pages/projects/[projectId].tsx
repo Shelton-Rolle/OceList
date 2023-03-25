@@ -1,5 +1,4 @@
 import GetProject from '@/database/GetProject';
-import { GetGitHubRepository } from '@/firebase/auth/gitHubAuth/octokit';
 import { GetServerSideProps } from 'next';
 import { useEffect } from 'react';
 

@@ -59,18 +59,19 @@ export default function ProfileSetup() {
                             console.log('Connecting GitHub Error: ', error);
                         });
                 } else {
-                    const error = await UpdateProfile(
+                    await UpdateProfile(
                         githubData?.login!,
                         githubData?.avatar_url!
-                    );
+                    ).then(async () => {
+                        fullUser.displayName = githubData?.login!;
+                        // Generate a temporary password for the user
+                        const password = GenerateTemporaryPassword();
+                        await updateUserPassword(password);
 
-                    // Generate a temporary password for the user
-                    const password = GenerateTemporaryPassword();
-                    await updateUserPassword(password);
-
-                    // Code for signing up with github
-                    await CreateUser(fullUser).then(async ({ result }) => {
-                        router.push(`/${githubData?.login}`);
+                        // Code for signing up with github
+                        await CreateUser(fullUser).then(async ({ result }) => {
+                            router.push(`/${githubData?.login}`);
+                        });
                     });
                 }
             })

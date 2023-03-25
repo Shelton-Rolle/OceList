@@ -8,13 +8,9 @@ export default async function CreateProjects(projects: Project[]) {
         await CreateIssues(project?.issues);
     });
 
-    const projectData: DatabaseProjectData[] = await MutateProjectObjects(
-        projects
-    );
-
     const data = {
         apiKey: 'test123456',
-        projects: projectData,
+        projects,
     };
 
     await fetch('http://localhost:3001/projects/create', {
