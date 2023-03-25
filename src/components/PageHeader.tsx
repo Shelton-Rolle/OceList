@@ -21,7 +21,6 @@ export const PageHeader = () => {
                         </>
                     ) : (
                         <>
-                            <Link href="/signup">Signup</Link>
                             <Link href="/login">Login</Link>
                         </>
                     )}
