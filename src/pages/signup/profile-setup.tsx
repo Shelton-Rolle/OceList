@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
 import { IUser, Project } from '@/types/dataObjects';
-import { sendPasswordResetEmail } from 'firebase/auth';
+import { sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
 import auth from '@/firebase/auth/authInit';
 import GenerateTemporaryPassword from '@/helpers/GenerateTemporaryPassword';
 
@@ -57,6 +57,7 @@ export default function ProfileSetup() {
                     // Code for signing up with github
                     await CreateUser(fullUser).then(async ({ result }) => {
                         setCurrentUserData(fullUser);
+                        await sendEmailVerification(currentUser!);
                         router.push(`/${githubData?.login}`);
                     });
                 });
