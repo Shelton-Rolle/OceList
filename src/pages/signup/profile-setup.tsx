@@ -9,7 +9,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
 import { IUser, Project } from '@/types/dataObjects';
-import UpdateUserWithGithubData from '@/database/UpdateUserWithGithub';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import auth from '@/firebase/auth/authInit';
 import GenerateTemporaryPassword from '@/helpers/GenerateTemporaryPassword';

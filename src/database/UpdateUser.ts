@@ -21,7 +21,7 @@ export default async function UpdateUser(user: IUser) {
         updatedData: updatedUser,
     };
 
-    await fetch('http://localhost:3001/users/update', {
+    await fetch('/api/users/update', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
