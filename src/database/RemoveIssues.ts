@@ -1,6 +1,6 @@
-import { DatabaseIssueObject } from '@/types/dataObjects';
+import { DatabaseIssueObject, Issue } from '@/types/dataObjects';
 
-export default async function RemoveIssues(issues: DatabaseIssueObject[]) {
+export default async function RemoveIssues(issues: Issue[]) {
     let result;
 
     if (issues) {

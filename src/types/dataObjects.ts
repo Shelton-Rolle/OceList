@@ -9,12 +9,8 @@ export interface DatabaseIssueObject {
     state: string;
 }
 
-export interface DatabaseProjectData {
-    id?: number;
-    name?: string;
-    owner?: any;
+export interface DatabaseProjectData extends Project {
     languages?: string[];
-    issues?: DatabaseIssueObject[];
 }
 
 interface GithubPermissions {

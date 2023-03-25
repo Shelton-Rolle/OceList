@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Issue, IUser, Project } from './dataObjects';
+import { DatabaseProjectData, Issue, IUser, Project } from './dataObjects';
 
 export interface AuthProviderProps {
     children: string | JSX.Element | JSX.Element[];
@@ -29,7 +29,7 @@ export interface RepositoryCheckboxProps {
     repo: Project;
 }
 export interface ProjectCardProps {
-    project: Project;
+    project: DatabaseProjectData;
 }
 
 export interface ProjectPageProps {
