@@ -5,6 +5,10 @@ export interface AuthProviderProps {
     children: string | JSX.Element | JSX.Element[];
 }
 
+export interface BrowsePageProps {
+    projects: Project[];
+}
+
 export interface ExternalUserProfileProps {
     data: IUser;
 }

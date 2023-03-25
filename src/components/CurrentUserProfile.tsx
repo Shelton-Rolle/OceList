@@ -18,7 +18,6 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
     const [openProjectModal, setOpenProjectModal] = useState<boolean>(false);
 
     async function AddNewProjects() {
-        console.log('New Projects: ', newProjects);
         await CreateProjects(newProjects).then(async () => {
             const updatedUserProjectsArray: DatabaseProjectData[] = [];
 
@@ -51,7 +50,6 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
     }
 
     useEffect(() => {
-        console.log('HERE IS OUR USER DATA: ', data);
         setProjectsList(data?.projects as DatabaseProjectData[]);
     }, []);
 
@@ -62,15 +60,8 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
                     setModalProjects(res);
                 }
             );
-            console.log('Modal Is Open');
-        } else {
-            console.log('Modal Is Closed');
         }
     }, [openProjectModal]);
-
-    useEffect(() => {
-        console.log('New Projects: ', newProjects);
-    }, [newProjects]);
 
     return (
         <div>
