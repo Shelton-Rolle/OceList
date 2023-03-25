@@ -19,14 +19,17 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
     const [openProjectModal, setOpenProjectModal] = useState<boolean>(false);
 
     async function AddNewProjects() {
-        await CreateProjects(newProjects).then(async () => {
+        await CreateProjects(data?.githubToken!, newProjects).then(async () => {
             const updatedUserProjectsArray: DatabaseProjectData[] = [];
 
             await data?.projects?.map((project) => {
                 updatedUserProjectsArray.push(project as DatabaseProjectData);
             });
 
-            const mutatedProjects = await MutateProjectObjects(newProjects);
+            const mutatedProjects = await MutateProjectObjects(
+                data?.githubToken!,
+                newProjects
+            );
 
             await mutatedProjects.map((project) => {
                 updatedUserProjectsArray?.push(project);

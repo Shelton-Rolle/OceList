@@ -1,3 +1,4 @@
+import { GetGitHubRepositoryLanugages } from '@/firebase/auth/gitHubAuth/octokit';
 import {
     DatabaseIssueObject,
     DatabaseProjectData,
@@ -5,6 +6,7 @@ import {
 } from '@/types/dataObjects';
 
 export default async function MutateProjectObjects(
+    token: string,
     projects: Project[]
 ): Promise<DatabaseProjectData[]> {
     let mutatedProjects: DatabaseProjectData[] = [];
@@ -27,19 +29,17 @@ export default async function MutateProjectObjects(
             });
         }
 
-        await fetch(languages_url!)
-            .then((res) => res.json())
-            .then((langs) => {
-                const languages = Object.keys(langs);
-                mutatedProjects?.push({
-                    id: id!,
-                    name: name!,
-                    owner,
-                    languages,
-                    issues: issueData,
-                });
-            })
-            .catch((err) => console.error(err));
+        const languages = await GetGitHubRepositoryLanugages(
+            token,
+            owner?.login!,
+            name!
+        );
+
+        mutatedProjects?.push({
+            ...projects[i],
+            issues: issueData,
+            languages,
+        });
     }
 
     return mutatedProjects;

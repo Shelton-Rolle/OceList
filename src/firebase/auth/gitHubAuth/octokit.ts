@@ -28,6 +28,25 @@ export async function GetGitHubUser(
     return user;
 }
 
+export async function GetGitHubRepositoryLanugages(
+    token: string,
+    owner: string,
+    repo: string
+) {
+    let languages;
+    const octokit = OctokitInit(token);
+
+    await octokit
+        .request('GET /repos/{owner}/{repo}/languages', {
+            owner,
+            repo,
+        })
+        .then(async (res) => (languages = Object.keys(res?.data)))
+        .catch((error) => console.error(error));
+
+    return languages;
+}
+
 export async function GetGitHubUserIssues(
     token: string
 ): Promise<Issue[] | undefined> {
@@ -76,7 +95,7 @@ export async function GetGithubUserRepos(
             data = updatedRepoData;
         })
         .catch((err) => {
-            console.error(err);
+            console.error('Get Github User Repo Error: ', err);
         });
 
     return data;
@@ -119,7 +138,7 @@ export async function GetGitHubRepository(
             data = res?.data;
         })
         .catch((error) => {
-            console.error(error);
+            console.error('Get Repo Error: ', error);
         });
 
     return data;

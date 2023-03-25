@@ -1,4 +1,3 @@
-import MutateProjectObjects from '@/helpers/MutateProjectObjects';
 import { DatabaseProjectData, IUser, Project } from '@/types/dataObjects';
 
 export default async function UpdateUser(user: IUser) {

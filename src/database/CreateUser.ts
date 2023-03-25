@@ -1,12 +1,15 @@
 import MutateProjectObjects from '@/helpers/MutateProjectObjects';
 import { DatabaseProjectData, IUser, Project } from '@/types/dataObjects';
 
-export default async function CreateUser(user: IUser) {
+export default async function CreateUser(token: string, user: IUser) {
     let result: { created: boolean; errors: string[] } | undefined;
     let projects: DatabaseProjectData[] = [];
 
     if (user?.projects) {
-        projects = await MutateProjectObjects(user?.projects as Project[]);
+        projects = await MutateProjectObjects(
+            token,
+            user?.projects as Project[]
+        );
     }
 
     const updatedUser: IUser = {

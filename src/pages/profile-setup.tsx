@@ -34,7 +34,10 @@ export default function ProfileSetup() {
 
     async function FinalizeProfileSetup() {
         // Create Project Instances of each project in the database
-        await CreateProjects(Object.values(githubData?.projects))
+        await CreateProjects(
+            githubData?.githubToken!,
+            Object.values(githubData?.projects)
+        )
             .then(async () => {
                 const assignedIssues = await GetGitHubUserIssues(
                     githubData?.githubToken!
@@ -55,11 +58,13 @@ export default function ProfileSetup() {
                     await updateUserPassword(password);
 
                     // Code for signing up with github
-                    await CreateUser(fullUser).then(async ({ result }) => {
-                        setCurrentUserData(fullUser);
-                        await sendEmailVerification(currentUser!);
-                        router.push(`/${githubData?.login}`);
-                    });
+                    await CreateUser(githubData?.githubToken!, fullUser).then(
+                        async ({ result }) => {
+                            setCurrentUserData(fullUser);
+                            await sendEmailVerification(currentUser!);
+                            router.push(`/${githubData?.login}`);
+                        }
+                    );
                 });
             })
             .catch((error) => {
