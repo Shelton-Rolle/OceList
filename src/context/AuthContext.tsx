@@ -59,7 +59,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     async function UpdateProfile(displayName?: string, photoURL?: string) {
         let errorCode: string | undefined;
-        console.log('Currently Usering User: ', currentUser);
+
         await updateProfile(currentUser!, {
             displayName,
             photoURL,
@@ -80,16 +80,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
         let errorCode: string | undefined;
 
         await deleteUser(currentUser!)
-            .then(async () => {
-                await RemoveUser(currentUserData!).then(async (result: any) => {
+            .then(() => {
+                RemoveUser(currentUserData!).then(async (result: any) => {
                     if (result?.deleted) {
+                        setCurrentUser(null);
                         setCurrentUserData(null);
                         router.push('/');
                     }
                 });
             })
             .catch((error) => {
-                console.log('Initial Error Code: ', error.code);
                 errorCode = error.code;
             });
 
@@ -97,7 +97,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     async function UpdateCurrentUserData() {
-        await GetUser(currentUser?.displayName!).then((userData) => {
+        GetUser(currentUser?.displayName!).then((userData) => {
             setCurrentUserData(userData!);
         });
     }

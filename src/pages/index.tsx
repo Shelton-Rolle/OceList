@@ -7,9 +7,9 @@ export default function Home() {
     const { currentUser, githubData, currentUserData, logout } = useAuth();
 
     useEffect(() => {
-        console.log('Current User: ', currentUser);
-        console.log('Github Data: ', githubData);
-        console.log('Current User Database Data: ', currentUserData);
+        // console.log('Current User: ', currentUser);
+        // console.log('Github Data: ', githubData);
+        // console.log('Current User Database Data: ', currentUserData);
     }, [currentUser, githubData, currentUserData]);
 
     return (

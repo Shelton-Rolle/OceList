@@ -16,12 +16,11 @@ export default async function UpdateUser(user: IUser) {
     };
 
     const data = {
-        apiKey: 'test123456',
         displayName: user?.displayName,
         updatedData: updatedUser,
     };
 
-    await fetch('http://localhost:3001/users/update', {
+    await fetch('/api/users/update', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

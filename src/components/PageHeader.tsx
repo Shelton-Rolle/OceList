@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { useEffect } from 'react';
 
 export const PageHeader = () => {
     const { currentUser } = useAuth();

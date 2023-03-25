@@ -1,7 +1,9 @@
 import GetProject from '@/database/GetProject';
+import database from '@/firebase/database/databaseInit';
 import { PageLayout } from '@/layouts/PageLayout';
 import { GithubUserObject } from '@/types/dataObjects';
 import { ProjectPageProps } from '@/types/props';
+import { ref, get, child } from 'firebase/database';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
@@ -74,8 +76,17 @@ export default function ProjectPage({ projectId, project }: ProjectPageProps) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const projectId = context?.params?.projectId;
 
-    const data = await GetProject(projectId as string);
-    const project = data?.data;
+    const project = await get(child(ref(database), `projects/${projectId}`))
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                return snapshot.val();
+            } else {
+                return null;
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+        });
 
     return {
         props: {

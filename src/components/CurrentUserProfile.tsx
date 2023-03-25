@@ -38,7 +38,7 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
                                 </a>
                                 <p>{project?.owner?.login}</p>
                                 <div className="flex gap-4 items-center">
-                                    {project?.languages.map(
+                                    {project?.languages?.map(
                                         (language, index) => (
                                             <p
                                                 key={index}

@@ -15,11 +15,10 @@ export default async function CreateUser(user: IUser) {
     };
 
     const data = {
-        apiKey: 'test123456',
         user: updatedUser,
     };
 
-    await fetch('http://localhost:3001/users/create', {
+    await fetch('/api/users/create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
