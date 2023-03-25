@@ -1,11 +1,16 @@
+import CreateProjects from '@/database/CreateProjects';
+import UpdateUser from '@/database/UpdateUser';
 import { GetGithubUserRepos } from '@/firebase/auth/gitHubAuth/octokit';
-import { DatabaseProjectData, Project } from '@/types/dataObjects';
+import MutateProjectObjects from '@/helpers/MutateProjectObjects';
+import { DatabaseProjectData, IUser, Project } from '@/types/dataObjects';
 import { CurrentUserProfileProps } from '@/types/props';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { ModalProjectCheckbox } from './ModalProjectCheckbox';
 
 export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
+    const router = useRouter();
     const { projects, assignedIssues } = data;
     const [modalProjects, setModalProjects] = useState<Project[]>();
     const [newProjects, setNewProjects] = useState<Project[]>([]);
@@ -14,6 +19,35 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
 
     async function AddNewProjects() {
         console.log('New Projects: ', newProjects);
+        await CreateProjects(newProjects).then(async () => {
+            const updatedUserProjectsArray: DatabaseProjectData[] = [];
+
+            await data?.projects?.map((project) => {
+                updatedUserProjectsArray.push(project as DatabaseProjectData);
+            });
+
+            const mutatedProjects = await MutateProjectObjects(newProjects);
+
+            await mutatedProjects.map((project) => {
+                updatedUserProjectsArray?.push(project);
+            });
+
+            const updatedUser: IUser = {
+                ...data,
+                projects: updatedUserProjectsArray,
+            };
+
+            console.log('Updated User: ', updatedUser);
+            console.log('Updated projects: ', updatedUserProjectsArray);
+
+            await UpdateUser(updatedUser).then(({ result }) => {
+                if (result?.updated) {
+                    router.reload();
+                } else {
+                    console.log('There was an error: ', result?.errors);
+                }
+            });
+        });
     }
 
     useEffect(() => {

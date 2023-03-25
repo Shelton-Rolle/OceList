@@ -55,7 +55,7 @@ export const ModalProjectCheckbox = ({
                                   UpdateNewProjects(e.target.checked, project)
                     }
                 />
-                {project?.name}
+                {project?.name} | {existingProject && 'ADDED'}
             </label>
             <p>--------------</p>
         </div>

@@ -4,20 +4,9 @@ import { DatabaseProjectData, IUser, Project } from '@/types/dataObjects';
 export default async function UpdateUser(user: IUser) {
     let result: { updated: boolean; errors: string[] } | undefined;
 
-    let projects: DatabaseProjectData[] = [];
-
-    if (user?.projects) {
-        projects = await MutateProjectObjects(user?.projects as Project[]);
-    }
-
-    const updatedUser: IUser = {
-        ...user,
-        projects,
-    };
-
     const data = {
         displayName: user?.displayName,
-        updatedData: updatedUser,
+        updatedData: user,
     };
 
     await fetch('/api/users/update', {

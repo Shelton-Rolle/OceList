@@ -10,10 +10,10 @@ export interface DatabaseIssueObject {
 }
 
 export interface DatabaseProjectData {
-    id: number;
-    name: string;
-    owner: any;
-    languages: string[];
+    id?: number;
+    name?: string;
+    owner?: any;
+    languages?: string[];
     issues?: DatabaseIssueObject[];
 }
 
