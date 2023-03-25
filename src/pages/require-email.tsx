@@ -11,7 +11,7 @@ export default function RequireEmail() {
         e.preventDefault();
         await updateUserEmail(email!);
 
-        router.push('/signup/profile-setup');
+        router.push('/profile-setup');
     }
 
     return (

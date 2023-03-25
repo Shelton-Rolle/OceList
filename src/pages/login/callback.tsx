@@ -11,9 +11,9 @@ export default function Callback() {
             router.push('/');
         } else {
             if (currentUser?.email) {
-                router.push('/signup/profile-setup');
+                router.push('/profile-setup');
             } else {
-                router.push('/signup/require-email');
+                router.push('/require-email');
             }
         }
     }, []);
