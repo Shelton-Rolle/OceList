@@ -41,7 +41,6 @@ export default function Settings() {
     const [previousEmail, setPreviousEmail] = useState<string>();
     const [userPassword, setUserPassword] = useState<string>();
     const [avatar, setAvatar] = useState<any>();
-    const [username, setUsername] = useState<string>();
     const [email, setEmail] = useState<string>();
     const [profileChanged, setProfileChanged] = useState<boolean>(false);
     const [isGithubConnected, setIsGithubConnected] = useState<boolean>();
@@ -67,11 +66,10 @@ export default function Settings() {
         const updatedUser: IUser = {
             ...currentUserData!,
             photoURL: avatar ? newAvatarURL : currentUser?.photoURL,
-            displayName: username ? username : currentUser?.displayName,
         };
 
         await UpdateProfile(
-            username ? username : currentUser?.displayName!,
+            currentUser?.displayName!,
             avatar ? newAvatarURL : currentUser?.photoURL!
         ).then((error) => {
             UpdateUser(updatedUser).then(() => {
@@ -186,16 +184,12 @@ export default function Settings() {
     useEffect(() => {
         let detectedChanges = false;
 
-        if (username && username !== '') {
-            detectedChanges = true;
-        }
-
         if (avatar) {
             detectedChanges = true;
         }
 
         setProfileChanged(detectedChanges);
-    }, [username, avatar]);
+    }, [avatar]);
 
     useEffect(() => {
         console.log('Current User: ', currentUser);
@@ -261,18 +255,6 @@ export default function Settings() {
                                     />
                                 </label>
                                 {avatar && <p>Selected File: {avatar?.name}</p>}
-                                <label htmlFor="username">
-                                    Username:
-                                    <input
-                                        type="text"
-                                        id="username"
-                                        placeholder={currentUser?.displayName!}
-                                        onChange={(e) =>
-                                            setUsername(e.target.value)
-                                        }
-                                        className="p-2 rounded-sm outline outline-2 outline-gray-400"
-                                    />
-                                </label>
                                 <button
                                     type="submit"
                                     disabled={!profileChanged}
@@ -286,8 +268,24 @@ export default function Settings() {
                                 </button>
                             </form>
                         </section>
+                        <section className="my-7">
+                            <h2 className="text-2xl font-bold">
+                                View Profile Information
+                            </h2>
+                            <p>Username: {currentUser?.displayName}</p>
+                            <h4 className="text-xl font-bold">
+                                Why can I not change my username?
+                            </h4>
+                            <p className="text-sm text-gray-400">
+                                We require your username here to match the
+                                username with the github account you've
+                                connected to try and help ensure project owners
+                                can secure the same username they have listed on
+                                their projects.
+                            </p>
+                        </section>
                         <section>
-                            <h2>Contact Info</h2>
+                            <h2 className="text-2xl font-bold">Contact Info</h2>
                             <form
                                 onSubmit={(e) => {
                                     e.preventDefault();

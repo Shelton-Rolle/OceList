@@ -25,6 +25,14 @@ interface GithubPermissions {
     triage: boolean;
 }
 
+interface GitHubRepositoryLicense {
+    key: string;
+    name: string;
+    node_id: string;
+    spdx_id: string;
+    url: string;
+}
+
 export interface GithubUserObject {
     email: string;
     avatar_url: string;
@@ -137,6 +145,7 @@ export interface Project {
     labels_url?: string;
     language?: string;
     languages_url?: string;
+    license?: GitHubRepositoryLicense;
     merges_url?: string;
     milestones_url?: string;
     name?: string;
