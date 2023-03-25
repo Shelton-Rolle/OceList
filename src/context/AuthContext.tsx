@@ -59,7 +59,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     async function UpdateProfile(displayName?: string, photoURL?: string) {
         let errorCode: string | undefined;
-        console.log('Currently Usering User: ', currentUser);
+
         await updateProfile(currentUser!, {
             displayName,
             photoURL,
@@ -79,14 +79,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     async function DeleteAccount(): Promise<string | undefined> {
         let errorCode: string | undefined;
 
-        console.log('Current USER Data: ', currentUserData);
-
         await deleteUser(currentUser!)
             .then(() => {
-                console.log('Current USER: ', currentUser);
-                console.log('Current USer DatA: ', currentUserData);
                 RemoveUser(currentUserData!).then(async (result: any) => {
                     if (result?.deleted) {
+                        setCurrentUser(null);
                         setCurrentUserData(null);
                         router.push('/');
                     }

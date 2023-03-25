@@ -32,9 +32,9 @@ export default function Settings() {
     const {
         currentUser,
         currentUserData,
+        setCurrentUserData,
         updateUserEmail,
         logout,
-        setGithubData,
         DeleteAccount,
         UpdateProfile,
     } = useAuth();
