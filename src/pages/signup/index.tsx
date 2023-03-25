@@ -9,12 +9,9 @@ import { FormEvent, useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import auth from '@/firebase/auth/authInit';
 import CreateUser from '@/database/CreateUser';
+import { PageLayout } from '@/layouts/PageLayout';
 
-export default function index() {
-    const [errors, setErrors] = useState<any[]>([]);
-    const [username, setUsername] = useState<string>('');
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
+export default function Signup() {
     const {
         setGithubData,
         setCurrentUserData,
@@ -66,17 +63,14 @@ export default function index() {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main>
-                {errors.map((error) => (
-                    <p className="p-4 font-bold">{error}</p>
-                ))}
+            <PageLayout>
                 <button
                     className="p-4 border border-black rounded-sm"
                     onClick={SignupWithGitHub}
                 >
                     Github Signup
                 </button>
-            </main>
+            </PageLayout>
         </>
     );
 }

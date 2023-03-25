@@ -71,7 +71,6 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
                     </div>
                 ))}
             </section>
-            <a href="/profile/settings">Settings</a>
         </div>
     );
 }

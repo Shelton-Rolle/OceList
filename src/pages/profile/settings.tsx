@@ -25,6 +25,7 @@ import auth from '@/firebase/auth/authInit';
 import githubProvider from '@/firebase/auth/gitHubAuth/githubInit';
 import UploadImage from '@/firebase/storage/UploadImage';
 import RemoveProjects from '@/database/RemoveProjects';
+import { PageLayout } from '@/layouts/PageLayout';
 
 export default function Settings() {
     const router = useRouter();
@@ -218,7 +219,7 @@ export default function Settings() {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main>
+            <PageLayout>
                 {currentUser ? (
                     <>
                         <h1>Settings</h1>
@@ -404,7 +405,7 @@ export default function Settings() {
                 ) : (
                     <div>Loading</div>
                 )}
-            </main>
+            </PageLayout>
         </>
     );
 }
