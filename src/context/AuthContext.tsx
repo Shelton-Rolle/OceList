@@ -50,7 +50,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     async function logout() {
-        await signOut(auth);
+        await signOut(auth).then(() => {
+            setCurrentUser(null);
+            setCurrentUserData(null);
+            router.push('/');
+        });
     }
 
     async function updateUserPassword(password: string) {
