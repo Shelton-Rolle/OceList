@@ -57,26 +57,27 @@ export interface GithubUserObject {
 }
 
 export interface Issue {
-    author_association: string;
-    body: string;
-    comments: number;
-    comments_url: string;
-    created_at: string;
-    events_url: string;
-    html_url: string;
-    id: number;
-    labels_url: string;
-    locked: boolean;
-    node_id: string;
-    number: number;
-    reactions: any;
-    repository_url: string;
-    state: string;
-    timeline_url: string;
-    title: string;
-    updated_at: string;
-    url: string;
-    user: GithubUserObject;
+    author_association?: string;
+    body?: string;
+    comments?: number;
+    comments_url?: string;
+    created_at?: string;
+    events_url?: string;
+    html_url?: string;
+    id?: number;
+    labels_url?: string;
+    locked?: boolean;
+    node_id?: string;
+    number?: number;
+    reactions?: any;
+    repository_url?: string;
+    state?: string;
+    timeline_url?: string;
+    title?: string;
+    updated_at?: string;
+    url?: string;
+    user?: GithubUserObject;
+    repository?: Project;
 }
 
 export interface IUser {
