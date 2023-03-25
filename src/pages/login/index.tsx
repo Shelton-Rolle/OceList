@@ -6,7 +6,7 @@ import { GithubUserObject, IUser } from '@/types/dataObjects';
 import { IGithubUser } from '@/types/interfaces';
 import { FormEvent, useState } from 'react';
 import auth from '@/firebase/auth/authInit';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, User } from 'firebase/auth';
 import GetUser from '@/database/GetUser';
 import { FirebaseError } from 'firebase/app';
 import Head from 'next/head';
@@ -18,21 +18,25 @@ export default function Login() {
 
     async function LoginWithGithub() {
         await AuthenticateWithGitHub().then(({ token }) => {
-            GetGitHubUser(token!).then((user) => {
-                const userData: GithubUserObject = user!;
-                const { html_url, id, login, public_repos } = userData;
+            GetGitHubUser(token!).then(async (user) => {
+                const existingUser = await GetUser(user?.login!);
 
-                const userObject: IGithubUser = {
-                    html_url,
-                    githubId: id,
-                    login,
-                    public_repos,
-                    githubToken: token,
-                    projects: [],
-                };
-
-                setGithubData(userObject);
-                router.push('/login/callback');
+                if (existingUser) {
+                    router.push('/');
+                } else {
+                    const userData: GithubUserObject = user!;
+                    const { html_url, id, login, public_repos } = userData;
+                    const userObject: IGithubUser = {
+                        html_url,
+                        githubId: id,
+                        login,
+                        public_repos,
+                        githubToken: token,
+                        projects: [],
+                    };
+                    setGithubData(userObject);
+                    router.push('/login/callback');
+                }
             });
         });
     }
