@@ -5,7 +5,7 @@ export default async function CreateIssues(issues: Issue[]) {
     for (let i = 0; i < issues.length; i++) {
         const { title, body, repository_url, state } = issues[i];
 
-        await fetch(repository_url)
+        await fetch(repository_url!)
             .then((res) => res.json())
             .then((data) => {
                 const { id, name } = data;

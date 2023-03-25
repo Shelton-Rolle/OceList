@@ -17,10 +17,10 @@ export default async function MutateProjectObjects(
             await issues.map((issue) => {
                 const { id, body, state, title } = issue;
                 issueData.push({
-                    id,
-                    body,
-                    state,
-                    title,
+                    id: id!,
+                    body: body!,
+                    state: state!,
+                    title: title!,
                     repoId: projects[i].id!,
                     repoName: name!,
                 });

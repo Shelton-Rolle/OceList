@@ -6,6 +6,7 @@ import { ProjectPageProps } from '@/types/props';
 import { ref, get, child } from 'firebase/database';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export default function ProjectPage({ projectId, project }: ProjectPageProps) {
@@ -38,9 +39,9 @@ export default function ProjectPage({ projectId, project }: ProjectPageProps) {
                 <div>
                     <h1>{project?.name}</h1>
                     <p>Owner: {project?.owner?.login}</p>
-                    <a href={project?.html_url}>Repo Link</a>
+                    <Link href={project?.html_url!}>Repo Link</Link>
                     {project?.homepage && (
-                        <a href={project?.homepage}>Repo Homepage</a>
+                        <Link href={project?.homepage!}>Repo Homepage</Link>
                     )}
                     {contributors?.map((contributor, index) => (
                         <p key={index}>Contributor: {contributor?.login}</p>

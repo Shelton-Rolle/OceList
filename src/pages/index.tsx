@@ -2,6 +2,7 @@ import Head from 'next/head';
 import { useAuth } from '@/context/AuthContext';
 import { useEffect } from 'react';
 import { PageLayout } from '@/layouts/PageLayout';
+import Link from 'next/link';
 
 export default function Home() {
     const { currentUser, githubData, currentUserData, logout } = useAuth();
@@ -27,7 +28,9 @@ export default function Home() {
                 <h1>Landing Page</h1>
 
                 <div>
-                    <a href={`/${currentUserData?.displayName}`}>Profile</a>
+                    <Link href={`/${currentUserData?.displayName}`}>
+                        Profile
+                    </Link>
                 </div>
                 <button onClick={logout}>Logout</button>
             </PageLayout>

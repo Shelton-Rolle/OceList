@@ -5,6 +5,7 @@ import MutateProjectObjects from '@/helpers/MutateProjectObjects';
 import { DatabaseProjectData, IUser, Project } from '@/types/dataObjects';
 import { CurrentUserProfileProps } from '@/types/props';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { ModalProjectCheckbox } from './ModalProjectCheckbox';
@@ -124,11 +125,11 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
                                 key={index}
                                 className="outline outline-2 outline-black my-3 p-5 max-w-md"
                             >
-                                <a href={`/projects/${project?.id}`}>
+                                <Link href={`/projects/${project?.id}`}>
                                     <h4 className="text-lg font-bold">
                                         {project?.name}
                                     </h4>
-                                </a>
+                                </Link>
                                 <p>{project?.owner?.login}</p>
                                 <div className="flex gap-4 items-center">
                                     {project?.languages?.map(

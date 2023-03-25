@@ -222,7 +222,7 @@ export default function Settings() {
                             </h4>
                             <p className="text-sm text-gray-400">
                                 We require your username here to match the
-                                username with the github account you've
+                                username with the github account you&aposve
                                 connected to try and help ensure project owners
                                 can secure the same username they have listed on
                                 their projects.
