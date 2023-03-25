@@ -125,63 +125,6 @@ export default function Settings() {
             });
     }
 
-    async function ConnectGithub() {
-        await linkWithPopup(currentUser!, githubProvider).then(
-            ({ _tokenResponse }: any) => {
-                const { oauthAccessToken } = _tokenResponse;
-
-                GetGitHubUser(oauthAccessToken!).then((user) => {
-                    const userData: GithubUserObject = user!;
-                    const { html_url, id, public_repos, login } = userData;
-
-                    const userObject: IGithubUser = {
-                        login,
-                        html_url,
-                        githubId: id,
-                        public_repos,
-                        githubToken: oauthAccessToken,
-                        projects: [],
-                    };
-
-                    setGithubData(userObject);
-                    router.push('/signup/profile-setup');
-                });
-            }
-        );
-    }
-
-    async function DisconnectGithub() {
-        await unlink(currentUser!, 'github.com')
-            .then(async () => {
-                const userData: IUser = {
-                    ...currentUserData,
-                    providerData: currentUser?.providerData,
-                    html_url: null,
-                    githubId: null,
-                    projects: [],
-                    public_repos: null,
-                    githubToken: null,
-                    assignedIssues: [],
-                };
-                await UpdateUser(userData).then(async ({ result }) => {
-                    if (result?.updated) {
-                        await RemoveProjects(
-                            currentUserData?.projects as DatabaseProjectData[]
-                        ).then((result: any) => {
-                            if (result?.deleted) {
-                                router.reload();
-                            } else {
-                                console.log('errors: ', result.errors);
-                            }
-                        });
-                    }
-                });
-            })
-            .catch((error) => {
-                console.log('Error Code: ', error.code);
-            });
-    }
-
     useEffect(() => {
         let detectedChanges = false;
 
@@ -312,20 +255,6 @@ export default function Settings() {
                                     Update Email
                                 </button>
                             </form>
-                        </section>
-                        <section className="flex flex-col gap-4">
-                            <h2 className="text-2xl font-bold">Connections</h2>
-                            <button
-                                onClick={
-                                    isGithubConnected
-                                        ? DisconnectGithub
-                                        : ConnectGithub
-                                }
-                            >
-                                {isGithubConnected
-                                    ? 'Disconnect Github'
-                                    : 'Connect GitHub'}
-                            </button>
                         </section>
                         <section className="flex flex-col gap-4">
                             <h2 className="text-2xl font-bold">Danger</h2>
