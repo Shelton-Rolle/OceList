@@ -1,3 +1,5 @@
+import { IssueCard } from '@/components/IssueCard';
+import { ProjectCard } from '@/components/ProjectCard';
 import database from '@/firebase/database/databaseInit';
 import { PageLayout } from '@/layouts/PageLayout';
 import { BrowsePageProps } from '@/types/props';
@@ -27,11 +29,6 @@ export default function BrowsePage({ projects, issues }: BrowsePageProps) {
         }
     }
 
-    useEffect(() => {
-        console.log('Projects: ', projects);
-        console.log('Issues: ', issues);
-    }, []);
-
     return (
         <>
             <Head>
@@ -58,10 +55,22 @@ export default function BrowsePage({ projects, issues }: BrowsePageProps) {
                         Search Issues
                     </button>
                 </div>
-                <div>
-                    {searchProjects && <h1>Searching Projects</h1>}
-                    {searchIssues && <h1>Searching Issues</h1>}
-                </div>
+                <section className="grid grid-cols-3 gap-4">
+                    {searchProjects && (
+                        <>
+                            {projects?.map((project, index) => (
+                                <ProjectCard project={project} key={index} />
+                            ))}
+                        </>
+                    )}
+                    {searchIssues && (
+                        <>
+                            {issues?.map((issue, index) => (
+                                <IssueCard issue={issue} key={index} />
+                            ))}
+                        </>
+                    )}
+                </section>
             </PageLayout>
         </>
     );

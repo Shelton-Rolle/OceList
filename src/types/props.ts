@@ -18,11 +18,18 @@ export interface CurrentUserProfileProps {
     data: IUser;
 }
 
+export interface IssueCardProps {
+    issue: Issue;
+}
+
 export interface PageLayoutProps {
     children: ReactNode | ReactNode[];
 }
 export interface RepositoryCheckboxProps {
     repo: Project;
+}
+export interface ProjectCardProps {
+    project: Project;
 }
 
 export interface ProjectPageProps {
