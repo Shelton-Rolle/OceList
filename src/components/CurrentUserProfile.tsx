@@ -103,26 +103,28 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
                 </article>
             )}
             <header>
-                <div>
-                    <Image
-                        src={data?.photoURL!}
-                        alt="avatar"
-                        width={150}
-                        height={150}
-                    />
-                    <p>{data?.displayName}</p>
+                <div className="flex items-center">
+                    <div className="rounded-full overflow-hidden mr-5">
+                        <Image
+                            src={data?.photoURL!}
+                            alt="avatar"
+                            width={150}
+                            height={150}
+                        />
+                    </div>
+                    <p className="text-3xl">{data?.displayName}</p>
                 </div>
                 <button
                     onClick={() => setOpenProjectModal(true)}
-                    className="outline outline-2 outline-blue-300 rounded-sm py-2 px-5 text-blue-300"
+                    className="outline outline-2 outline-blue-300 rounded-sm py-2 px-5 text-blue-300 my-4"
                 >
                     Add Project
                 </button>
             </header>
-            <section className="my-4">
-                <h2>Projects</h2>
+            <section className="m-5">
+                <h2 className="text-2xl font-bold">Projects</h2>
                 {projectsList ? (
-                    <>
+                    <div className="grid grid-cols-3 gap-4">
                         {projectsList?.map((project, index) => (
                             <div
                                 key={index}
@@ -148,13 +150,13 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
                                 </div>
                             </div>
                         ))}
-                    </>
+                    </div>
                 ) : (
                     <>{projects ? <p>Loading</p> : <p>No Projects Found</p>}</>
                 )}
             </section>
-            <section className="my-4">
-                <h2>Contributions</h2>
+            <section className="m-5">
+                <h2 className="text-2xl font-bold">Contributions</h2>
                 {assignedIssues?.map((issue, index) => (
                     <div
                         key={index}
