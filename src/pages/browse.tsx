@@ -37,44 +37,64 @@ export default function BrowsePage({ projects, issues }: BrowsePageProps) {
 
     async function UpdateDisplayResults(query: string) {
         if (searchProjects) {
-            const updatedProjects: DatabaseProjectData[] = [];
+            if (query === '') {
+                setDisplayedProjects(projects);
+            } else {
+                const updatedProjects: DatabaseProjectData[] = [];
 
-            projects?.map((project) => {
-                switch (searchFilter) {
-                    case 'title':
-                        if (
-                            project?.name
-                                ?.toLowerCase()
-                                .includes(query.toLowerCase())
-                        )
-                            updatedProjects.push(project);
-                        break;
-                    case 'owner':
-                        if (
-                            project?.owner?.login
-                                .toLowerCase()
-                                .includes(query.toLowerCase())
-                        )
-                            updatedProjects.push(project);
-                        break;
-                    case 'language':
-                        const languages = project?.languages;
-                        for (let i = 0; i < languages?.length!; i++) {
+                projects?.map((project) => {
+                    switch (searchFilter) {
+                        case 'title':
                             if (
-                                languages![i]
+                                project?.name
+                                    ?.toLowerCase()
+                                    .includes(query.toLowerCase())
+                            )
+                                updatedProjects.push(project);
+                            break;
+                        case 'owner':
+                            if (
+                                project?.owner?.login
                                     .toLowerCase()
                                     .includes(query.toLowerCase())
-                            ) {
+                            )
                                 updatedProjects.push(project);
-                                break;
+                            break;
+                        case 'language':
+                            const languages = project?.languages;
+                            for (let i = 0; i < languages?.length!; i++) {
+                                if (
+                                    languages![i]
+                                        .toLowerCase()
+                                        .includes(query.toLowerCase())
+                                ) {
+                                    updatedProjects.push(project);
+                                    break;
+                                }
                             }
-                        }
-                        break;
-                }
-            });
+                            break;
+                    }
+                });
 
-            setDisplayedProjects(updatedProjects);
+                setDisplayedProjects(updatedProjects);
+            }
         } else if (searchIssues) {
+            if (query === '') {
+                setDisplayedIssues(issues);
+            } else {
+                const updatedIssues: Issue[] = [];
+
+                issues?.map((issue) => {
+                    if (
+                        issue?.title
+                            ?.toLowerCase()
+                            .includes(query.toLowerCase())
+                    )
+                        updatedIssues.push(issue);
+                });
+
+                setDisplayedIssues(updatedIssues);
+            }
         }
     }
 
@@ -91,17 +111,25 @@ export default function BrowsePage({ projects, issues }: BrowsePageProps) {
             </Head>
             <PageLayout>
                 <div id="search" className="flex flex-col items-end">
-                    <h1 className="font-medium text-sm mb-1">Filter By</h1>
-                    <select
-                        name="search-filter"
-                        id="search-filter"
-                        className="p-4"
-                        onChange={(e) => setSearchFilter(e.target.value)}
-                    >
-                        <option value="title">Title</option>
-                        <option value="owner">Owner</option>
-                        <option value="language">Language</option>
-                    </select>
+                    {searchProjects && (
+                        <>
+                            <h1 className="font-medium text-sm mb-1">
+                                Filter By
+                            </h1>
+                            <select
+                                name="search-filter"
+                                id="search-filter"
+                                className="p-4"
+                                onChange={(e) =>
+                                    setSearchFilter(e.target.value)
+                                }
+                            >
+                                <option value="title">Title</option>
+                                <option value="owner">Owner</option>
+                                <option value="language">Language</option>
+                            </select>
+                        </>
+                    )}
                     <input
                         type="text"
                         id="search-bar"
