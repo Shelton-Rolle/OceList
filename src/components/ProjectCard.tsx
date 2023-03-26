@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 export const ProjectCard = ({ project }: ProjectCardProps) => {
-    console.log('Project Card: ', project);
     return (
         <div className="outline outline-1 outline-black rounded-sm p-6">
             <a href={`/projects/${project?.id}`}>

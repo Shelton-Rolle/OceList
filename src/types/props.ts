@@ -6,7 +6,7 @@ export interface AuthProviderProps {
 }
 
 export interface BrowsePageProps {
-    projects: Project[];
+    projects: DatabaseProjectData[];
     issues: Issue[];
 }
 
