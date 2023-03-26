@@ -74,9 +74,10 @@ export default function Home() {
                             in for the first time, you will be navigated to a
                             profile-setup page to complete setting up your
                             profile. There you will be prompted to select some
-                            of your public github repos to add as "Open Source
-                            Projects". It is not required, but encouraged to add
-                            at least 1 project for the sake of the test.
+                            of your public github repos to add as &quot;Open
+                            Source Projects&quot;. It is not required, but
+                            encouraged to add at least 1 project for the sake of
+                            the test.
                         </li>
                         <li className="my-5">
                             View Your Profile - Navigate to the profile page
