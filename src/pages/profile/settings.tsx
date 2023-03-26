@@ -62,8 +62,10 @@ export default function Settings() {
         if (email && email !== currentUser?.email) {
             const error = await updateUserEmail(email!);
 
-            if (error == 'auth/requires-recent-login') {
-                setRequiresReAuthenticate(true);
+            if (error) {
+                if (error == 'auth/requires-recent-login') {
+                    setRequiresReAuthenticate(true);
+                }
             } else {
                 await UpdateUser(updatedUser).then(() => {
                     router.reload();
@@ -148,6 +150,7 @@ export default function Settings() {
                                 <button
                                     className="border border-black py-3 px-5 rounded-md"
                                     type="submit"
+                                    disabled={email ? false : true}
                                 >
                                     Update Email
                                 </button>
