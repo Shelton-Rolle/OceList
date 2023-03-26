@@ -41,21 +41,47 @@ export default function BrowsePage({ projects, issues }: BrowsePageProps) {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <PageLayout>
-                <div>
+                <div id="search" className="flex flex-col items-end">
+                    <h1 className="font-medium text-sm mb-1">Filter By</h1>
+                    <select
+                        name="search-filter"
+                        id="search-filter"
+                        className="p-4"
+                    >
+                        <option value="title">Title</option>
+                        <option value="title">Owner</option>
+                        <option value="title">Language</option>
+                    </select>
+                    <input
+                        type="text"
+                        id="search-bar"
+                        placeholder="Search"
+                        className=" my-5 border border-black rounded-md w-3/4 px-5 py-3 bg-slate-500 text-white placeholder:text-white"
+                    />
+                </div>
+                <div className="w-full grid grid-cols-2 mb-6">
                     <button
                         onClick={() => ChangeSearch('project')}
-                        className="outline outline-2 outline-black p-5 mx-5"
+                        className={`py-3 border-b-2 duration-150 ${
+                            searchProjects
+                                ? 'border-b-black text-black'
+                                : 'border-b-gray-300 text-gray-300'
+                        }`}
                     >
-                        Searh Projects
+                        Projects
                     </button>
                     <button
                         onClick={() => ChangeSearch('issue')}
-                        className="outline outline-2 outline-black p-5 mx-5"
+                        className={`py-3 border-b-2 duration-150 ${
+                            searchIssues
+                                ? 'border-b-black text-black'
+                                : 'border-b-gray-300 text-gray-300'
+                        }`}
                     >
-                        Search Issues
+                        Issues
                     </button>
                 </div>
-                <section className="grid grid-cols-3 gap-4">
+                <section className="grid grid-cols-2 gap-7">
                     {searchProjects && (
                         <>
                             {projects?.map((project, index) => (

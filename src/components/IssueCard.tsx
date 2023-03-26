@@ -17,9 +17,10 @@ export const IssueCard = ({ issue }: IssueCardProps) => {
     }, []);
 
     return (
-        <div className="outline outline-1 outline-black p-4 m-7 rounded-sm">
-            <h2>{issue?.title}</h2>
-            <p>{repository?.name}</p>
+        <div className="outline outline-1 outline-black rounded-sm p-4">
+            <h2 className="text-2xl">{issue?.title}</h2>
+            <p className="text-sm text-gray-400">{repository?.name}</p>
+            <p className="mt-6">{issue?.body}</p>
         </div>
     );
 };

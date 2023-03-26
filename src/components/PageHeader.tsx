@@ -6,26 +6,46 @@ export const PageHeader = () => {
     const { currentUser } = useAuth();
 
     return (
-        <header className="w-full p-5">
-            <div className="flex justify-between items-center">
-                <h1>OSM Alpha</h1>
-                <nav className="flex gap-9 items-center">
-                    <Link href="/">Home</Link>
-                    <Link href="/browse">Browse</Link>
-                    {currentUser ? (
-                        <>
-                            <Link href={`/${currentUser?.displayName}`}>
-                                Profile
-                            </Link>
-                            <Link href={`/profile/settings`}>Settings</Link>
-                        </>
-                    ) : (
-                        <>
-                            <Link href="/login">Login</Link>
-                        </>
-                    )}
-                </nav>
-            </div>
+        <header className="col-span-3 max-h-[50vh] rounded-md bg-slate-400 overflow-hidden">
+            <nav className="h-full flex flex-col font-medium text-lg text-white">
+                <Link
+                    href="/"
+                    className="pt-6 pb-3 px-6 duration-200 hover:bg-gray-800"
+                >
+                    Home
+                </Link>
+                <Link
+                    href="/browse"
+                    className="py-3 px-6 duration-200 hover:bg-gray-800"
+                >
+                    Browse
+                </Link>
+                {currentUser ? (
+                    <>
+                        <Link
+                            href={`/${currentUser?.displayName}`}
+                            className="py-3 px-6 duration-200 hover:bg-gray-800"
+                        >
+                            Profile
+                        </Link>
+                        <Link
+                            href={`/profile/settings`}
+                            className="mt-auto py-3 px-6 duration-200 hover:bg-gray-800"
+                        >
+                            Settings
+                        </Link>
+                    </>
+                ) : (
+                    <>
+                        <Link
+                            href="/login"
+                            className="py-3 px-6 duration-200 hover:bg-gray-800"
+                        >
+                            Login
+                        </Link>
+                    </>
+                )}
+            </nav>
         </header>
     );
 };

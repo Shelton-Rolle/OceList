@@ -9,14 +9,34 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { ModalProjectCheckbox } from './ModalProjectCheckbox';
+import { ProjectCard } from './ProjectCard';
 
 export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
+    const [viewProjects, setViewProjects] = useState<boolean>(true);
+    const [viewActivity, setViewActivity] = useState<boolean>(false);
     const router = useRouter();
     const { projects, assignedIssues } = data;
     const [modalProjects, setModalProjects] = useState<Project[]>();
     const [newProjects, setNewProjects] = useState<Project[]>([]);
     const [projectsList, setProjectsList] = useState<DatabaseProjectData[]>();
     const [openProjectModal, setOpenProjectModal] = useState<boolean>(false);
+
+    async function ChangeView(newType: string) {
+        switch (newType) {
+            case 'project':
+                if (viewActivity) {
+                    setViewActivity(false);
+                    setViewProjects(true);
+                }
+                break;
+            case 'activity':
+                if (viewProjects) {
+                    setViewProjects(false);
+                    setViewActivity(true);
+                }
+                break;
+        }
+    }
 
     async function AddNewProjects() {
         await CreateProjects(data?.githubToken!, newProjects).then(async () => {
@@ -69,6 +89,99 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
 
     return (
         <div>
+            <header>
+                <div className="flex items-center">
+                    <div className="rounded-full overflow-hidden mr-5">
+                        <Image
+                            src={data?.photoURL!}
+                            alt="avatar"
+                            width={150}
+                            height={150}
+                        />
+                    </div>
+                </div>
+                <div className="flex items-center justify-between my-6">
+                    <div>
+                        <p className="text-3xl">{data?.displayName}</p>
+                        <p className="text-base text-gray-400">10 Followers</p>
+                    </div>
+                    <button className="py-3 px-5 border border-black rounded-sm">
+                        Edit Profile
+                    </button>
+                </div>
+            </header>
+            <div className="w-full grid grid-cols-2 mb-6">
+                <button
+                    onClick={() => ChangeView('project')}
+                    className={`py-3 border-b-2 duration-150 ${
+                        viewProjects
+                            ? 'border-b-black text-black'
+                            : 'border-b-gray-300 text-gray-300'
+                    }`}
+                >
+                    Projects
+                </button>
+                <button
+                    onClick={() => ChangeView('activity')}
+                    className={`py-3 border-b-2 duration-150 ${
+                        viewActivity
+                            ? 'border-b-black text-black'
+                            : 'border-b-gray-300 text-gray-300'
+                    }`}
+                >
+                    Activity
+                </button>
+            </div>
+            {viewProjects && (
+                <section className="">
+                    <div className="flex justify-end items-center">
+                        <button
+                            onClick={() => setOpenProjectModal(true)}
+                            className="border-2 border-blue-300 py-1 px-3 rounded-md text-blue-300 my-4 text-2xl"
+                        >
+                            +
+                        </button>
+                    </div>
+                    {projectsList ? (
+                        <div className="grid grid-cols-2 gap-7">
+                            {projectsList?.map((project, index) => (
+                                <ProjectCard project={project} key={index} />
+                            ))}
+                        </div>
+                    ) : (
+                        <>
+                            {projects ? (
+                                <p>Loading</p>
+                            ) : (
+                                <p>No Projects Found</p>
+                            )}
+                        </>
+                    )}
+                </section>
+            )}
+            {viewActivity && (
+                <section className="">
+                    {assignedIssues?.map((issue, index) => (
+                        <div
+                            key={index}
+                            className="outline outline-2 outline-black my-3 p-5 max-w-xs"
+                        >
+                            <h4 className="text-lg font-bold">
+                                {issue?.title}
+                            </h4>
+                            <p>{issue?.body}</p>
+                            <div className="flex items-center gap-5">
+                                <p className="text-gray-400 text-sm">
+                                    {issue?.user?.login}
+                                </p>
+                                <p className="text-gray-400 text-sm">
+                                    {issue?.repository?.name}
+                                </p>
+                            </div>
+                        </div>
+                    ))}
+                </section>
+            )}
             {openProjectModal && (
                 <article className="absolute top-0 left-0 w-full h-screen">
                     <div
@@ -102,79 +215,6 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
                     </div>
                 </article>
             )}
-            <header>
-                <div className="flex items-center">
-                    <div className="rounded-full overflow-hidden mr-5">
-                        <Image
-                            src={data?.photoURL!}
-                            alt="avatar"
-                            width={150}
-                            height={150}
-                        />
-                    </div>
-                    <p className="text-3xl">{data?.displayName}</p>
-                </div>
-                <button
-                    onClick={() => setOpenProjectModal(true)}
-                    className="outline outline-2 outline-blue-300 rounded-sm py-2 px-5 text-blue-300 my-4"
-                >
-                    Add Project
-                </button>
-            </header>
-            <section className="m-5">
-                <h2 className="text-2xl font-bold">Projects</h2>
-                {projectsList ? (
-                    <div className="grid grid-cols-3 gap-4">
-                        {projectsList?.map((project, index) => (
-                            <div
-                                key={index}
-                                className="outline outline-2 outline-black my-3 p-5 max-w-md"
-                            >
-                                <Link href={`/projects/${project?.id}`}>
-                                    <h4 className="text-lg font-bold">
-                                        {project?.name}
-                                    </h4>
-                                </Link>
-                                <p>{project?.owner?.login}</p>
-                                <div className="flex gap-4 items-center">
-                                    {project?.languages?.map(
-                                        (language, index) => (
-                                            <p
-                                                key={index}
-                                                className="text-gray-400 text-sm"
-                                            >
-                                                {language}
-                                            </p>
-                                        )
-                                    )}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <>{projects ? <p>Loading</p> : <p>No Projects Found</p>}</>
-                )}
-            </section>
-            <section className="m-5">
-                <h2 className="text-2xl font-bold">Contributions</h2>
-                {assignedIssues?.map((issue, index) => (
-                    <div
-                        key={index}
-                        className="outline outline-2 outline-black my-3 p-5 max-w-xs"
-                    >
-                        <h4 className="text-lg font-bold">{issue?.title}</h4>
-                        <p>{issue?.body}</p>
-                        <div className="flex items-center gap-5">
-                            <p className="text-gray-400 text-sm">
-                                {issue?.user?.login}
-                            </p>
-                            <p className="text-gray-400 text-sm">
-                                {issue?.repository?.name}
-                            </p>
-                        </div>
-                    </div>
-                ))}
-            </section>
         </div>
     );
 }
