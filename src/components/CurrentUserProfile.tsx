@@ -1,13 +1,15 @@
+import { useAuth } from '@/context/AuthContext';
 import CreateProjects from '@/database/CreateProjects';
 import UpdateUser from '@/database/UpdateUser';
 import { GetGithubUserRepos } from '@/firebase/auth/gitHubAuth/octokit';
+import UploadImage from '@/firebase/storage/UploadImage';
 import MutateProjectObjects from '@/helpers/MutateProjectObjects';
 import { DatabaseProjectData, IUser, Project } from '@/types/dataObjects';
 import { CurrentUserProfileProps } from '@/types/props';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { ModalProjectCheckbox } from './ModalProjectCheckbox';
 import { ProjectCard } from './ProjectCard';
 
@@ -15,11 +17,14 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
     const [viewProjects, setViewProjects] = useState<boolean>(true);
     const [viewActivity, setViewActivity] = useState<boolean>(false);
     const router = useRouter();
+    const { UpdateProfile } = useAuth();
+    const [avatar, setAvatar] = useState<File | null>(null);
     const { projects, assignedIssues } = data;
     const [modalProjects, setModalProjects] = useState<Project[]>();
     const [newProjects, setNewProjects] = useState<Project[]>([]);
     const [projectsList, setProjectsList] = useState<DatabaseProjectData[]>();
     const [openProjectModal, setOpenProjectModal] = useState<boolean>(false);
+    const [openAvatarModal, setOpenAvatarModal] = useState<boolean>(false);
 
     async function ChangeView(newType: string) {
         switch (newType) {
@@ -35,6 +40,32 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
                     setViewActivity(true);
                 }
                 break;
+        }
+    }
+
+    async function UpdateAvatar(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+
+        if (avatar) {
+            await UploadImage(avatar, data?.displayName!).then(async (url) => {
+                const updatedUser: IUser = {
+                    ...data!,
+                    photoURL: avatar ? url : data?.photoURL,
+                };
+
+                console.log('Updated User --- : ', updatedUser);
+
+                await UpdateProfile(
+                    data?.displayName!,
+                    avatar ? url : data?.photoURL!
+                ).then((error) => {
+                    UpdateUser(updatedUser).then(() => {
+                        router.reload();
+                    });
+                });
+            });
+        } else {
+            console.log('No Avatar Selected');
         }
     }
 
@@ -59,9 +90,6 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
                 ...data,
                 projects: updatedUserProjectsArray,
             };
-
-            console.log('Updated User: ', updatedUser);
-            console.log('Updated projects: ', updatedUserProjectsArray);
 
             await UpdateUser(updatedUser).then(({ result }) => {
                 if (result?.updated) {
@@ -97,6 +125,7 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
                             alt="avatar"
                             width={150}
                             height={150}
+                            onClick={() => setOpenAvatarModal(true)}
                         />
                     </div>
                 </div>
@@ -105,9 +134,6 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
                         <p className="text-3xl">{data?.displayName}</p>
                         <p className="text-base text-gray-400">10 Followers</p>
                     </div>
-                    <button className="py-3 px-5 border border-black rounded-sm">
-                        Edit Profile
-                    </button>
                 </div>
             </header>
             <div className="w-full grid grid-cols-2 mb-6">
@@ -212,6 +238,40 @@ export default function CurrentUserProfile({ data }: CurrentUserProfileProps) {
                                 Add Projects
                             </button>
                         </div>
+                    </div>
+                </article>
+            )}
+            {openAvatarModal && (
+                <article className="absolute top-0 left-0 w-full h-screen">
+                    <div
+                        id="overlay"
+                        className="absolute top-0 left-0 w-full h-screen bg-black bg-opacity-75"
+                    />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 bg-white">
+                        <form onSubmit={UpdateAvatar}>
+                            <input
+                                type="file"
+                                id="avatar"
+                                accept="image/jpg image/jpeg image/png"
+                                onChange={(e) =>
+                                    setAvatar(
+                                        e.target.files && e.target.files[0]
+                                    )
+                                }
+                            />
+                            <button
+                                className="outline outline-2 outline-red-300 rounded-sm py-2 px-5 text-red-300"
+                                onClick={() => setOpenAvatarModal(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="outline outline-2 outline-blue-300 rounded-sm py-2 px-5 text-blue-300"
+                                type="submit"
+                            >
+                                Update
+                            </button>
+                        </form>
                     </div>
                 </article>
             )}
