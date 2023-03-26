@@ -53,22 +53,25 @@ export default function Settings() {
         useState<boolean>(false);
 
     async function UpdateEmail() {
-        const updatedUser: IUser = {
-            ...currentUserData!,
-            email: email ? email : currentUser?.email,
-        };
-
+        console.log('CUrrent User Darta in email Update: ', currentUserData);
         // If the email was changed, update the email on the users auth profile before updating the database
         if (email && email !== currentUser?.email) {
             const error = await updateUserEmail(email!);
-
             if (error) {
                 if (error == 'auth/requires-recent-login') {
                     setRequiresReAuthenticate(true);
                 }
             } else {
-                await UpdateUser(updatedUser).then(() => {
-                    router.reload();
+                const updatedUser: IUser = {
+                    ...currentUserData!,
+                    email,
+                };
+                await UpdateUser(updatedUser).then(({ result }) => {
+                    if (result?.updated) {
+                        router.reload();
+                    } else {
+                        console.log('Error Updating');
+                    }
                 });
             }
         }
