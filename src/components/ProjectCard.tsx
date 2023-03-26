@@ -4,12 +4,14 @@ import React, { useEffect, useState } from 'react';
 export const ProjectCard = ({ project }: ProjectCardProps) => {
     console.log('Project: ', project);
     return (
-        <div className="outline outline-1 outline-black p-4 m-7 rounded-sm">
-            <h2>{project?.name}</h2>
-            <p>{project.owner?.login}</p>
-            <div className="flex items-center my-3">
+        <div className="outline outline-1 outline-black rounded-sm p-6">
+            <a href={`/projects/${project?.id}`}>
+                <h2 className="text-2xl">{project?.name}</h2>
+            </a>
+            <p className="text-sm text-gray-400">{project.owner?.login}</p>
+            <div className="flex gap-3 mt-5">
                 {project?.languages?.map((language, index) => (
-                    <p className="mr-3" key={index}>
+                    <p className="" key={index}>
                         {language}
                     </p>
                 ))}

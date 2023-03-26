@@ -41,7 +41,6 @@ export default function Settings() {
 
     const [previousEmail, setPreviousEmail] = useState<string>();
     const [userPassword, setUserPassword] = useState<string>();
-    const [avatar, setAvatar] = useState<any>();
     const [email, setEmail] = useState<string>();
     const [profileChanged, setProfileChanged] = useState<boolean>(false);
     const [isGithubConnected, setIsGithubConnected] = useState<boolean>();
@@ -53,32 +52,6 @@ export default function Settings() {
     const [requiresReAuthenticate, setRequiresReAuthenticate] =
         useState<boolean>(false);
 
-    async function UpdateUserProfile(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-        let newAvatarURL: string | undefined;
-
-        if (avatar) {
-            await UploadImage(avatar, currentUser?.displayName!).then((url) => {
-                newAvatarURL = url;
-            });
-        }
-
-        // Create a clone of the currentUserData object with the updated data and update the database
-        const updatedUser: IUser = {
-            ...currentUserData!,
-            photoURL: avatar ? newAvatarURL : currentUser?.photoURL,
-        };
-
-        await UpdateProfile(
-            currentUser?.displayName!,
-            avatar ? newAvatarURL : currentUser?.photoURL!
-        ).then((error) => {
-            UpdateUser(updatedUser).then(() => {
-                router.reload();
-            });
-        });
-    }
-
     async function UpdateEmail() {
         const updatedUser: IUser = {
             ...currentUserData!,
@@ -89,8 +62,10 @@ export default function Settings() {
         if (email && email !== currentUser?.email) {
             const error = await updateUserEmail(email!);
 
-            if (error == 'auth/requires-recent-login') {
-                setRequiresReAuthenticate(true);
+            if (error) {
+                if (error == 'auth/requires-recent-login') {
+                    setRequiresReAuthenticate(true);
+                }
             } else {
                 await UpdateUser(updatedUser).then(() => {
                     router.reload();
@@ -126,16 +101,6 @@ export default function Settings() {
     }
 
     useEffect(() => {
-        let detectedChanges = false;
-
-        if (avatar) {
-            detectedChanges = true;
-        }
-
-        setProfileChanged(detectedChanges);
-    }, [avatar]);
-
-    useEffect(() => {
         console.log('Current User: ', currentUser);
         console.log('Current User Data: ', currentUserData);
     }, [currentUser, currentUserData]);
@@ -165,101 +130,59 @@ export default function Settings() {
             <PageLayout>
                 {currentUser ? (
                     <>
-                        <h1>Settings</h1>
-
-                        <section className="flex flex-col gap-2">
-                            <h2 className="text-2xl font-bold">Edit Profile</h2>
-                            <form
-                                onSubmit={UpdateUserProfile}
-                                className="flex flex-col gap-4"
-                            >
-                                <label htmlFor="avatar">
-                                    {/* Having the image in the label allows the user to click it to open the file explorer */}
-                                    <Image
-                                        src={
-                                            currentUser?.photoURL
-                                                ? currentUser?.photoURL!
-                                                : process.env
-                                                      .NEXT_PUBLIC_DEFAULT_IMAGE!
-                                        }
-                                        alt="avatar"
-                                        width={250}
-                                        height={250}
-                                    />
-                                    <input
-                                        type="file"
-                                        id="avatar"
-                                        accept="image/jpg image/jpeg image/png"
-                                        onChange={(e) =>
-                                            setAvatar(
-                                                e.target.files &&
-                                                    e.target.files[0]
-                                            )
-                                        }
-                                    />
-                                </label>
-                                {avatar && <p>Selected File: {avatar?.name}</p>}
-                                <button
-                                    type="submit"
-                                    disabled={!profileChanged}
-                                    className={`outline outline-2  w-36 rounded-sm ${
-                                        profileChanged
-                                            ? 'outline-black text-black'
-                                            : 'outline-gray-400 text-gray-400'
-                                    }`}
-                                >
-                                    Save
-                                </button>
-                            </form>
-                        </section>
-                        <section className="my-7">
-                            <h2 className="text-2xl font-bold">
-                                View Profile Information
+                        <section className="w-full mb-7">
+                            <h2 className="text-2xl font-bold mb-3">
+                                Change Email
                             </h2>
-                            <p>Username: {currentUser?.displayName}</p>
-                            <h4 className="text-xl font-bold">
-                                Why can I not change my username?
-                            </h4>
-                            <p className="text-sm text-gray-400">
-                                We require your username here to match the
-                                username with the github account you&apos;ve
-                                connected to try and help ensure project owners
-                                can secure the same username they have listed on
-                                their projects.
-                            </p>
-                        </section>
-                        <section>
-                            <h2 className="text-2xl font-bold">Contact Info</h2>
                             <form
                                 onSubmit={(e) => {
                                     e.preventDefault();
                                     UpdateEmail();
                                 }}
                             >
-                                <label htmlFor="email">
-                                    Email:
-                                    <input
-                                        type="text"
-                                        id="email"
-                                        placeholder={currentUser?.email!}
-                                        onChange={(e) =>
-                                            setEmail(e.target.value)
-                                        }
-                                        className="p-2 rounded-sm outline outline-2 outline-gray-400"
-                                    />
-                                </label>
+                                <input
+                                    type="text"
+                                    id="email"
+                                    placeholder={currentUser?.email!}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="p-3 rounded-md border border-black w-full max-w-md mr-4"
+                                />
                                 <button
-                                    className="border border-black rounded-sm p-2"
+                                    className="border border-black py-3 px-5 rounded-md"
                                     type="submit"
+                                    disabled={email ? false : true}
                                 >
                                     Update Email
                                 </button>
                             </form>
                         </section>
+                        <section className="mb-16">
+                            <h4 className="text-xl font-medium mb-2">
+                                Why can I not change my username?
+                            </h4>
+                            <p className="text-base font-light text-gray-400 w-3/4 leading-6">
+                                To ensure consistency between projects and
+                                users, we require that your username match your
+                                github username. This helps prevent users from
+                                taking usernames that might belong to someone
+                                else on github thus preventing confusion on who
+                                owns which projects here on Simu.
+                            </p>
+                        </section>
                         <section className="flex flex-col gap-4">
-                            <h2 className="text-2xl font-bold">Danger</h2>
-                            <button onClick={logout}>Logout</button>
-                            <button onClick={deleteUserAccount}>
+                            <h2 className="font-medium text-2xl mb-5 text-red-500">
+                                Danger Zone
+                            </h2>
+                            <button
+                                onClick={logout}
+                                className="rounded-md w-60 py-3 bg-red-500 text-white"
+                            >
+                                Logout
+                            </button>
+                            <button
+                                onClick={deleteUserAccount}
+                                className="rounded-md w-60 py-3 bg-red-500 text-white"
+                            >
                                 Delete Account
                             </button>
                         </section>
