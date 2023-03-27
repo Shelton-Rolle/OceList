@@ -24,7 +24,7 @@ interface ProfilePageProps {
 
 export default function ProfilePage({ profileName, data }: ProfilePageProps) {
     const { currentUser, UpdateProfile } = useAuth();
-    const [isCurrentUser, setIsCurrentUser] = useState<boolean>();
+    const [isCurrentUser, setIsCurrentUser] = useState<boolean>(false);
     const [viewProjects, setViewProjects] = useState<boolean>(true);
     const [viewActivity, setViewActivity] = useState<boolean>(false);
     const router = useRouter();
@@ -156,7 +156,11 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                         alt="avatar"
                                         width={150}
                                         height={150}
-                                        onClick={() => setOpenAvatarModal(true)}
+                                        onClick={() => {
+                                            if (isCurrentUser) {
+                                                setOpenAvatarModal(true);
+                                            }
+                                        }}
                                     />
                                 </div>
                             </div>
@@ -195,16 +199,18 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                         </div>
                         {viewProjects && (
                             <section className="">
-                                <div className="flex justify-end items-center">
-                                    <button
-                                        onClick={() =>
-                                            setOpenProjectModal(true)
-                                        }
-                                        className="border-2 border-blue-300 py-1 px-3 rounded-md text-blue-300 my-4 text-2xl"
-                                    >
-                                        +
-                                    </button>
-                                </div>
+                                {isCurrentUser && (
+                                    <div className="flex justify-end items-center">
+                                        <button
+                                            onClick={() =>
+                                                setOpenProjectModal(true)
+                                            }
+                                            className="border-2 border-blue-300 py-1 px-3 rounded-md text-blue-300 my-4 text-2xl"
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+                                )}
                                 {projectsList ? (
                                     <div className="grid grid-cols-2 gap-7">
                                         {projectsList?.map((project, index) => (
