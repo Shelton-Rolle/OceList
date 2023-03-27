@@ -70,14 +70,11 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
             await UploadImage(avatar, data?.displayName!).then(async (url) => {
                 const updatedUser: IUser = {
                     ...data!,
-                    photoURL: avatar ? url : data?.photoURL,
                 };
-
-                console.log('Updated User --- : ', updatedUser);
 
                 await UpdateProfile(
                     data?.displayName!,
-                    avatar ? url : data?.photoURL!
+                    avatar ? url : currentUser?.photoURL!
                 ).then((error) => {
                     UpdateUser(updatedUser).then(() => {
                         router.reload();
@@ -155,7 +152,7 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                             <div className="flex items-center">
                                 <div className="rounded-full overflow-hidden mr-5">
                                     <Image
-                                        src={data?.photoURL!}
+                                        src={currentUser?.photoURL!}
                                         alt="avatar"
                                         width={150}
                                         height={150}
