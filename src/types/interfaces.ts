@@ -9,6 +9,7 @@ export interface IGithubUser {
     githubToken?: string | undefined;
     projects?: any | null;
     avatar_url?: string | null;
+    email?: string | null;
 }
 
 export interface IAuthContext {

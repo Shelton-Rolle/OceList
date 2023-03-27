@@ -43,7 +43,6 @@ export default function ProfileSetup() {
                     githubData?.githubToken!
                 );
                 const fullUser: IUser = {
-                    ...currentUser,
                     ...githubData,
                     assignedIssues,
                 };

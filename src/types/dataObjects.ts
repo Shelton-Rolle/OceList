@@ -77,21 +77,15 @@ export interface Issue {
 }
 
 export interface IUser {
-    email?: string | undefined | null;
-    emailVerified?: boolean | undefined;
-    html_url?: string | null;
-    githubId?: number | null;
-    isAnonymous?: boolean | null;
-    displayName?: string | null;
-    metadata?: UserMetadata | null;
-    photoURL?: string | null;
-    projects?: Project[] | DatabaseProjectData[] | null;
-    providerId?: string | null;
-    providerData?: ProviderData[];
-    public_repos?: number | null;
-    githubToken?: string | null;
-    uid?: string | null;
     assignedIssues?: Issue[];
+    displayName?: string | null;
+    githubId?: number | null;
+    githubToken?: string | null;
+    html_url?: string | null;
+    login?: string | null;
+    email?: string | null;
+    projects?: Project[] | DatabaseProjectData[] | null;
+    public_repos?: number | null;
 }
 
 export interface Project {

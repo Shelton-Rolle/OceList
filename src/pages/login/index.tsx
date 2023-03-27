@@ -25,13 +25,15 @@ export default function Login() {
                     router.push('/');
                 } else {
                     const userData: GithubUserObject = user!;
-                    const { html_url, id, login, public_repos } = userData;
+                    const { html_url, id, login, public_repos, email } =
+                        userData;
                     const userObject: IGithubUser = {
                         html_url,
                         githubId: id,
                         login,
                         public_repos,
                         githubToken: token,
+                        email,
                         projects: [],
                     };
                     setGithubData(userObject);

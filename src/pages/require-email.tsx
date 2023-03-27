@@ -3,13 +3,15 @@ import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
 
 export default function RequireEmail() {
-    const { updateUserEmail } = useAuth();
+    const { updateUserEmail, setGithubData, githubData } = useAuth();
     const router = useRouter();
     const [email, setEmail] = useState<string>();
 
     async function HandleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        await updateUserEmail(email!);
+        await updateUserEmail(email!).then(() => {
+            setGithubData({ ...githubData, email });
+        });
 
         router.push('/profile-setup');
     }
