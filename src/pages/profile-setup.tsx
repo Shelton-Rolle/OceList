@@ -12,6 +12,7 @@ import { IUser, Project } from '@/types/dataObjects';
 import { sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
 import auth from '@/firebase/auth/authInit';
 import GenerateTemporaryPassword from '@/helpers/GenerateTemporaryPassword';
+import GetDefaultBanners from '@/firebase/storage/GetDefaultBanners';
 
 export default function ProfileSetup() {
     const {
@@ -53,21 +54,28 @@ export default function ProfileSetup() {
                 ).then(async () => {
                     fullUser.displayName = githubData?.login!;
                     fullUser.photoURL = githubData?.avatar_url!;
-                    // Change Banner URL to be a random selection from default banners
-                    fullUser.banner_url =
-                        'https://firebasestorage.googleapis.com/v0/b/opensourcestartup-621f8.appspot.com/o/artwork-imperial-city-rain-samurai-wallpaper-preview.jpg?alt=media&token=a819a91c-b2c4-4054-86e4-a8c35deee83b';
-                    // Generate a temporary password for the user
-                    const password = GenerateTemporaryPassword();
-                    await updateUserPassword(password);
+                    await GetDefaultBanners().then(async (defaultBanners) => {
+                        fullUser.banner_url =
+                            defaultBanners[
+                                Math.floor(
+                                    Math.random() * defaultBanners.length
+                                )
+                            ];
 
-                    // Code for signing up with github
-                    await CreateUser(githubData?.githubToken!, fullUser).then(
-                        async ({ result }) => {
+                        // Generate a temporary password for the user
+                        const password = GenerateTemporaryPassword();
+                        await updateUserPassword(password);
+
+                        // Code for signing up with github
+                        await CreateUser(
+                            githubData?.githubToken!,
+                            fullUser
+                        ).then(async ({ result }) => {
                             setCurrentUserData(fullUser);
                             await sendEmailVerification(currentUser!);
                             router.push(`/${githubData?.login}`);
-                        }
-                    );
+                        });
+                    });
                 });
             })
             .catch((error) => {
