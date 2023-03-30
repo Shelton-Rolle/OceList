@@ -1,3 +1,4 @@
+import DeleteProject from '@/database/DeleteProject';
 import GetProject from '@/database/GetProject';
 import database from '@/firebase/database/databaseInit';
 import { PageLayout } from '@/layouts/PageLayout';
@@ -7,20 +8,35 @@ import { ref, get, child } from 'firebase/database';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-export default function ProjectPage({ projectId, project }: ProjectPageProps) {
+export default function ProjectPage({
+    projectId,
+    project,
+    owner,
+}: ProjectPageProps) {
+    const router = useRouter();
     const [contributors, setContributors] = useState<GithubUserObject[]>();
-    // We can fetch any repo data we need that we dont have using the provided links in the project as seen below where we fetch the contributors
+
     async function fetchContributors() {
         await fetch(project?.contributors_url!)
             .then((res) => res.json())
             .then((res) => setContributors(res));
     }
 
+    async function Delete() {
+        await DeleteProject(owner, project)
+            .then((res) => {
+                console.log('Res: ', res);
+                router.push(`/${owner?.login}`);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
     useEffect(() => {
-        console.log('Project Id: ', projectId);
-        console.log('Data: ', project);
         fetchContributors();
     }, []);
 
@@ -37,6 +53,12 @@ export default function ProjectPage({ projectId, project }: ProjectPageProps) {
             </Head>
             <PageLayout>
                 <div>
+                    <button
+                        className="outline outline-2 outline-black rounded-sm p-5 my-4"
+                        onClick={Delete}
+                    >
+                        Delete Project
+                    </button>
                     <h1>{project?.name}</h1>
                     <p>Owner: {project?.owner?.login}</p>
                     <Link href={project?.html_url!}>Repo Link</Link>
@@ -89,10 +111,25 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             console.error(error);
         });
 
+    const owner = await get(
+        child(ref(database), `users/${project?.owner?.login}`)
+    )
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                return snapshot.val();
+            } else {
+                return null;
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+
     return {
         props: {
             projectId,
             project,
+            owner,
         },
     };
 };

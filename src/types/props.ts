@@ -35,4 +35,5 @@ export interface ProjectCardProps {
 export interface ProjectPageProps {
     projectId: string;
     project: Project;
+    owner: IUser;
 }
