@@ -86,6 +86,12 @@ export interface IUser {
     email?: string | null;
     projects?: Project[] | DatabaseProjectData[] | null;
     public_repos?: number | null;
+    followers?: IUser[];
+    follower_count?: number;
+    following?: IUser[];
+    following_count?: number;
+    favorite_projects?: Project[] | DatabaseProjectData[] | null;
+    favorite_projects_count?: number;
 }
 
 export interface Project {

@@ -23,7 +23,7 @@ interface ProfilePageProps {
 }
 
 export default function ProfilePage({ profileName, data }: ProfilePageProps) {
-    const { currentUser, UpdateProfile } = useAuth();
+    const { currentUser, UpdateProfile, currentUserData } = useAuth();
     const [isCurrentUser, setIsCurrentUser] = useState<boolean>(false);
     const [viewProjects, setViewProjects] = useState<boolean>(true);
     const [viewActivity, setViewActivity] = useState<boolean>(false);
@@ -35,16 +35,55 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
     const [projectsList, setProjectsList] = useState<DatabaseProjectData[]>();
     const [openProjectModal, setOpenProjectModal] = useState<boolean>(false);
     const [openAvatarModal, setOpenAvatarModal] = useState<boolean>(false);
+    const [loadingFollow, setLoadingFollow] = useState<boolean>(false);
+    const [isFollowing, setIsFollowing] = useState<boolean>();
+    const [loadingPage, setLoadingPage] = useState<boolean>(true);
 
-    useEffect(() => {
-        if (currentUser) {
-            if (profileName === currentUser?.displayName) {
-                setIsCurrentUser(true);
+    async function FollowUser() {
+        setLoadingFollow(true);
+        const followingUserObject = {
+            displayName: data?.displayName,
+            html_url: data?.html_url,
+        };
+        const followerUserObject = {
+            displayName: currentUserData?.displayName,
+            html_url: currentUserData?.html_url,
+        };
+        const updatedCurrentUser: IUser = {
+            ...currentUserData,
+            following: currentUserData?.following
+                ? [...currentUserData?.following, followingUserObject]
+                : [followingUserObject],
+            following_count: currentUserData?.following_count
+                ? currentUserData?.following_count + 1
+                : 1,
+        };
+        const updatedProfileUserData: IUser = {
+            ...data,
+            followers: data?.followers
+                ? [...data?.followers, followerUserObject]
+                : [followerUserObject],
+            follower_count: data?.follower_count ? data?.follower_count + 1 : 1,
+        };
+
+        await UpdateUser(updatedCurrentUser).then(async ({ result }) => {
+            if (result?.updated) {
+                await UpdateUser(updatedProfileUserData).then(({ result }) => {
+                    if (result?.updated) {
+                        setLoadingFollow(false);
+                        setIsFollowing(true);
+                    } else {
+                        console.log(
+                            'Error Updating Profile User: ',
+                            result?.errors
+                        );
+                    }
+                });
             } else {
-                setIsCurrentUser(false);
+                console.log('Error Updating Current User: ', result?.errors);
             }
-        }
-    }, [currentUser]);
+        });
+    }
 
     async function ChangeView(newType: string) {
         switch (newType) {
@@ -119,6 +158,24 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
     }
 
     useEffect(() => {
+        if (profileName === currentUser?.displayName) {
+            setIsCurrentUser(true);
+        } else {
+            setIsCurrentUser(false);
+        }
+
+        if (currentUserData?.following) {
+            for (let i = 0; i < currentUserData?.following?.length; i++) {
+                const { displayName } = currentUserData?.following[i];
+                if (displayName === data?.displayName) {
+                    setIsFollowing(true);
+                    break;
+                }
+            }
+        }
+    }, [currentUser, currentUserData]);
+
+    useEffect(() => {
         setProjectsList(data?.projects as DatabaseProjectData[]);
     }, []);
 
@@ -170,9 +227,28 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                         {data?.displayName}
                                     </p>
                                     <p className="text-base text-gray-400">
-                                        10 Followers
+                                        {data?.follower_count
+                                            ? data?.follower_count
+                                            : '0'}{' '}
+                                        Followers
                                     </p>
                                 </div>
+                                {!isCurrentUser && (
+                                    <button
+                                        onClick={FollowUser}
+                                        className="outline outline-1 outline-black rounded-sm px-3 py-2 my-4"
+                                    >
+                                        {loadingFollow ? (
+                                            <>Loading</>
+                                        ) : (
+                                            <>
+                                                {isFollowing
+                                                    ? 'Following'
+                                                    : 'Follow'}
+                                            </>
+                                        )}
+                                    </button>
+                                )}
                             </div>
                         </header>
                         <div className="w-full grid grid-cols-2 mb-6">
@@ -207,7 +283,7 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                             }
                                             className="border-2 border-blue-300 py-1 px-3 rounded-md text-blue-300 my-4 text-2xl"
                                         >
-                                            +
+                                            Add Project
                                         </button>
                                     </div>
                                 )}
