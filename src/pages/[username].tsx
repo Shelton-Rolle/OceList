@@ -37,52 +37,125 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
     const [openAvatarModal, setOpenAvatarModal] = useState<boolean>(false);
     const [loadingFollow, setLoadingFollow] = useState<boolean>(false);
     const [isFollowing, setIsFollowing] = useState<boolean>();
-    const [loadingPage, setLoadingPage] = useState<boolean>(true);
 
     async function FollowUser() {
         setLoadingFollow(true);
-        const followingUserObject = {
-            displayName: data?.displayName,
-            html_url: data?.html_url,
-        };
-        const followerUserObject = {
-            displayName: currentUserData?.displayName,
-            html_url: currentUserData?.html_url,
-        };
-        const updatedCurrentUser: IUser = {
-            ...currentUserData,
-            following: currentUserData?.following
-                ? [...currentUserData?.following, followingUserObject]
-                : [followingUserObject],
-            following_count: currentUserData?.following_count
-                ? currentUserData?.following_count + 1
-                : 1,
-        };
-        const updatedProfileUserData: IUser = {
-            ...data,
-            followers: data?.followers
-                ? [...data?.followers, followerUserObject]
-                : [followerUserObject],
-            follower_count: data?.follower_count ? data?.follower_count + 1 : 1,
-        };
+        if (isFollowing) {
+            const followingList = currentUserData?.following;
+            const followerList = data?.followers;
+            // Add UnFollow Functionality
+            let followingIndex;
+            let followerIndex;
 
-        await UpdateUser(updatedCurrentUser).then(async ({ result }) => {
-            if (result?.updated) {
-                await UpdateUser(updatedProfileUserData).then(({ result }) => {
-                    if (result?.updated) {
-                        setLoadingFollow(false);
-                        setIsFollowing(true);
-                    } else {
-                        console.log(
-                            'Error Updating Profile User: ',
-                            result?.errors
-                        );
-                    }
-                });
-            } else {
-                console.log('Error Updating Current User: ', result?.errors);
+            for (let i = 0; i < currentUserData?.following?.length!; i++) {
+                if (
+                    currentUserData?.following![i].displayName ===
+                    data?.displayName
+                ) {
+                    followingIndex = i;
+                }
             }
-        });
+
+            for (let i = 0; i < data?.followers?.length!; i++) {
+                if (
+                    data?.followers![i].displayName ===
+                    currentUserData?.displayName
+                ) {
+                    followerIndex = i;
+                }
+            }
+
+            console.log('Following Index: ', followingIndex);
+            console.log('Follower Index: ', followerIndex);
+            if (followingIndex !== undefined) {
+                followingList?.splice(followingIndex, 1);
+            }
+            if (followerIndex !== undefined) {
+                followerList?.splice(followerIndex, 1);
+            }
+
+            const updatedCurrentUser: IUser = {
+                ...currentUserData,
+                following: followingList,
+                following_count: currentUserData?.following_count! - 1,
+            };
+            const updatedProfileUser: IUser = {
+                ...data,
+                followers: followerList,
+                follower_count: data?.follower_count! - 1,
+            };
+
+            await UpdateUser(updatedCurrentUser).then(async ({ result }) => {
+                if (result?.updated) {
+                    await UpdateUser(updatedProfileUser).then(({ result }) => {
+                        if (result?.updated) {
+                            setLoadingFollow(false);
+                            setIsFollowing(false);
+                        } else {
+                            console.log(
+                                'Error Updating Profile User: ',
+                                result?.errors
+                            );
+                        }
+                    });
+                } else {
+                    console.log(
+                        'Error Updating Current User: ',
+                        result?.errors
+                    );
+                }
+            });
+        } else {
+            const followingUserObject = {
+                displayName: data?.displayName,
+                html_url: data?.html_url,
+            };
+            const followerUserObject = {
+                displayName: currentUserData?.displayName,
+                html_url: currentUserData?.html_url,
+            };
+            const updatedCurrentUser: IUser = {
+                ...currentUserData,
+                following: currentUserData?.following
+                    ? [...currentUserData?.following, followingUserObject]
+                    : [followingUserObject],
+                following_count: currentUserData?.following_count
+                    ? currentUserData?.following_count + 1
+                    : 1,
+            };
+            const updatedProfileUserData: IUser = {
+                ...data,
+                followers: data?.followers
+                    ? [...data?.followers, followerUserObject]
+                    : [followerUserObject],
+                follower_count: data?.follower_count
+                    ? data?.follower_count + 1
+                    : 1,
+            };
+
+            await UpdateUser(updatedCurrentUser).then(async ({ result }) => {
+                if (result?.updated) {
+                    await UpdateUser(updatedProfileUserData).then(
+                        ({ result }) => {
+                            if (result?.updated) {
+                                setLoadingFollow(false);
+                                setIsFollowing(true);
+                            } else {
+                                console.log(
+                                    'Error Updating Profile User: ',
+                                    result?.errors
+                                );
+                            }
+                        }
+                    );
+                } else {
+                    console.log(
+                        'Error Updating Current User: ',
+                        result?.errors
+                    );
+                }
+            });
+        }
     }
 
     async function ChangeView(newType: string) {
@@ -236,7 +309,7 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                 {!isCurrentUser && (
                                     <button
                                         onClick={FollowUser}
-                                        className="outline outline-1 outline-black rounded-sm px-3 py-2 my-4"
+                                        className={`outline outline-1 outline-black rounded-sm px-3 py-2 my-4`}
                                     >
                                         {loadingFollow ? (
                                             <>Loading</>
