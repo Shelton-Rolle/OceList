@@ -8,7 +8,7 @@ export default async function handler(
 ) {
     const { displayName, updatedData } = req.body;
 
-    set(ref(database, `users/${displayName}`), updatedData)
+    await set(ref(database, `users/${displayName}`), updatedData)
         .then(() => {
             res.status(200).json({ updated: true, errors: [] });
         })
