@@ -52,6 +52,10 @@ export default function ProfileSetup() {
                     githubData?.avatar_url!
                 ).then(async () => {
                     fullUser.displayName = githubData?.login!;
+                    fullUser.photoURL = githubData?.avatar_url!;
+                    // Change Banner URL to be a random selection from default banners
+                    fullUser.banner_url =
+                        'https://firebasestorage.googleapis.com/v0/b/opensourcestartup-621f8.appspot.com/o/artwork-imperial-city-rain-samurai-wallpaper-preview.jpg?alt=media&token=a819a91c-b2c4-4054-86e4-a8c35deee83b';
                     // Generate a temporary password for the user
                     const password = GenerateTemporaryPassword();
                     await updateUserPassword(password);

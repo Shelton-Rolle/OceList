@@ -78,12 +78,14 @@ export interface Issue {
 
 export interface IUser {
     assignedIssues?: Issue[];
+    banner_url?: string | null;
     displayName?: string | null;
     githubId?: number | null;
     githubToken?: string | null;
     html_url?: string | null;
     login?: string | null;
     email?: string | null;
+    photoURL?: string | null;
     projects?: Project[] | DatabaseProjectData[] | null;
     public_repos?: number | null;
     followers?: IUser[];

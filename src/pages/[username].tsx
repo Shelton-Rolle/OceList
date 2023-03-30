@@ -279,13 +279,21 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                 ) : (
                     <div>
                         <header>
-                            <div className="flex items-center">
-                                <div className="rounded-full overflow-hidden mr-5">
+                            <div className="relative flex items-center h-64 mb-16">
+                                <div className="top-0 left-0 w-full h-full bg-black -z-10 relative overflow-hidden">
                                     <Image
-                                        src={currentUser?.photoURL!}
+                                        src={data?.banner_url!}
+                                        alt="banner"
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+                                <div className=" absolute -bottom-12 left-7 rounded-full overflow-hidden mr-5">
+                                    <Image
+                                        src={data?.photoURL!}
                                         alt="avatar"
-                                        width={150}
-                                        height={150}
+                                        width={100}
+                                        height={100}
                                         onClick={() => {
                                             if (isCurrentUser) {
                                                 setOpenAvatarModal(true);
