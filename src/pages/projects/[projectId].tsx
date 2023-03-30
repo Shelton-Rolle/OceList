@@ -1,3 +1,4 @@
+import { useAuth } from '@/context/AuthContext';
 import DeleteProject from '@/database/DeleteProject';
 import GetProject from '@/database/GetProject';
 import database from '@/firebase/database/databaseInit';
@@ -16,8 +17,10 @@ export default function ProjectPage({
     project,
     owner,
 }: ProjectPageProps) {
+    const { currentUser } = useAuth();
     const router = useRouter();
     const [contributors, setContributors] = useState<GithubUserObject[]>();
+    const [isOwner, setIsOwner] = useState<boolean>();
 
     async function fetchContributors() {
         await fetch(project?.contributors_url!)
@@ -40,6 +43,16 @@ export default function ProjectPage({
         fetchContributors();
     }, []);
 
+    useEffect(() => {
+        if (currentUser) {
+            if (currentUser.displayName === owner.displayName) {
+                setIsOwner(true);
+            } else {
+                setIsOwner(false);
+            }
+        }
+    }, [currentUser]);
+
     return (
         <>
             <Head>
@@ -53,12 +66,14 @@ export default function ProjectPage({
             </Head>
             <PageLayout>
                 <div>
-                    <button
-                        className="outline outline-2 outline-black rounded-sm p-5 my-4"
-                        onClick={Delete}
-                    >
-                        Delete Project
-                    </button>
+                    {isOwner && (
+                        <button
+                            className="outline outline-2 outline-black rounded-sm p-5 my-4"
+                            onClick={Delete}
+                        >
+                            Delete Project
+                        </button>
+                    )}
                     <h1>{project?.name}</h1>
                     <p>Owner: {project?.owner?.login}</p>
                     <Link href={project?.html_url!}>Repo Link</Link>

@@ -22,12 +22,12 @@ export const PageHeader = () => {
                 </Link>
                 {currentUser ? (
                     <>
-                        <Link
+                        <a
                             href={`/${currentUser?.displayName}`}
                             className="py-3 px-6 duration-200 hover:bg-gray-800"
                         >
                             Profile
-                        </Link>
+                        </a>
                         <Link
                             href={`/profile/settings`}
                             className="mt-auto py-3 px-6 duration-200 hover:bg-gray-800"
