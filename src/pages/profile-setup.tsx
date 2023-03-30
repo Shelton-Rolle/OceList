@@ -73,7 +73,7 @@ export default function ProfileSetup() {
                         ).then(async ({ result }) => {
                             setCurrentUserData(fullUser);
                             await sendEmailVerification(currentUser!);
-                            router.push(`/${githubData?.login}`);
+                            router.push(`/`);
                         });
                     });
                 });
