@@ -307,6 +307,7 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                     <Image
                                         src={data?.banner_url!}
                                         alt="banner"
+                                        priority
                                         fill
                                         className="object-cover"
                                         onClick={() => {
