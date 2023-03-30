@@ -50,6 +50,8 @@ export default function ProjectPage({
             } else {
                 setIsOwner(false);
             }
+        } else {
+            setIsOwner(false);
         }
     }, [currentUser]);
 
