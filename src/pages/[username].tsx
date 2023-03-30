@@ -16,6 +16,7 @@ import MutateProjectObjects from '@/helpers/MutateProjectObjects';
 import { Project, DatabaseProjectData, IUser } from '@/types/dataObjects';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
+import UploadBanner from '@/firebase/storage/UploadBanner';
 
 interface ProfilePageProps {
     profileName: string;
@@ -29,12 +30,14 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
     const [viewActivity, setViewActivity] = useState<boolean>(false);
     const router = useRouter();
     const [avatar, setAvatar] = useState<File | null>(null);
+    const [banner, setBanner] = useState<File | null>(null);
     const { projects, assignedIssues } = data;
     const [modalProjects, setModalProjects] = useState<Project[]>();
     const [newProjects, setNewProjects] = useState<Project[]>([]);
     const [projectsList, setProjectsList] = useState<DatabaseProjectData[]>();
     const [openProjectModal, setOpenProjectModal] = useState<boolean>(false);
     const [openAvatarModal, setOpenAvatarModal] = useState<boolean>(false);
+    const [openBannerModal, setOpenBannerModal] = useState<boolean>(false);
     const [loadingFollow, setLoadingFollow] = useState<boolean>(false);
     const [isFollowing, setIsFollowing] = useState<boolean>();
 
@@ -182,6 +185,7 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
             await UploadImage(avatar, data?.displayName!).then(async (url) => {
                 const updatedUser: IUser = {
                     ...data!,
+                    photoURL: url,
                 };
 
                 await UpdateProfile(
@@ -195,6 +199,25 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
             });
         } else {
             console.log('No Avatar Selected');
+        }
+    }
+
+    async function UpdateBanner(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+
+        if (banner) {
+            await UploadBanner(banner, data?.displayName!).then(async (url) => {
+                const updatedUser: IUser = {
+                    ...data!,
+                    banner_url: url,
+                };
+
+                await UpdateUser(updatedUser).then(() => {
+                    router.reload();
+                });
+            });
+        } else {
+            console.log('No Banner Selected');
         }
     }
 
@@ -280,15 +303,20 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                     <div>
                         <header>
                             <div className="relative flex items-center h-64 mb-16">
-                                <div className="top-0 left-0 w-full h-full bg-black -z-10 relative overflow-hidden">
+                                <div className="top-0 left-0 w-full h-full absolute overflow-hidden">
                                     <Image
                                         src={data?.banner_url!}
                                         alt="banner"
                                         fill
                                         className="object-cover"
+                                        onClick={() => {
+                                            if (isCurrentUser) {
+                                                setOpenBannerModal(true);
+                                            }
+                                        }}
                                     />
                                 </div>
-                                <div className=" absolute -bottom-12 left-7 rounded-full overflow-hidden mr-5">
+                                <div className="absolute -bottom-12 left-7 rounded-full overflow-hidden mr-5">
                                     <Image
                                         src={data?.photoURL!}
                                         alt="avatar"
@@ -475,6 +503,43 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                             className="outline outline-2 outline-red-300 rounded-sm py-2 px-5 text-red-300"
                                             onClick={() =>
                                                 setOpenAvatarModal(false)
+                                            }
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            className="outline outline-2 outline-blue-300 rounded-sm py-2 px-5 text-blue-300"
+                                            type="submit"
+                                        >
+                                            Update
+                                        </button>
+                                    </form>
+                                </div>
+                            </article>
+                        )}
+                        {openBannerModal && (
+                            <article className="absolute top-0 left-0 w-full h-screen">
+                                <div
+                                    id="overlay"
+                                    className="absolute top-0 left-0 w-full h-screen bg-black bg-opacity-75"
+                                />
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 bg-white">
+                                    <form onSubmit={UpdateBanner}>
+                                        <input
+                                            type="file"
+                                            id="avatar"
+                                            accept="image/jpg image/jpeg image/png"
+                                            onChange={(e) =>
+                                                setBanner(
+                                                    e.target.files &&
+                                                        e.target.files[0]
+                                                )
+                                            }
+                                        />
+                                        <button
+                                            className="outline outline-2 outline-red-300 rounded-sm py-2 px-5 text-red-300"
+                                            onClick={() =>
+                                                setOpenBannerModal(false)
                                             }
                                         >
                                             Cancel
