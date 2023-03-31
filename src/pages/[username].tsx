@@ -32,6 +32,7 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
     const [isCurrentUser, setIsCurrentUser] = useState<boolean>(false);
     const [viewProjects, setViewProjects] = useState<boolean>(true);
     const [viewActivity, setViewActivity] = useState<boolean>(false);
+    const [viewPosts, setViewPosts] = useState<boolean>(false);
     const { projects, assignedIssues } = data;
     const [modalProjects, setModalProjects] = useState<Project[]>();
     const [projectsList, setProjectsList] = useState<DatabaseProjectData[]>();
@@ -167,14 +168,26 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
             case 'project':
                 if (viewActivity) {
                     setViewActivity(false);
-                    setViewProjects(true);
+                } else if (viewPosts) {
+                    setViewPosts(false);
                 }
+                setViewProjects(true);
                 break;
             case 'activity':
                 if (viewProjects) {
                     setViewProjects(false);
-                    setViewActivity(true);
+                } else if (viewPosts) {
+                    setViewPosts(false);
                 }
+                setViewActivity(true);
+                break;
+            case 'posts':
+                if (viewProjects) {
+                    setViewProjects(false);
+                } else if (viewActivity) {
+                    setViewActivity(false);
+                }
+                setViewPosts(true);
                 break;
         }
     }
@@ -297,7 +310,7 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                 </button>
                             </div>
                         )}
-                        <div className="w-full grid grid-cols-2 mb-6">
+                        <div className="w-full grid grid-cols-3 mb-6">
                             <button
                                 onClick={() => ChangeView('project')}
                                 className={`py-3 border-b-2 duration-150 ${
@@ -307,6 +320,16 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                 }`}
                             >
                                 Projects
+                            </button>
+                            <button
+                                onClick={() => ChangeView('posts')}
+                                className={`py-3 border-b-2 duration-150 ${
+                                    viewPosts
+                                        ? 'border-b-black text-black'
+                                        : 'border-b-gray-300 text-gray-300'
+                                }`}
+                            >
+                                Posts
                             </button>
                             <button
                                 onClick={() => ChangeView('activity')}
@@ -350,6 +373,19 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                             <p>No Projects Found</p>
                                         )}
                                     </>
+                                )}
+                            </section>
+                        )}
+                        {viewPosts && (
+                            <section>
+                                {data?.posts ? (
+                                    <>
+                                        {data?.posts?.map((post, index) => (
+                                            <p key={index}>{post.body}</p>
+                                        ))}
+                                    </>
+                                ) : (
+                                    <p>No Posts Found.</p>
                                 )}
                             </section>
                         )}

@@ -106,6 +106,7 @@ export interface IUser {
 export interface Post {
     owner: IUser;
     body: string;
+    projectId?: string;
     comments?: Comment[];
 }
 
