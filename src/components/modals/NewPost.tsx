@@ -14,6 +14,7 @@ export const NewPost = ({ projects, setModal, userData }: NewPostProps) => {
         e.preventDefault();
 
         if (!body || body === '') {
+            // This error should be displayed to the user
             console.log('error/post_body_missing');
             return;
         }
@@ -42,7 +43,6 @@ export const NewPost = ({ projects, setModal, userData }: NewPostProps) => {
             };
         }
 
-        console.log('Updated User Object: ', updatedUserObject);
         await UpdateUser(updatedUserObject).then(({ result }) => {
             if (result?.updated) {
                 router.reload();
@@ -88,7 +88,7 @@ export const NewPost = ({ projects, setModal, userData }: NewPostProps) => {
                         className="outline outline-2 outline-blue-300 rounded-sm py-2 px-5 text-blue-300"
                         type="submit"
                     >
-                        Update
+                        Post
                     </button>
                 </div>
             </form>
