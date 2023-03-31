@@ -6,9 +6,9 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    const { displayName, updatedData } = req.body;
+    const { project } = req.body;
 
-    await set(ref(database, `users/${displayName}`), updatedData)
+    await set(ref(database, `projects/${project?.id}`), project)
         .then(() => {
             res.status(200).json({ updated: true, errors: [] });
         })

@@ -1,4 +1,11 @@
-import { GetGitHubRepositoryLanugages } from '@/firebase/auth/gitHubAuth/octokit';
+import {
+    GetGitHubRepositoryLanugages,
+    GetProjectContributors,
+    GetProjectReadme,
+    GetRepositoryForksCount,
+    GetRepositoryStargazers,
+    GetRepositorySubscribers,
+} from '@/firebase/auth/gitHubAuth/octokit';
 import {
     DatabaseIssueObject,
     DatabaseProjectData,
@@ -12,7 +19,7 @@ export default async function MutateProjectObjects(
     let mutatedProjects: DatabaseProjectData[] = [];
 
     for (let i = 0; i < projects.length; i++) {
-        const { id, name, owner, languages_url, issues } = projects[i];
+        const { name, owner, issues } = projects[i];
         const issueData: DatabaseIssueObject[] = [];
 
         if (issues) {
@@ -25,6 +32,7 @@ export default async function MutateProjectObjects(
                     title: title!,
                     repoId: projects[i].id!,
                     repoName: name!,
+                    type: 'issue',
                 });
             });
         }
@@ -35,10 +43,42 @@ export default async function MutateProjectObjects(
             name!
         );
 
+        const readme = await GetProjectReadme(token, owner?.login!, name!);
+
+        const contributors = await GetProjectContributors(
+            token,
+            owner?.login!,
+            name!
+        );
+
+        const subscribers = await GetRepositorySubscribers(
+            token,
+            owner?.login!,
+            name!
+        );
+
+        const stargazers = await GetRepositoryStargazers(
+            token,
+            owner?.login!,
+            name!
+        );
+
+        const forks = await GetRepositoryForksCount(
+            token,
+            owner?.login!,
+            name!
+        );
+
         mutatedProjects?.push({
             ...projects[i],
             issues: issueData,
             languages,
+            readme,
+            contributors,
+            subscribers,
+            stargazers,
+            forks,
+            type: 'project',
         });
     }
 

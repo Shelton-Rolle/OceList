@@ -12,6 +12,7 @@ import { IUser, Project } from '@/types/dataObjects';
 import { sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
 import auth from '@/firebase/auth/authInit';
 import GenerateTemporaryPassword from '@/helpers/GenerateTemporaryPassword';
+import GetDefaultBanners from '@/firebase/storage/GetDefaultBanners';
 
 export default function ProfileSetup() {
     const {
@@ -52,18 +53,29 @@ export default function ProfileSetup() {
                     githubData?.avatar_url!
                 ).then(async () => {
                     fullUser.displayName = githubData?.login!;
-                    // Generate a temporary password for the user
-                    const password = GenerateTemporaryPassword();
-                    await updateUserPassword(password);
+                    fullUser.photoURL = githubData?.avatar_url!;
+                    await GetDefaultBanners().then(async (defaultBanners) => {
+                        fullUser.banner_url =
+                            defaultBanners[
+                                Math.floor(
+                                    Math.random() * defaultBanners.length
+                                )
+                            ];
 
-                    // Code for signing up with github
-                    await CreateUser(githubData?.githubToken!, fullUser).then(
-                        async ({ result }) => {
+                        // Generate a temporary password for the user
+                        const password = GenerateTemporaryPassword();
+                        await updateUserPassword(password);
+
+                        // Code for signing up with github
+                        await CreateUser(
+                            githubData?.githubToken!,
+                            fullUser
+                        ).then(async ({ result }) => {
                             setCurrentUserData(fullUser);
                             await sendEmailVerification(currentUser!);
-                            router.push(`/${githubData?.login}`);
-                        }
-                    );
+                            router.push(`/`);
+                        });
+                    });
                 });
             })
             .catch((error) => {

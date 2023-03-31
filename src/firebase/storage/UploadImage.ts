@@ -2,7 +2,7 @@ import { ref, uploadBytes } from 'firebase/storage';
 import GetImageURL from './GetImage';
 import storage from './storageInit';
 
-export default async function UploadImage(file: any, username: string) {
+export default async function UploadImage(file: File, username: string) {
     let imageURL;
     const imageRef = ref(storage, `images/avatars/${username}`);
 

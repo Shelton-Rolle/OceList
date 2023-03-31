@@ -1,5 +1,11 @@
 import { User, UserMetadata } from 'firebase/auth';
 
+export interface Comment {
+    owner: IUser;
+    body: string;
+    comments?: Comment[];
+}
+
 export interface DatabaseIssueObject {
     id: number;
     title: string;
@@ -7,10 +13,16 @@ export interface DatabaseIssueObject {
     repoId: number;
     repoName: string;
     state: string;
+    type: string;
 }
 
 export interface DatabaseProjectData extends Project {
     languages?: string[];
+    readme?: any;
+    contributors?: any[];
+    subscribers?: GithubUserObject[];
+    stargazers?: GithubUserObject[];
+    type: string;
 }
 
 interface GithubPermissions {
@@ -70,6 +82,7 @@ export interface Issue {
     state?: string;
     timeline_url?: string;
     title?: string;
+    type: string;
     updated_at?: string;
     url?: string;
     user?: GithubUserObject;
@@ -78,14 +91,31 @@ export interface Issue {
 
 export interface IUser {
     assignedIssues?: Issue[];
+    banner_url?: string | null;
     displayName?: string | null;
     githubId?: number | null;
     githubToken?: string | null;
     html_url?: string | null;
     login?: string | null;
     email?: string | null;
+    photoURL?: string | null;
     projects?: Project[] | DatabaseProjectData[] | null;
     public_repos?: number | null;
+    followers?: IUser[];
+    follower_count?: number;
+    following?: IUser[];
+    following_count?: number;
+    favorite_projects?: Project[] | DatabaseProjectData[] | null;
+    favorite_projects_count?: number;
+    posts?: Post[];
+}
+
+export interface Post {
+    owner: IUser;
+    body: string;
+    projectId?: string;
+    comments?: Comment[];
+    type: string;
 }
 
 export interface Project {

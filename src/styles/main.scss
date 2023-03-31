@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+#readme {
+    outline: 3px solid #f7f7f7;
+    border-radius: 7px;
+    padding: 24px;
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-weight: bold;
+        margin-bottom: 4px;
+    }
+
+    h1 {
+        font-size: 46px;
+    }
+
+    h2 {
+        font-size: 40px;
+    }
+
+    h3 {
+        font-size: 36px;
+    }
+
+    h4 {
+        font-size: 32px;
+    }
+
+    h5 {
+        font-size: 28px;
+    }
+
+    h6 {
+        font-size: 24px;
+    }
+
+    p {
+        line-height: 2;
+        font-size: 16px;
+        margin-bottom: 24px;
+    }
+}

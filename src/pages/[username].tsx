@@ -16,6 +16,11 @@ import MutateProjectObjects from '@/helpers/MutateProjectObjects';
 import { Project, DatabaseProjectData, IUser } from '@/types/dataObjects';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
+import UploadBanner from '@/firebase/storage/UploadBanner';
+import { NewPost } from '@/components/modals/NewPost';
+import { ChangeBanner } from '@/components/modals/ChangeBanner';
+import { ChangeAvatar } from '@/components/modals/ChangeAvatar';
+import { AddProjects } from '@/components/modals/AddProjects';
 
 interface ProfilePageProps {
     profileName: string;
@@ -23,100 +28,187 @@ interface ProfilePageProps {
 }
 
 export default function ProfilePage({ profileName, data }: ProfilePageProps) {
-    const { currentUser, UpdateProfile } = useAuth();
+    const { currentUser, currentUserData } = useAuth();
     const [isCurrentUser, setIsCurrentUser] = useState<boolean>(false);
     const [viewProjects, setViewProjects] = useState<boolean>(true);
     const [viewActivity, setViewActivity] = useState<boolean>(false);
-    const router = useRouter();
-    const [avatar, setAvatar] = useState<File | null>(null);
+    const [viewPosts, setViewPosts] = useState<boolean>(false);
     const { projects, assignedIssues } = data;
     const [modalProjects, setModalProjects] = useState<Project[]>();
-    const [newProjects, setNewProjects] = useState<Project[]>([]);
     const [projectsList, setProjectsList] = useState<DatabaseProjectData[]>();
     const [openProjectModal, setOpenProjectModal] = useState<boolean>(false);
     const [openAvatarModal, setOpenAvatarModal] = useState<boolean>(false);
+    const [openBannerModal, setOpenBannerModal] = useState<boolean>(false);
+    const [loadingFollow, setLoadingFollow] = useState<boolean>(false);
+    const [isFollowing, setIsFollowing] = useState<boolean>();
+    const [openNewPostModal, setOpenNewPostModal] = useState<boolean>(false);
 
-    useEffect(() => {
-        if (currentUser) {
-            if (profileName === currentUser?.displayName) {
-                setIsCurrentUser(true);
-            } else {
-                setIsCurrentUser(false);
+    async function FollowUser() {
+        setLoadingFollow(true);
+        if (isFollowing) {
+            const followingList = currentUserData?.following;
+            const followerList = data?.followers;
+            // Add UnFollow Functionality
+            let followingIndex;
+            let followerIndex;
+
+            for (let i = 0; i < currentUserData?.following?.length!; i++) {
+                if (
+                    currentUserData?.following![i].displayName ===
+                    data?.displayName
+                ) {
+                    followingIndex = i;
+                }
             }
+
+            for (let i = 0; i < data?.followers?.length!; i++) {
+                if (
+                    data?.followers![i].displayName ===
+                    currentUserData?.displayName
+                ) {
+                    followerIndex = i;
+                }
+            }
+
+            console.log('Following Index: ', followingIndex);
+            console.log('Follower Index: ', followerIndex);
+            if (followingIndex !== undefined) {
+                followingList?.splice(followingIndex, 1);
+            }
+            if (followerIndex !== undefined) {
+                followerList?.splice(followerIndex, 1);
+            }
+
+            const updatedCurrentUser: IUser = {
+                ...currentUserData,
+                following: followingList,
+                following_count: currentUserData?.following_count! - 1,
+            };
+            const updatedProfileUser: IUser = {
+                ...data,
+                followers: followerList,
+                follower_count: data?.follower_count! - 1,
+            };
+
+            await UpdateUser(updatedCurrentUser).then(async ({ result }) => {
+                if (result?.updated) {
+                    await UpdateUser(updatedProfileUser).then(({ result }) => {
+                        if (result?.updated) {
+                            setLoadingFollow(false);
+                            setIsFollowing(false);
+                        } else {
+                            console.log(
+                                'Error Updating Profile User: ',
+                                result?.errors
+                            );
+                        }
+                    });
+                } else {
+                    console.log(
+                        'Error Updating Current User: ',
+                        result?.errors
+                    );
+                }
+            });
+        } else {
+            const followingUserObject = {
+                displayName: data?.displayName,
+                html_url: data?.html_url,
+            };
+            const followerUserObject = {
+                displayName: currentUserData?.displayName,
+                html_url: currentUserData?.html_url,
+            };
+            const updatedCurrentUser: IUser = {
+                ...currentUserData,
+                following: currentUserData?.following
+                    ? [...currentUserData?.following, followingUserObject]
+                    : [followingUserObject],
+                following_count: currentUserData?.following_count
+                    ? currentUserData?.following_count + 1
+                    : 1,
+            };
+            const updatedProfileUserData: IUser = {
+                ...data,
+                followers: data?.followers
+                    ? [...data?.followers, followerUserObject]
+                    : [followerUserObject],
+                follower_count: data?.follower_count
+                    ? data?.follower_count + 1
+                    : 1,
+            };
+
+            await UpdateUser(updatedCurrentUser).then(async ({ result }) => {
+                if (result?.updated) {
+                    await UpdateUser(updatedProfileUserData).then(
+                        ({ result }) => {
+                            if (result?.updated) {
+                                setLoadingFollow(false);
+                                setIsFollowing(true);
+                            } else {
+                                console.log(
+                                    'Error Updating Profile User: ',
+                                    result?.errors
+                                );
+                            }
+                        }
+                    );
+                } else {
+                    console.log(
+                        'Error Updating Current User: ',
+                        result?.errors
+                    );
+                }
+            });
         }
-    }, [currentUser]);
+    }
 
     async function ChangeView(newType: string) {
         switch (newType) {
             case 'project':
                 if (viewActivity) {
                     setViewActivity(false);
-                    setViewProjects(true);
+                } else if (viewPosts) {
+                    setViewPosts(false);
                 }
+                setViewProjects(true);
                 break;
             case 'activity':
                 if (viewProjects) {
                     setViewProjects(false);
-                    setViewActivity(true);
+                } else if (viewPosts) {
+                    setViewPosts(false);
                 }
+                setViewActivity(true);
+                break;
+            case 'posts':
+                if (viewProjects) {
+                    setViewProjects(false);
+                } else if (viewActivity) {
+                    setViewActivity(false);
+                }
+                setViewPosts(true);
                 break;
         }
     }
 
-    async function UpdateAvatar(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-
-        if (avatar) {
-            await UploadImage(avatar, data?.displayName!).then(async (url) => {
-                const updatedUser: IUser = {
-                    ...data!,
-                };
-
-                await UpdateProfile(
-                    data?.displayName!,
-                    avatar ? url : currentUser?.photoURL!
-                ).then((error) => {
-                    UpdateUser(updatedUser).then(() => {
-                        router.reload();
-                    });
-                });
-            });
+    useEffect(() => {
+        if (profileName === currentUser?.displayName) {
+            setIsCurrentUser(true);
         } else {
-            console.log('No Avatar Selected');
+            setIsCurrentUser(false);
         }
-    }
 
-    async function AddNewProjects() {
-        await CreateProjects(data?.githubToken!, newProjects).then(async () => {
-            const updatedUserProjectsArray: DatabaseProjectData[] = [];
-
-            await projects?.map((project) => {
-                updatedUserProjectsArray.push(project as DatabaseProjectData);
-            });
-
-            const mutatedProjects = await MutateProjectObjects(
-                data?.githubToken!,
-                newProjects
-            );
-
-            await mutatedProjects.map((project) => {
-                updatedUserProjectsArray?.push(project);
-            });
-
-            const updatedUser: IUser = {
-                ...data,
-                projects: updatedUserProjectsArray,
-            };
-
-            await UpdateUser(updatedUser).then(({ result }) => {
-                if (result?.updated) {
-                    router.reload();
-                } else {
-                    console.log('There was an error: ', result?.errors);
+        if (currentUserData?.following) {
+            for (let i = 0; i < currentUserData?.following?.length; i++) {
+                const { displayName } = currentUserData?.following[i];
+                if (displayName === data?.displayName) {
+                    setIsFollowing(true);
+                    break;
                 }
-            });
-        });
-    }
+            }
+        }
+    }, [currentUser, currentUserData]);
 
     useEffect(() => {
         setProjectsList(data?.projects as DatabaseProjectData[]);
@@ -149,13 +241,27 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                 ) : (
                     <div>
                         <header>
-                            <div className="flex items-center">
-                                <div className="rounded-full overflow-hidden mr-5">
+                            <div className="relative flex items-center h-64 mb-16">
+                                <div className="top-0 left-0 w-full h-full absolute overflow-hidden">
                                     <Image
-                                        src={currentUser?.photoURL!}
+                                        src={data?.banner_url!}
+                                        alt="banner"
+                                        priority
+                                        fill
+                                        className="object-cover"
+                                        onClick={() => {
+                                            if (isCurrentUser) {
+                                                setOpenBannerModal(true);
+                                            }
+                                        }}
+                                    />
+                                </div>
+                                <div className="absolute -bottom-12 left-7 rounded-full overflow-hidden mr-5">
+                                    <Image
+                                        src={data?.photoURL!}
                                         alt="avatar"
-                                        width={150}
-                                        height={150}
+                                        width={100}
+                                        height={100}
                                         onClick={() => {
                                             if (isCurrentUser) {
                                                 setOpenAvatarModal(true);
@@ -170,12 +276,41 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                         {data?.displayName}
                                     </p>
                                     <p className="text-base text-gray-400">
-                                        10 Followers
+                                        {data?.follower_count
+                                            ? data?.follower_count
+                                            : '0'}{' '}
+                                        Followers
                                     </p>
                                 </div>
+                                {!isCurrentUser && (
+                                    <button
+                                        onClick={FollowUser}
+                                        className={`outline outline-1 outline-black rounded-sm px-3 py-2 my-4`}
+                                    >
+                                        {loadingFollow ? (
+                                            <>Loading</>
+                                        ) : (
+                                            <>
+                                                {isFollowing
+                                                    ? 'Following'
+                                                    : 'Follow'}
+                                            </>
+                                        )}
+                                    </button>
+                                )}
                             </div>
                         </header>
-                        <div className="w-full grid grid-cols-2 mb-6">
+                        {isCurrentUser && (
+                            <div>
+                                <button
+                                    className="outline outline-2 outline-black rounded-md px-4 py-2"
+                                    onClick={() => setOpenNewPostModal(true)}
+                                >
+                                    Create Post
+                                </button>
+                            </div>
+                        )}
+                        <div className="w-full grid grid-cols-3 mb-6">
                             <button
                                 onClick={() => ChangeView('project')}
                                 className={`py-3 border-b-2 duration-150 ${
@@ -185,6 +320,16 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                 }`}
                             >
                                 Projects
+                            </button>
+                            <button
+                                onClick={() => ChangeView('posts')}
+                                className={`py-3 border-b-2 duration-150 ${
+                                    viewPosts
+                                        ? 'border-b-black text-black'
+                                        : 'border-b-gray-300 text-gray-300'
+                                }`}
+                            >
+                                Posts
                             </button>
                             <button
                                 onClick={() => ChangeView('activity')}
@@ -207,7 +352,7 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                             }
                                             className="border-2 border-blue-300 py-1 px-3 rounded-md text-blue-300 my-4 text-2xl"
                                         >
-                                            +
+                                            Add Project
                                         </button>
                                     </div>
                                 )}
@@ -228,6 +373,19 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                             <p>No Projects Found</p>
                                         )}
                                     </>
+                                )}
+                            </section>
+                        )}
+                        {viewPosts && (
+                            <section>
+                                {data?.posts ? (
+                                    <>
+                                        {data?.posts?.map((post, index) => (
+                                            <p key={index}>{post.body}</p>
+                                        ))}
+                                    </>
+                                ) : (
+                                    <p>No Posts Found.</p>
                                 )}
                             </section>
                         )}
@@ -255,82 +413,31 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                             </section>
                         )}
                         {openProjectModal && (
-                            <article className="absolute top-0 left-0 w-full h-screen">
-                                <div
-                                    id="overlay"
-                                    className="absolute top-0 left-0 w-full h-screen bg-black bg-opacity-75"
-                                />
-                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 bg-white">
-                                    <div>
-                                        {modalProjects?.map(
-                                            (project, index) => (
-                                                <ModalProjectCheckbox
-                                                    project={project}
-                                                    existingProjects={
-                                                        data?.projects!
-                                                    }
-                                                    newProjects={newProjects}
-                                                    setNewProjects={
-                                                        setNewProjects
-                                                    }
-                                                    key={index}
-                                                />
-                                            )
-                                        )}
-                                        <button
-                                            className="outline outline-2 outline-red-300 rounded-sm py-2 px-5 text-red-300"
-                                            onClick={() =>
-                                                setOpenProjectModal(false)
-                                            }
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button
-                                            className="outline outline-2 outline-blue-300 rounded-sm py-2 px-5 text-blue-300"
-                                            onClick={AddNewProjects}
-                                        >
-                                            Add Projects
-                                        </button>
-                                    </div>
-                                </div>
-                            </article>
+                            <AddProjects
+                                projects={modalProjects!}
+                                existingProjects={data?.projects!}
+                                setModal={setOpenProjectModal}
+                                userData={data}
+                            />
                         )}
                         {openAvatarModal && (
-                            <article className="absolute top-0 left-0 w-full h-screen">
-                                <div
-                                    id="overlay"
-                                    className="absolute top-0 left-0 w-full h-screen bg-black bg-opacity-75"
-                                />
-                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 bg-white">
-                                    <form onSubmit={UpdateAvatar}>
-                                        <input
-                                            type="file"
-                                            id="avatar"
-                                            accept="image/jpg image/jpeg image/png"
-                                            onChange={(e) =>
-                                                setAvatar(
-                                                    e.target.files &&
-                                                        e.target.files[0]
-                                                )
-                                            }
-                                        />
-                                        <button
-                                            className="outline outline-2 outline-red-300 rounded-sm py-2 px-5 text-red-300"
-                                            onClick={() =>
-                                                setOpenAvatarModal(false)
-                                            }
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button
-                                            className="outline outline-2 outline-blue-300 rounded-sm py-2 px-5 text-blue-300"
-                                            type="submit"
-                                        >
-                                            Update
-                                        </button>
-                                    </form>
-                                </div>
-                            </article>
+                            <ChangeAvatar
+                                setModal={setOpenAvatarModal}
+                                userData={data}
+                            />
+                        )}
+                        {openBannerModal && (
+                            <ChangeBanner
+                                setModal={setOpenBannerModal}
+                                userData={data}
+                            />
+                        )}
+                        {openNewPostModal && (
+                            <NewPost
+                                projects={data?.projects!}
+                                setModal={setOpenNewPostModal}
+                                userData={data}
+                            />
                         )}
                     </div>
                 )}

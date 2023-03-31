@@ -143,3 +143,103 @@ export async function GetGitHubRepository(
 
     return data;
 }
+
+export async function GetProjectContributors(
+    token: string,
+    owner: string,
+    repo: string
+) {
+    let data;
+    const octokit = OctokitInit(token);
+
+    await octokit
+        .request('GET /repos/{owner}/{repo}/contributors', {
+            owner,
+            repo,
+        })
+        .then((res) => {
+            data = res?.data;
+        });
+
+    return data;
+}
+
+export async function GetProjectReadme(
+    token: string,
+    owner: string,
+    repo: string
+) {
+    let data;
+    const octokit = OctokitInit(token);
+
+    await octokit
+        .request('GET /repos/{owner}/{repo}/readme', {
+            owner,
+            repo,
+        })
+        .then((res) => {
+            data = res?.data;
+        });
+
+    return data;
+}
+
+export async function GetRepositorySubscribers(
+    token: string,
+    owner: string,
+    repo: string
+) {
+    let data;
+    const octokit = OctokitInit(token);
+
+    await octokit
+        .request('GET /repos/{owner}/{repo}/subscribers', {
+            owner,
+            repo,
+        })
+        .then((res) => {
+            data = res?.data;
+        });
+
+    return data;
+}
+
+export async function GetRepositoryStargazers(
+    token: string,
+    owner: string,
+    repo: string
+) {
+    let data;
+    const octokit = OctokitInit(token);
+
+    await octokit
+        .request('GET /repos/{owner}/{repo}/stargazers', {
+            owner,
+            repo,
+        })
+        .then((res) => {
+            data = res?.data;
+        });
+
+    return data;
+}
+
+export async function GetRepositoryForksCount(
+    token: string,
+    owner: string,
+    repo: string
+) {
+    let data;
+    const octokit = OctokitInit(token);
+
+    await octokit
+        .request('GET /repos/{owner}/{repo}/forks', {
+            owner,
+            repo,
+        })
+        .then((res) => {
+            data = res?.data.length;
+        });
+
+    return data;
+}
