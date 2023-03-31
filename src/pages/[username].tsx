@@ -17,6 +17,10 @@ import { Project, DatabaseProjectData, IUser } from '@/types/dataObjects';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import UploadBanner from '@/firebase/storage/UploadBanner';
+import { NewPost } from '@/components/modals/NewPost';
+import { ChangeBanner } from '@/components/modals/ChangeBanner';
+import { ChangeAvatar } from '@/components/modals/ChangeAvatar';
+import { AddProjects } from '@/components/modals/AddProjects';
 
 interface ProfilePageProps {
     profileName: string;
@@ -24,16 +28,12 @@ interface ProfilePageProps {
 }
 
 export default function ProfilePage({ profileName, data }: ProfilePageProps) {
-    const { currentUser, UpdateProfile, currentUserData } = useAuth();
+    const { currentUser, currentUserData } = useAuth();
     const [isCurrentUser, setIsCurrentUser] = useState<boolean>(false);
     const [viewProjects, setViewProjects] = useState<boolean>(true);
     const [viewActivity, setViewActivity] = useState<boolean>(false);
-    const router = useRouter();
-    const [avatar, setAvatar] = useState<File | null>(null);
-    const [banner, setBanner] = useState<File | null>(null);
     const { projects, assignedIssues } = data;
     const [modalProjects, setModalProjects] = useState<Project[]>();
-    const [newProjects, setNewProjects] = useState<Project[]>([]);
     const [projectsList, setProjectsList] = useState<DatabaseProjectData[]>();
     const [openProjectModal, setOpenProjectModal] = useState<boolean>(false);
     const [openAvatarModal, setOpenAvatarModal] = useState<boolean>(false);
@@ -178,83 +178,6 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                 break;
         }
     }
-
-    async function UpdateAvatar(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-
-        if (avatar) {
-            await UploadImage(avatar, data?.displayName!).then(async (url) => {
-                const updatedUser: IUser = {
-                    ...data!,
-                    photoURL: url,
-                };
-
-                await UpdateProfile(
-                    data?.displayName!,
-                    avatar ? url : currentUser?.photoURL!
-                ).then((error) => {
-                    UpdateUser(updatedUser).then(() => {
-                        router.reload();
-                    });
-                });
-            });
-        } else {
-            console.log('No Avatar Selected');
-        }
-    }
-
-    async function UpdateBanner(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-
-        if (banner) {
-            await UploadBanner(banner, data?.displayName!).then(async (url) => {
-                const updatedUser: IUser = {
-                    ...data!,
-                    banner_url: url,
-                };
-
-                await UpdateUser(updatedUser).then(() => {
-                    router.reload();
-                });
-            });
-        } else {
-            console.log('No Banner Selected');
-        }
-    }
-
-    async function AddNewProjects() {
-        await CreateProjects(data?.githubToken!, newProjects).then(async () => {
-            const updatedUserProjectsArray: DatabaseProjectData[] = [];
-
-            await projects?.map((project) => {
-                updatedUserProjectsArray.push(project as DatabaseProjectData);
-            });
-
-            const mutatedProjects = await MutateProjectObjects(
-                data?.githubToken!,
-                newProjects
-            );
-
-            await mutatedProjects.map((project) => {
-                updatedUserProjectsArray?.push(project);
-            });
-
-            const updatedUser: IUser = {
-                ...data,
-                projects: updatedUserProjectsArray,
-            };
-
-            await UpdateUser(updatedUser).then(({ result }) => {
-                if (result?.updated) {
-                    router.reload();
-                } else {
-                    console.log('There was an error: ', result?.errors);
-                }
-            });
-        });
-    }
-
-    async function CreateNewPost() {}
 
     useEffect(() => {
         if (profileName === currentUser?.displayName) {
@@ -454,174 +377,31 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                             </section>
                         )}
                         {openProjectModal && (
-                            <article className="absolute top-0 left-0 w-full h-screen">
-                                <div
-                                    id="overlay"
-                                    className="absolute top-0 left-0 w-full h-screen bg-black bg-opacity-75"
-                                />
-                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 bg-white">
-                                    <div>
-                                        {modalProjects?.map(
-                                            (project, index) => (
-                                                <ModalProjectCheckbox
-                                                    project={project}
-                                                    existingProjects={
-                                                        data?.projects!
-                                                    }
-                                                    newProjects={newProjects}
-                                                    setNewProjects={
-                                                        setNewProjects
-                                                    }
-                                                    key={index}
-                                                />
-                                            )
-                                        )}
-                                        <button
-                                            className="outline outline-2 outline-red-300 rounded-sm py-2 px-5 text-red-300"
-                                            onClick={() =>
-                                                setOpenProjectModal(false)
-                                            }
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button
-                                            className="outline outline-2 outline-blue-300 rounded-sm py-2 px-5 text-blue-300"
-                                            onClick={AddNewProjects}
-                                        >
-                                            Add Projects
-                                        </button>
-                                    </div>
-                                </div>
-                            </article>
+                            <AddProjects
+                                projects={modalProjects!}
+                                existingProjects={data?.projects!}
+                                setModal={setOpenProjectModal}
+                                userData={data}
+                            />
                         )}
                         {openAvatarModal && (
-                            <article className="absolute top-0 left-0 w-full h-screen">
-                                <div
-                                    id="overlay"
-                                    className="absolute top-0 left-0 w-full h-screen bg-black bg-opacity-75"
-                                />
-                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 bg-white">
-                                    <form onSubmit={UpdateAvatar}>
-                                        <input
-                                            type="file"
-                                            id="avatar"
-                                            accept="image/jpg image/jpeg image/png"
-                                            onChange={(e) =>
-                                                setAvatar(
-                                                    e.target.files &&
-                                                        e.target.files[0]
-                                                )
-                                            }
-                                        />
-                                        <button
-                                            className="outline outline-2 outline-red-300 rounded-sm py-2 px-5 text-red-300"
-                                            onClick={() =>
-                                                setOpenAvatarModal(false)
-                                            }
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button
-                                            className="outline outline-2 outline-blue-300 rounded-sm py-2 px-5 text-blue-300"
-                                            type="submit"
-                                        >
-                                            Update
-                                        </button>
-                                    </form>
-                                </div>
-                            </article>
+                            <ChangeAvatar
+                                setModal={setOpenAvatarModal}
+                                userData={data}
+                            />
                         )}
                         {openBannerModal && (
-                            <article className="absolute top-0 left-0 w-full h-screen">
-                                <div
-                                    id="overlay"
-                                    className="absolute top-0 left-0 w-full h-screen bg-black bg-opacity-75"
-                                />
-                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 bg-white">
-                                    <form onSubmit={UpdateBanner}>
-                                        <input
-                                            type="file"
-                                            id="avatar"
-                                            accept="image/jpg image/jpeg image/png"
-                                            onChange={(e) =>
-                                                setBanner(
-                                                    e.target.files &&
-                                                        e.target.files[0]
-                                                )
-                                            }
-                                        />
-                                        <button
-                                            className="outline outline-2 outline-red-300 rounded-sm py-2 px-5 text-red-300"
-                                            onClick={() =>
-                                                setOpenBannerModal(false)
-                                            }
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button
-                                            className="outline outline-2 outline-blue-300 rounded-sm py-2 px-5 text-blue-300"
-                                            type="submit"
-                                        >
-                                            Update
-                                        </button>
-                                    </form>
-                                </div>
-                            </article>
+                            <ChangeBanner
+                                setModal={setOpenBannerModal}
+                                userData={data}
+                            />
                         )}
                         {openNewPostModal && (
-                            <article className="absolute top-0 left-0 w-full h-screen">
-                                <div
-                                    id="overlay"
-                                    className="absolute top-0 left-0 w-full h-screen bg-black bg-opacity-75"
-                                />
-                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 bg-white">
-                                    <form
-                                        className="flex flex-col w-1/2 mx-auto"
-                                        onSubmit={CreateNewPost}
-                                    >
-                                        <label htmlFor="post_project">
-                                            Post Project
-                                        </label>
-                                        <select
-                                            name="post_project"
-                                            id="post_project"
-                                        >
-                                            <option value="">None</option>
-                                            {data?.projects?.map(
-                                                (project, index) => (
-                                                    <option
-                                                        value={project?.name?.toLowerCase()}
-                                                        key={index}
-                                                    >
-                                                        {project?.name}
-                                                    </option>
-                                                )
-                                            )}
-                                        </select>
-                                        <textarea
-                                            id="post_body"
-                                            placeholder="Start typing..."
-                                            className="outline outline-2 outline-black w-full mt-7"
-                                        />
-                                        <div className="mt-7">
-                                            <button
-                                                className="outline outline-2 outline-red-300 rounded-sm py-2 px-5 text-red-300"
-                                                onClick={() =>
-                                                    setOpenNewPostModal(false)
-                                                }
-                                            >
-                                                Cancel
-                                            </button>
-                                            <button
-                                                className="outline outline-2 outline-blue-300 rounded-sm py-2 px-5 text-blue-300"
-                                                type="submit"
-                                            >
-                                                Update
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </article>
+                            <NewPost
+                                projects={data?.projects!}
+                                setModal={setOpenNewPostModal}
+                                userData={data}
+                            />
                         )}
                     </div>
                 )}
