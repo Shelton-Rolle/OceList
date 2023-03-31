@@ -2,6 +2,7 @@ import {
     GetGitHubRepositoryLanugages,
     GetProjectContributors,
     GetProjectReadme,
+    GetRepositorySubscribers,
 } from '@/firebase/auth/gitHubAuth/octokit';
 import {
     DatabaseIssueObject,
@@ -48,12 +49,19 @@ export default async function MutateProjectObjects(
             name!
         );
 
+        const subscribers = await GetRepositorySubscribers(
+            token,
+            owner?.login!,
+            name!
+        );
+
         mutatedProjects?.push({
             ...projects[i],
             issues: issueData,
             languages,
             readme,
             contributors,
+            subscribers,
             type: 'project',
         });
     }

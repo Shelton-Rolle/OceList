@@ -183,3 +183,23 @@ export async function GetProjectReadme(
 
     return data;
 }
+
+export async function GetRepositorySubscribers(
+    token: string,
+    owner: string,
+    repo: string
+) {
+    let data;
+    const octokit = OctokitInit(token);
+
+    await octokit
+        .request('GET /repos/{owner}/{repo}/subscribers', {
+            owner,
+            repo,
+        })
+        .then((res) => {
+            data = res?.data;
+        });
+
+    return data;
+}

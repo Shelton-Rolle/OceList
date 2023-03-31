@@ -49,7 +49,6 @@ export default function ProjectPage({
 
     useEffect(() => {
         console.log('Project: ', project);
-        console.log('De-coded ReadME: ', atob(project?.readme?.content));
         setReadme(atob(project?.readme?.content));
     }, [project]);
 
@@ -89,8 +88,9 @@ export default function ProjectPage({
                     <section className="flex items-center gap-7 my-16">
                         <p>{project?.forks_count} Forks</p>
                         <p>{project?.stargazers_count} Stars</p>
-                        <p>{project?.watchers_count} Watchers</p>
+                        <p>{project?.subscribers?.length} Watchers</p>
                     </section>
+                    <p>License: {project?.license?.name}</p>
 
                     <div id="readme">
                         <ReactMarkdown>{readme!}</ReactMarkdown>
