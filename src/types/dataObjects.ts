@@ -1,5 +1,11 @@
 import { User, UserMetadata } from 'firebase/auth';
 
+export interface Comment {
+    owner: IUser;
+    body: string;
+    comments?: Comment[];
+}
+
 export interface DatabaseIssueObject {
     id: number;
     title: string;
@@ -94,6 +100,13 @@ export interface IUser {
     following_count?: number;
     favorite_projects?: Project[] | DatabaseProjectData[] | null;
     favorite_projects_count?: number;
+    posts?: Post[];
+}
+
+export interface Post {
+    owner: IUser;
+    body: string;
+    comments?: Comment[];
 }
 
 export interface Project {

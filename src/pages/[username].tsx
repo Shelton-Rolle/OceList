@@ -40,6 +40,7 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
     const [openBannerModal, setOpenBannerModal] = useState<boolean>(false);
     const [loadingFollow, setLoadingFollow] = useState<boolean>(false);
     const [isFollowing, setIsFollowing] = useState<boolean>();
+    const [openNewPostModal, setOpenNewPostModal] = useState<boolean>(false);
 
     async function FollowUser() {
         setLoadingFollow(true);
@@ -253,6 +254,8 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
         });
     }
 
+    async function CreateNewPost() {}
+
     useEffect(() => {
         if (profileName === currentUser?.displayName) {
             setIsCurrentUser(true);
@@ -361,6 +364,16 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                 )}
                             </div>
                         </header>
+                        {isCurrentUser && (
+                            <div>
+                                <button
+                                    className="outline outline-2 outline-black rounded-md px-4 py-2"
+                                    onClick={() => setOpenNewPostModal(true)}
+                                >
+                                    Create Post
+                                </button>
+                            </div>
+                        )}
                         <div className="w-full grid grid-cols-2 mb-6">
                             <button
                                 onClick={() => ChangeView('project')}
@@ -551,6 +564,61 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                         >
                                             Update
                                         </button>
+                                    </form>
+                                </div>
+                            </article>
+                        )}
+                        {openNewPostModal && (
+                            <article className="absolute top-0 left-0 w-full h-screen">
+                                <div
+                                    id="overlay"
+                                    className="absolute top-0 left-0 w-full h-screen bg-black bg-opacity-75"
+                                />
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 bg-white">
+                                    <form
+                                        className="flex flex-col w-1/2 mx-auto"
+                                        onSubmit={CreateNewPost}
+                                    >
+                                        <label htmlFor="post_project">
+                                            Post Project
+                                        </label>
+                                        <select
+                                            name="post_project"
+                                            id="post_project"
+                                        >
+                                            <option value="">None</option>
+                                            {data?.projects?.map(
+                                                (project, index) => (
+                                                    <option
+                                                        value={project?.name?.toLowerCase()}
+                                                        key={index}
+                                                    >
+                                                        {project?.name}
+                                                    </option>
+                                                )
+                                            )}
+                                        </select>
+                                        <textarea
+                                            id="post_body"
+                                            placeholder="Start typing..."
+                                            className="outline outline-2 outline-black w-full mt-7"
+                                        />
+                                        <div className="mt-7">
+                                            <button
+                                                className="outline outline-2 outline-red-300 rounded-sm py-2 px-5 text-red-300"
+                                                onClick={() =>
+                                                    setOpenNewPostModal(false)
+                                                }
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                className="outline outline-2 outline-blue-300 rounded-sm py-2 px-5 text-blue-300"
+                                                type="submit"
+                                            >
+                                                Update
+                                            </button>
+                                        </div>
                                     </form>
                                 </div>
                             </article>
