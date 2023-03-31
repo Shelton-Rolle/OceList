@@ -25,6 +25,7 @@ export const NewPost = ({ projects, setModal, userData }: NewPostProps) => {
             owner: userData,
             body,
             projectId: postProjectId!,
+            type: 'post',
         };
 
         let updatedUserObject: IUser;

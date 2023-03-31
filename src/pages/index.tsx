@@ -4,18 +4,19 @@ import { useEffect, useState } from 'react';
 import { PageLayout } from '@/layouts/PageLayout';
 import GetProjects from '@/database/GetProjects';
 import GetIssues from '@/database/GetIssues';
-import { DatabaseProjectData, Issue } from '@/types/dataObjects';
+import { DatabaseProjectData, Issue, Post } from '@/types/dataObjects';
 import { IssueCard } from '@/components/IssueCard';
 import { ProjectCard } from '@/components/ProjectCard';
+import GetFollowedPosts from '@/database/GetFollowedPosts';
 
 export default function Home() {
     const { currentUserData } = useAuth();
-    const [feed, setFeed] = useState<(DatabaseProjectData | Issue)[]>();
+    const [feed, setFeed] = useState<(DatabaseProjectData | Issue | Post)[]>();
     const [loadingFeed, setLoadingFeed] = useState<boolean>();
 
     async function Shuffle(
-        array: (DatabaseProjectData | Issue)[]
-    ): Promise<(DatabaseProjectData | Issue)[]> {
+        array: (DatabaseProjectData | Issue | Post)[]
+    ): Promise<(DatabaseProjectData | Issue | Post)[]> {
         let currentIndex = array.length,
             randomIndex;
 
@@ -39,9 +40,18 @@ export default function Home() {
         setLoadingFeed(true);
         const projects = await GetProjects();
         const issues = await GetIssues();
-        const feedData: (DatabaseProjectData | Issue)[] = await Shuffle([
+        let followedPosts: Post[] = [];
+
+        if (currentUserData?.following) {
+            followedPosts = await GetFollowedPosts(currentUserData?.following!);
+        }
+
+        console.log('Followed Users Posts: ', followedPosts);
+
+        const feedData: (DatabaseProjectData | Issue | Post)[] = await Shuffle([
             ...projects,
             ...issues,
+            ...followedPosts,
         ]);
 
         setFeed(feedData);
@@ -73,15 +83,27 @@ export default function Home() {
                         {feed?.map((item, index) => {
                             switch (item?.type) {
                                 case 'issue':
+                                    const issue = item as Issue;
                                     return (
-                                        <IssueCard issue={item} key={index} />
+                                        <IssueCard issue={issue} key={index} />
                                     );
                                 case 'project':
+                                    const project = item as DatabaseProjectData;
                                     return (
                                         <ProjectCard
-                                            project={item}
+                                            project={project}
                                             key={index}
                                         />
+                                    );
+                                case 'post':
+                                    const post = item as Post;
+                                    return (
+                                        <div key={index}>
+                                            <h1 className="font-bold">
+                                                {post?.owner?.displayName}
+                                            </h1>
+                                            <p>{post?.body}</p>
+                                        </div>
                                     );
                             }
                         })}

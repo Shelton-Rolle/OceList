@@ -17,7 +17,7 @@ export interface DatabaseIssueObject {
 
 export interface DatabaseProjectData extends Project {
     languages?: string[];
-    type?: string;
+    type: string;
 }
 
 interface GithubPermissions {
@@ -77,7 +77,7 @@ export interface Issue {
     state?: string;
     timeline_url?: string;
     title?: string;
-    type?: string;
+    type: string;
     updated_at?: string;
     url?: string;
     user?: GithubUserObject;
@@ -110,6 +110,7 @@ export interface Post {
     body: string;
     projectId?: string;
     comments?: Comment[];
+    type: string;
 }
 
 export interface Project {
