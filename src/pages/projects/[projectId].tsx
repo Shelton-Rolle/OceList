@@ -19,14 +19,8 @@ export default function ProjectPage({
 }: ProjectPageProps) {
     const { currentUser } = useAuth();
     const router = useRouter();
-    const [contributors, setContributors] = useState<GithubUserObject[]>();
+    const [contributors, setContributors] = useState<GithubUserObject[]>([]);
     const [isOwner, setIsOwner] = useState<boolean>();
-
-    async function fetchContributors() {
-        await fetch(project?.contributors_url!)
-            .then((res) => res.json())
-            .then((res) => setContributors(res));
-    }
 
     async function Delete() {
         await DeleteProject(owner, project)
@@ -40,10 +34,6 @@ export default function ProjectPage({
     }
 
     useEffect(() => {
-        fetchContributors();
-    }, []);
-
-    useEffect(() => {
         if (currentUser) {
             if (currentUser.displayName === owner.displayName) {
                 setIsOwner(true);
@@ -54,6 +44,11 @@ export default function ProjectPage({
             setIsOwner(false);
         }
     }, [currentUser]);
+
+    useEffect(() => {
+        console.log('Project: ', project);
+        console.log('De-coded ReadME: ', atob(project?.readme?.content));
+    }, [project]);
 
     return (
         <>
@@ -82,15 +77,18 @@ export default function ProjectPage({
                     {project?.homepage && (
                         <Link href={project?.homepage!}>Repo Homepage</Link>
                     )}
-                    {contributors?.map((contributor, index) => (
-                        <p key={index}>Contributor: {contributor?.login}</p>
-                    ))}
+                    <div>
+                        <h2>Contributors</h2>
+                        {contributors?.map((contributor, index) => (
+                            <p key={index}>Contributor: {contributor?.login}</p>
+                        ))}
+                    </div>
                     <section className="flex items-center gap-7 my-16">
                         <p>{project?.forks_count} Forks</p>
                         <p>{project?.stargazers_count} Stars</p>
                         <p>{project?.watchers_count} Watchers</p>
                     </section>
-
+                    <p>{atob(project?.readme?.content)}</p>
                     <section>
                         {project?.issues?.map((issue, index) => (
                             <div

@@ -61,6 +61,6 @@ export interface ProjectCardProps {
 
 export interface ProjectPageProps {
     projectId: string;
-    project: Project;
+    project: DatabaseProjectData;
     owner: IUser;
 }

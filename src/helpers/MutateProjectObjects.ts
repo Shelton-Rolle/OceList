@@ -1,4 +1,8 @@
-import { GetGitHubRepositoryLanugages } from '@/firebase/auth/gitHubAuth/octokit';
+import {
+    GetGitHubRepositoryLanugages,
+    GetProjectContributors,
+    GetProjectReadme,
+} from '@/firebase/auth/gitHubAuth/octokit';
 import {
     DatabaseIssueObject,
     DatabaseProjectData,
@@ -25,6 +29,7 @@ export default async function MutateProjectObjects(
                     title: title!,
                     repoId: projects[i].id!,
                     repoName: name!,
+                    type: 'issue',
                 });
             });
         }
@@ -35,10 +40,20 @@ export default async function MutateProjectObjects(
             name!
         );
 
+        const readme = await GetProjectReadme(token, owner?.login!, name!);
+
+        const contributors = await GetProjectContributors(
+            token,
+            owner?.login!,
+            name!
+        );
+
         mutatedProjects?.push({
             ...projects[i],
             issues: issueData,
             languages,
+            readme,
+            contributors,
             type: 'project',
         });
     }

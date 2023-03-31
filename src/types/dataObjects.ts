@@ -13,10 +13,13 @@ export interface DatabaseIssueObject {
     repoId: number;
     repoName: string;
     state: string;
+    type: string;
 }
 
 export interface DatabaseProjectData extends Project {
     languages?: string[];
+    readme?: any;
+    contributors?: any[];
     type: string;
 }
 
