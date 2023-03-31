@@ -9,6 +9,7 @@ import { ProjectPageProps } from '@/types/props';
 import { ref, get, child } from 'firebase/database';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -104,8 +105,17 @@ export default function ProjectPage({
                     )}
                     <div>
                         <h2>Contributors</h2>
-                        {contributors?.map((contributor, index) => (
-                            <p key={index}>Contributor: {contributor?.login}</p>
+                        {project?.contributors?.map((contributor, index) => (
+                            <div
+                                key={index}
+                                className="relative w-8 h-8 rounded-full overflow-hidden"
+                            >
+                                <Image
+                                    src={contributor?.avatar_url}
+                                    alt="contributor-avatar"
+                                    fill
+                                />
+                            </div>
                         ))}
                     </div>
                     <section className="flex items-center gap-7 my-16">
