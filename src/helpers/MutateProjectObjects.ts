@@ -12,7 +12,7 @@ export default async function MutateProjectObjects(
     let mutatedProjects: DatabaseProjectData[] = [];
 
     for (let i = 0; i < projects.length; i++) {
-        const { id, name, owner, languages_url, issues } = projects[i];
+        const { name, owner, issues } = projects[i];
         const issueData: DatabaseIssueObject[] = [];
 
         if (issues) {
@@ -39,6 +39,7 @@ export default async function MutateProjectObjects(
             ...projects[i],
             issues: issueData,
             languages,
+            type: 'project',
         });
     }
 

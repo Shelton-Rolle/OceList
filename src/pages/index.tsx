@@ -2,16 +2,52 @@ import Head from 'next/head';
 import { useAuth } from '@/context/AuthContext';
 import { useEffect } from 'react';
 import { PageLayout } from '@/layouts/PageLayout';
-import Link from 'next/link';
+import GetProjects from '@/database/GetProjects';
+import GetIssues from '@/database/GetIssues';
+import { Issue, Project } from '@/types/dataObjects';
 
 export default function Home() {
-    const { currentUser, githubData, currentUserData, logout } = useAuth();
+    const { currentUserData } = useAuth();
+
+    async function Shuffle(
+        array: (Project | Issue)[]
+    ): Promise<(Project | Issue)[]> {
+        let currentIndex = array.length,
+            randomIndex;
+
+        // While there remain elements to shuffle.
+        while (currentIndex != 0) {
+            // Pick a remaining element.
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+
+            // And swap it with the current element.
+            [array[currentIndex], array[randomIndex]] = [
+                array[randomIndex],
+                array[currentIndex],
+            ];
+        }
+
+        return array;
+    }
+
+    async function GenerateFeed() {
+        const projects = await GetProjects();
+        const issues = await GetIssues();
+        const feedData: (Project | Issue)[] = await Shuffle([
+            ...projects,
+            ...issues,
+        ]);
+
+        console.log('Feed Data: ', feedData);
+    }
 
     useEffect(() => {
-        // console.log('Current User: ', currentUser);
-        // console.log('Github Data: ', githubData);
-        // console.log('Current User Database Data: ', currentUserData);
-    }, [currentUser, githubData, currentUserData]);
+        console.log('Current User Database Data: ', currentUserData);
+        if (currentUserData) {
+            GenerateFeed();
+        }
+    }, [currentUserData]);
 
     return (
         <>
