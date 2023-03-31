@@ -2,6 +2,8 @@ import {
     GetGitHubRepositoryLanugages,
     GetProjectContributors,
     GetProjectReadme,
+    GetRepositoryForksCount,
+    GetRepositoryStargazers,
     GetRepositorySubscribers,
 } from '@/firebase/auth/gitHubAuth/octokit';
 import {
@@ -55,6 +57,18 @@ export default async function MutateProjectObjects(
             name!
         );
 
+        const stargazers = await GetRepositoryStargazers(
+            token,
+            owner?.login!,
+            name!
+        );
+
+        const forks = await GetRepositoryForksCount(
+            token,
+            owner?.login!,
+            name!
+        );
+
         mutatedProjects?.push({
             ...projects[i],
             issues: issueData,
@@ -62,6 +76,8 @@ export default async function MutateProjectObjects(
             readme,
             contributors,
             subscribers,
+            stargazers,
+            forks,
             type: 'project',
         });
     }

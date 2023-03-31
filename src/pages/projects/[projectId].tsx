@@ -1,6 +1,7 @@
 import { useAuth } from '@/context/AuthContext';
 import DeleteProject from '@/database/DeleteProject';
 import GetProject from '@/database/GetProject';
+import UpdateProject from '@/database/UpdateProject';
 import database from '@/firebase/database/databaseInit';
 import { PageLayout } from '@/layouts/PageLayout';
 import { GithubUserObject } from '@/types/dataObjects';
@@ -35,6 +36,20 @@ export default function ProjectPage({
             });
     }
 
+    async function Reload() {
+        await UpdateProject(
+            owner?.githubToken!,
+            project,
+            owner?.displayName!
+        ).then((updated) => {
+            if (updated) {
+                router.reload();
+            } else {
+                console.log('Update Error');
+            }
+        });
+    }
+
     useEffect(() => {
         if (currentUser) {
             if (currentUser.displayName === owner.displayName) {
@@ -66,12 +81,20 @@ export default function ProjectPage({
             <PageLayout>
                 <div>
                     {isOwner && (
-                        <button
-                            className="outline outline-2 outline-black rounded-sm p-5 my-4"
-                            onClick={Delete}
-                        >
-                            Delete Project
-                        </button>
+                        <>
+                            <button
+                                className="outline outline-2 outline-black rounded-sm p-5 my-4"
+                                onClick={Delete}
+                            >
+                                Delete Project
+                            </button>
+                            <button
+                                className="outline outline-2 outline-black rounded-sm p-5 my-4"
+                                onClick={Reload}
+                            >
+                                Reload Project
+                            </button>
+                        </>
                     )}
                     <h1>{project?.name}</h1>
                     <p>Owner: {project?.owner?.login}</p>
@@ -86,9 +109,19 @@ export default function ProjectPage({
                         ))}
                     </div>
                     <section className="flex items-center gap-7 my-16">
-                        <p>{project?.forks_count} Forks</p>
-                        <p>{project?.stargazers_count} Stars</p>
-                        <p>{project?.subscribers?.length} Watchers</p>
+                        <p>{project?.forks ? project?.forks : 0} Forks</p>
+                        <p>
+                            {project?.stargazers
+                                ? project?.stargazers?.length
+                                : 0}{' '}
+                            Stars
+                        </p>
+                        <p>
+                            {project?.subscribers
+                                ? project?.subscribers?.length
+                                : 0}{' '}
+                            Watchers
+                        </p>
                     </section>
                     <p>License: {project?.license?.name}</p>
 

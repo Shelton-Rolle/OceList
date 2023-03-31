@@ -20,7 +20,8 @@ export interface DatabaseProjectData extends Project {
     languages?: string[];
     readme?: any;
     contributors?: any[];
-    subscribers?: User[];
+    subscribers?: GithubUserObject[];
+    stargazers?: GithubUserObject[];
     type: string;
 }
 
