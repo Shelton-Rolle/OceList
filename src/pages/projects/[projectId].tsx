@@ -11,6 +11,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 
 export default function ProjectPage({
     projectId,
@@ -21,6 +22,7 @@ export default function ProjectPage({
     const router = useRouter();
     const [contributors, setContributors] = useState<GithubUserObject[]>([]);
     const [isOwner, setIsOwner] = useState<boolean>();
+    const [readme, setReadme] = useState<string>();
 
     async function Delete() {
         await DeleteProject(owner, project)
@@ -48,6 +50,7 @@ export default function ProjectPage({
     useEffect(() => {
         console.log('Project: ', project);
         console.log('De-coded ReadME: ', atob(project?.readme?.content));
+        setReadme(atob(project?.readme?.content));
     }, [project]);
 
     return (
@@ -88,7 +91,11 @@ export default function ProjectPage({
                         <p>{project?.stargazers_count} Stars</p>
                         <p>{project?.watchers_count} Watchers</p>
                     </section>
-                    <p>{atob(project?.readme?.content)}</p>
+
+                    <div id="readme">
+                        <ReactMarkdown>{readme!}</ReactMarkdown>
+                    </div>
+
                     <section>
                         {project?.issues?.map((issue, index) => (
                             <div
@@ -123,7 +130,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             }
         })
         .catch((error) => {
-            console.error(error);
+            console.error('Project Error: ', error);
         });
 
     const owner = await get(
@@ -137,7 +144,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             }
         })
         .catch((error) => {
-            console.error(error);
+            console.error('Owner Error: ', error);
         });
 
     return {
