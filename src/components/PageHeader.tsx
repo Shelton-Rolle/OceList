@@ -6,12 +6,7 @@ import { BiSearchAlt } from 'react-icons/bi';
 import { CgProfile } from 'react-icons/cg';
 import { MdFavorite } from 'react-icons/md';
 import { IoMdSettings } from 'react-icons/io';
-
-interface NavItemProps {
-    label: string;
-    href: string;
-    icon: ReactNode;
-}
+import { NavItemProps } from '@/types/props';
 
 export const PageHeader = () => {
     const { currentUser } = useAuth();

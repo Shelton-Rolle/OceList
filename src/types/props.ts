@@ -17,6 +17,11 @@ export interface BrowsePageProps {
     issues: Issue[];
 }
 
+export interface CardAvatarProps {
+    src: string;
+    alt: string;
+}
+
 export interface ChangeAvatarProps {
     setModal: Dispatch<SetStateAction<boolean>>;
     userData: IUser;
@@ -37,6 +42,12 @@ export interface ExternalUserProfileProps {
 
 export interface IssueCardProps {
     issue: Issue;
+}
+
+export interface NavItemProps {
+    label: string;
+    href: string;
+    icon: ReactNode;
 }
 
 export interface ModalLayoutProps {

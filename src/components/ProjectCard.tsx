@@ -6,6 +6,7 @@ import UpdateUser from '@/database/UpdateUser';
 import Image from 'next/image';
 import { MdFavorite } from 'react-icons/md';
 import { IoIosHeartDislike } from 'react-icons/io';
+import CardAvatar from './CardAvatar';
 
 export const ProjectCard = ({ project }: ProjectCardProps) => {
     const { currentUser, currentUserData, setCurrentUserData } = useAuth();
@@ -110,16 +111,13 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
     return (
         <article className="border-b-2 border-default-dark border-opacity-10 p-5">
             <div className="grid grid-cols-12 gap-4">
-                <div className="relative w-full h-full max-w-[35px] max-h-[35px] rounded-full overflow-hidden col-span-2">
-                    <Image
-                        src={project?.owner?.avatar_url!}
-                        alt="owner-avatar"
-                        fill
-                    />
-                </div>
+                <CardAvatar
+                    src={project?.owner?.avatar_url!}
+                    alt="owner-avatar"
+                />
                 <div className="col-span-9">
                     <Link href={`/projects/${project?.id}`}>
-                        <h1 className="line-cutoff-1 font-title text-lg font-bold">
+                        <h1 className="line-cutoff-1 font-title text-lg font-bold md:text-xl lg:text-2xl">
                             {project?.name}
                         </h1>
                     </Link>
@@ -161,32 +159,5 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
                 })}
             </div>
         </article>
-    );
-
-    return (
-        <div>
-            <div>
-                <Link href={`/projects/${project?.id}`}>
-                    <h2>{project?.name}</h2>
-                </Link>
-                {!isCurrentUserProject && (
-                    <button onClick={HandleFavorite}>
-                        {updatingFavorites ? (
-                            'Loading'
-                        ) : (
-                            <>{isFavorited ? 'Favorited' : 'Favorite'}</>
-                        )}
-                    </button>
-                )}
-            </div>
-            <Link href={`/${project.owner?.login}`}>
-                <p>{project.owner?.login}</p>
-            </Link>
-            <div>
-                {project?.languages?.map((language, index) => (
-                    <p key={index}>{language}</p>
-                ))}
-            </div>
-        </div>
     );
 };

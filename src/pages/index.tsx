@@ -11,7 +11,9 @@ import GetFollowedPosts from '@/database/GetFollowedPosts';
 
 export default function Home() {
     const { currentUserData } = useAuth();
-    const [feed, setFeed] = useState<(DatabaseProjectData | Issue | Post)[]>();
+    const [feed, setFeed] = useState<(DatabaseProjectData | Issue | Post)[]>(
+        []
+    );
     const [loadingFeed, setLoadingFeed] = useState<boolean>();
 
     async function Shuffle(
@@ -46,8 +48,6 @@ export default function Home() {
             followedPosts = await GetFollowedPosts(currentUserData?.following!);
         }
 
-        console.log('Followed Users Posts: ', followedPosts);
-
         const feedData: (DatabaseProjectData | Issue | Post)[] = await Shuffle([
             ...projects,
             ...issues,
@@ -60,7 +60,9 @@ export default function Home() {
 
     useEffect(() => {
         if (currentUserData) {
-            GenerateFeed();
+            if (feed?.length < 1) {
+                GenerateFeed();
+            }
         }
     }, [currentUserData]);
 
