@@ -11,7 +11,6 @@ import { useRouter } from 'next/router';
 
 export const PageHeader = () => {
     const router = useRouter();
-    console.log('Router: ', router.asPath.split('/')[1]);
     const { currentUser } = useAuth();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
