@@ -27,11 +27,11 @@ export const PageHeader = () => {
     );
 
     return (
-        <header className="fixed top-0 left-0 w-full h-16 bg-background-dark bg-opacity-75 backdrop-blur-sm p-2 flex justify-end items-center">
+        <header className="fixed top-0 left-0 w-full h-16 bg-background-dark bg-opacity-75 backdrop-blur-sm p-2 flex justify-end items-center md:relative md:col-span-4 md:border-r-2 md:border-default-dark md:border-opacity-10 md:h-screen">
             <button
                 className={`relative flex flex-col gap-2 justify-between lg:hidden w-12 z-20 ${
                     isMenuOpen ? 'items-end' : 'items-start'
-                }`}
+                } md:hidden`}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
                 <div
@@ -57,11 +57,11 @@ export const PageHeader = () => {
                 />
             </button>
             <nav
-                className={`absolute top-0 left-0 bg-background-dark w-full h-screen p-7 flex flex-col justify-center ${
-                    !isMenuOpen ? 'hidden' : 'block'
-                }`}
+                className={`absolute top-0 left-0 bg-background-dark w-full h-screen p-7 ${
+                    !isMenuOpen ? 'max-md:hidden' : 'max-md:block'
+                } md:block`}
             >
-                <div className="flex flex-col gap-11">
+                <div className="flex flex-col gap-11 mt-14">
                     {currentUser && (
                         <NavItem
                             label="Home"
@@ -86,7 +86,7 @@ export const PageHeader = () => {
                                 href="/favorites"
                                 icon={<MdFavorite />}
                             />
-                            <div className="mt-14">
+                            <div className="mt-14 lg:mt-20">
                                 <NavItem
                                     label="Settings"
                                     href="/profile/settings"
