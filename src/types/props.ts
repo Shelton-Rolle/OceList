@@ -48,6 +48,7 @@ export interface NavItemProps {
     label: string;
     href: string;
     icon: ReactNode;
+    active: boolean;
 }
 
 export interface ModalLayoutProps {

@@ -7,14 +7,19 @@ import { CgProfile } from 'react-icons/cg';
 import { MdFavorite } from 'react-icons/md';
 import { IoMdSettings } from 'react-icons/io';
 import { NavItemProps } from '@/types/props';
+import { useRouter } from 'next/router';
 
 export const PageHeader = () => {
+    const router = useRouter();
+    console.log('Router: ', router.asPath.split('/')[1]);
     const { currentUser } = useAuth();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    const NavItem = ({ label, href, icon }: NavItemProps) => (
+    const NavItem = ({ label, href, icon, active }: NavItemProps) => (
         <a
-            className="relative font-title text-h6 flex items-center justify-end gap-5"
+            className={`relative font-title text-h6 flex items-center justify-end gap-5 ${
+                active && 'text-secondary-dark'
+            }`}
             href={href}
         >
             {label} {icon}
@@ -62,12 +67,14 @@ export const PageHeader = () => {
                             label="Home"
                             href="/"
                             icon={<AiOutlineHome />}
+                            active={router.asPath === '/'}
                         />
                     )}
                     <NavItem
                         label="Browse"
                         href="/browse"
                         icon={<BiSearchAlt />}
+                        active={router.asPath.split('/')[1] === 'browse'}
                     />
                     {currentUser ? (
                         <>
@@ -75,17 +82,25 @@ export const PageHeader = () => {
                                 label="Profile"
                                 href={`/${currentUser?.displayName}`}
                                 icon={<CgProfile />}
+                                active={router.query.username ? true : false}
                             />
                             <NavItem
                                 label="Favorites"
                                 href="/favorites"
                                 icon={<MdFavorite />}
+                                active={
+                                    router.asPath.split('/')[1] === 'favorites'
+                                }
                             />
                             <div className="mt-14 lg:mt-20">
                                 <NavItem
                                     label="Settings"
                                     href="/profile/settings"
                                     icon={<IoMdSettings />}
+                                    active={
+                                        router.asPath.split('/')[2] ===
+                                        'settings'
+                                    }
                                 />
                             </div>
                         </>
@@ -94,6 +109,7 @@ export const PageHeader = () => {
                             label="Login"
                             href="/login"
                             icon={<AiOutlineHome />}
+                            active={router.asPath.split('/')[1] === 'login'}
                         />
                     )}
                 </div>
