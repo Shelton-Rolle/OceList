@@ -14,13 +14,16 @@ export const PageLayout = ({ children }: PageLayoutProps) => {
     }, [currentUser, currentUserData]);
 
     return (
-        <main className="grid grid-cols-12 pt-20 px-8 max-w-7xl mx-auto h-screen gap-10">
-            <PageHeader />
-            <div
-                id="content"
-                className="col-span-9 overflow-y-scroll scrollbar-hide px-7"
-            >
-                {children}
+        <main className="w-full h-full text-default-dark">
+            {/* <div className="grid grid-cols-12 pt-20 px-8 max-w-7xl mx-auto h-screen gap-10"> */}
+            <div className="p-6">
+                <PageHeader />
+                <div
+                    id="content"
+                    className="col-span-9 overflow-y-scroll scrollbar-hide px-7"
+                >
+                    {children}
+                </div>
             </div>
         </main>
     );
