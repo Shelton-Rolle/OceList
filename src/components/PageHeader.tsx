@@ -8,6 +8,7 @@ import { MdFavorite } from 'react-icons/md';
 import { IoMdSettings } from 'react-icons/io';
 import { NavItemProps } from '@/types/props';
 import { useRouter } from 'next/router';
+import { IoMdLogIn } from 'react-icons/io';
 
 export const PageHeader = () => {
     const router = useRouter();
@@ -107,7 +108,7 @@ export const PageHeader = () => {
                         <NavItem
                             label="Login"
                             href="/login"
-                            icon={<AiOutlineHome />}
+                            icon={<IoMdLogIn />}
                             active={router.asPath.split('/')[1] === 'login'}
                         />
                     )}

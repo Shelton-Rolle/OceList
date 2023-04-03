@@ -11,6 +11,7 @@ import GetUser from '@/database/GetUser';
 import { FirebaseError } from 'firebase/app';
 import Head from 'next/head';
 import { PageLayout } from '@/layouts/PageLayout';
+import { AiFillGithub } from 'react-icons/ai';
 
 export default function Login() {
     const router = useRouter();
@@ -62,12 +63,19 @@ export default function Login() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <PageLayout>
-                <button
-                    className="p-4 border border-black rounded-sm"
-                    onClick={LoginWithGithub}
-                >
-                    Login With Github
-                </button>
+                <section className="flex justify-center items-center h-full">
+                    <div className="w-fit">
+                        <p className="font-paragraph font-medium text-lg leading-8 mb-4">
+                            Login with GitHub to get started!
+                        </p>
+                        <button
+                            className="bg-[#161b22] px-6 py-3 rounded-md flex items-center gap-4 font-paragraph font-medium text-xl"
+                            onClick={LoginWithGithub}
+                        >
+                            <AiFillGithub size={30} /> Login With Github
+                        </button>
+                    </div>
+                </section>
             </PageLayout>
         </>
     );
