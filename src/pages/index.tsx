@@ -86,7 +86,7 @@ export default function Home() {
                 {loadingFeed ? (
                     <PageLoader />
                 ) : (
-                    <div className="border-r-2 border-default-dark border-opacity-10 w-fit pr-9">
+                    <div className="border-r-2 border-default-dark border-opacity-10 w-fit pr-10">
                         {feed?.map((item, index) => {
                             switch (item?.type) {
                                 case 'issue':

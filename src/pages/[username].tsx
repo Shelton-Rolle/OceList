@@ -7,7 +7,6 @@ import { PageLayout } from '@/layouts/PageLayout';
 import database from '@/firebase/database/databaseInit';
 import { ref, get, child } from 'firebase/database';
 import { ModalProjectCheckbox } from '@/components/ModalProjectCheckbox';
-import { ProjectCard } from '@/components/FeedProject';
 import CreateProjects from '@/database/CreateProjects';
 import UpdateUser from '@/database/UpdateUser';
 import { GetGithubUserRepos } from '@/firebase/auth/gitHubAuth/octokit';
@@ -21,6 +20,8 @@ import { NewPost } from '@/components/modals/NewPost';
 import { ChangeBanner } from '@/components/modals/ChangeBanner';
 import { ChangeAvatar } from '@/components/modals/ChangeAvatar';
 import { AddProjects } from '@/components/modals/AddProjects';
+import ProjectCard from '@/components/ProjectCard';
+import { PageLoader } from '@/components/PageLoader';
 
 interface ProfilePageProps {
     profileName: string;
@@ -227,8 +228,11 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
     return (
         <>
             <Head>
-                <title>Landing</title>
-                <meta name="description" content="Landing Page" />
+                <title>{data?.displayName}'s Profile</title>
+                <meta
+                    name="description"
+                    content={`Profile page of ${data?.displayName}`}
+                />
                 <meta
                     name="viewport"
                     content="width=device-width, initial-scale=1"
@@ -239,16 +243,15 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                 {data === null ? (
                     <h1>User Not Found</h1>
                 ) : (
-                    <div>
-                        <header>
-                            <div className="relative flex items-center h-64 mb-16">
-                                <div className="top-0 left-0 w-full h-full absolute overflow-hidden">
+                    <div className="z-10">
+                        <section>
+                            <div className="absolute top-0 left-0 w-full">
+                                <div className="relative h-96">
                                     <Image
                                         src={data?.banner_url!}
                                         alt="banner"
                                         priority
                                         fill
-                                        className="object-cover"
                                         onClick={() => {
                                             if (isCurrentUser) {
                                                 setOpenBannerModal(true);
@@ -256,12 +259,13 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                         }}
                                     />
                                 </div>
-                                <div className="absolute -bottom-12 left-7 rounded-full overflow-hidden mr-5">
+                                <div className="absolute left-6 -bottom-10 rounded-full overflow-hidden">
                                     <Image
                                         src={data?.photoURL!}
                                         alt="avatar"
-                                        width={100}
-                                        height={100}
+                                        width={80}
+                                        height={80}
+                                        priority
                                         onClick={() => {
                                             if (isCurrentUser) {
                                                 setOpenAvatarModal(true);
@@ -270,94 +274,69 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                     />
                                 </div>
                             </div>
-                            <div className="flex items-center justify-between my-6">
-                                <div>
-                                    <p className="text-3xl">
-                                        {data?.displayName}
-                                    </p>
-                                    <p className="text-base text-gray-400">
-                                        {data?.follower_count
-                                            ? data?.follower_count
-                                            : '0'}{' '}
-                                        Followers
-                                    </p>
-                                </div>
-                                {!isCurrentUser && (
-                                    <button
-                                        onClick={FollowUser}
-                                        className={`outline outline-1 outline-black rounded-sm px-3 py-2 my-4`}
-                                    >
-                                        {loadingFollow ? (
-                                            <>Loading</>
-                                        ) : (
-                                            <>
-                                                {isFollowing
-                                                    ? 'Following'
-                                                    : 'Follow'}
-                                            </>
-                                        )}
-                                    </button>
-                                )}
-                            </div>
-                        </header>
-                        {isCurrentUser && (
+                        </section>
+                        <section className="mt-96 flex items-center justify-between">
                             <div>
-                                <button
-                                    className="outline outline-2 outline-black rounded-md px-4 py-2"
-                                    onClick={() => setOpenNewPostModal(true)}
-                                >
-                                    Create Post
-                                </button>
+                                <p className="font-paragraph text-2xl font-medium">
+                                    {data?.displayName}
+                                </p>
+                                <p className="font-paragraph text-sm font-light">
+                                    {data?.follower_count
+                                        ? data?.follower_count
+                                        : '0'}{' '}
+                                    Followers
+                                </p>
                             </div>
-                        )}
-                        <div className="w-full grid grid-cols-3 mb-6">
+                            {!isCurrentUser && (
+                                <button onClick={FollowUser}>
+                                    {loadingFollow ? (
+                                        <>Loading</>
+                                    ) : (
+                                        <>
+                                            {isFollowing
+                                                ? 'Following'
+                                                : 'Follow'}
+                                        </>
+                                    )}
+                                </button>
+                            )}
+                        </section>
+                        <div className="my-10 text-base md:text-xl">
                             <button
-                                onClick={() => ChangeView('project')}
-                                className={`py-3 border-b-2 duration-150 ${
+                                className={`py-3 border-b-2 duration-150 w-1/2 border-b-secondary-dark text-secondary-dark ${
                                     viewProjects
-                                        ? 'border-b-black text-black'
-                                        : 'border-b-gray-300 text-gray-300'
+                                        ? 'border-opacity-100 opacity-100'
+                                        : 'border-opacity-30 opacity-30'
                                 }`}
+                                onClick={() => ChangeView('project')}
                             >
                                 Projects
                             </button>
                             <button
-                                onClick={() => ChangeView('posts')}
-                                className={`py-3 border-b-2 duration-150 ${
+                                className={`py-3 border-b-2 duration-150 w-1/2 border-b-secondary-dark text-secondary-dark ${
                                     viewPosts
-                                        ? 'border-b-black text-black'
-                                        : 'border-b-gray-300 text-gray-300'
+                                        ? 'border-opacity-100 opacity-100'
+                                        : 'border-opacity-30 opacity-30'
                                 }`}
+                                onClick={() => ChangeView('posts')}
                             >
                                 Posts
                             </button>
-                            <button
-                                onClick={() => ChangeView('activity')}
-                                className={`py-3 border-b-2 duration-150 ${
-                                    viewActivity
-                                        ? 'border-b-black text-black'
-                                        : 'border-b-gray-300 text-gray-300'
-                                }`}
-                            >
-                                Activity
-                            </button>
                         </div>
                         {viewProjects && (
-                            <section className="">
+                            <section>
                                 {isCurrentUser && (
-                                    <div className="flex justify-end items-center">
-                                        <button
-                                            onClick={() =>
-                                                setOpenProjectModal(true)
-                                            }
-                                            className="border-2 border-blue-300 py-1 px-3 rounded-md text-blue-300 my-4 text-2xl"
-                                        >
-                                            Add Project
-                                        </button>
-                                    </div>
+                                    <button
+                                        className="px-5 py-4 rounded-md bg-default-dark text-background-dark font-paragraph font-light text-sm"
+                                        onClick={() =>
+                                            setOpenProjectModal(true)
+                                        }
+                                    >
+                                        Add Project
+                                    </button>
                                 )}
                                 {projectsList ? (
-                                    <div className="grid grid-cols-2 gap-7">
+                                    <div className="mt-8 flex flex-col gap-4">
                                         {projectsList?.map((project, index) => (
                                             <ProjectCard
                                                 project={project}
@@ -368,7 +347,9 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                 ) : (
                                     <>
                                         {projects ? (
-                                            <p>Loading</p>
+                                            <p>
+                                                <PageLoader />
+                                            </p>
                                         ) : (
                                             <p>No Projects Found</p>
                                         )}
@@ -378,35 +359,38 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                         )}
                         {viewPosts && (
                             <section>
-                                {data?.posts ? (
-                                    <>
-                                        {data?.posts?.map((post, index) => (
-                                            <p key={index}>{post.body}</p>
-                                        ))}
-                                    </>
-                                ) : (
-                                    <p>No Posts Found.</p>
+                                {isCurrentUser && (
+                                    <button
+                                        className="px-5 py-4 rounded-md bg-default-dark text-background-dark font-paragraph font-light text-sm"
+                                        onClick={() =>
+                                            setOpenNewPostModal(true)
+                                        }
+                                    >
+                                        Create Post
+                                    </button>
                                 )}
+                                <div className="mt-8">
+                                    {data?.posts ? (
+                                        <>
+                                            {data?.posts?.map((post, index) => (
+                                                <p key={index}>{post.body}</p>
+                                            ))}
+                                        </>
+                                    ) : (
+                                        <p>No Posts Found.</p>
+                                    )}
+                                </div>
                             </section>
                         )}
                         {viewActivity && (
-                            <section className="">
+                            <section>
                                 {assignedIssues?.map((issue, index) => (
-                                    <div
-                                        key={index}
-                                        className="outline outline-2 outline-black my-3 p-5 max-w-xs"
-                                    >
-                                        <h4 className="text-lg font-bold">
-                                            {issue?.title}
-                                        </h4>
+                                    <div key={index}>
+                                        <h4>{issue?.title}</h4>
                                         <p>{issue?.body}</p>
-                                        <div className="flex items-center gap-5">
-                                            <p className="text-gray-400 text-sm">
-                                                {issue?.user?.login}
-                                            </p>
-                                            <p className="text-gray-400 text-sm">
-                                                {issue?.repository?.name}
-                                            </p>
+                                        <div>
+                                            <p>{issue?.user?.login}</p>
+                                            <p>{issue?.repository?.name}</p>
                                         </div>
                                     </div>
                                 ))}
