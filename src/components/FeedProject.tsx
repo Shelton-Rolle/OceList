@@ -109,7 +109,7 @@ export const FeedProject = ({ project }: FeedProjectProps) => {
     }, [currentUser, currentUserData]);
 
     return (
-        <article className="border-b-2 border-default-dark border-opacity-10 p-5">
+        <article className="border-b-2 border-default-dark border-opacity-10 px-5 py-8 max-w-lg">
             <div className="grid grid-cols-12 gap-4">
                 <CardAvatar
                     src={project?.owner?.avatar_url!}

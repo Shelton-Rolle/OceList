@@ -18,7 +18,7 @@ export const FeedIssue = ({ issue }: FeedIssueProps) => {
     }, []);
 
     return (
-        <article className="border-b-2 border-default-dark border-opacity-10 p-5">
+        <article className="border-b-2 border-default-dark border-opacity-10 px-5 py-8 max-w-lg">
             <div className="grid grid-cols-12 gap-4">
                 <CardAvatar
                     src={repository?.owner?.avatar_url!}

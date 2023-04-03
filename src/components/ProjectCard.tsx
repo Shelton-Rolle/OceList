@@ -4,13 +4,15 @@ import { MdFavorite } from 'react-icons/md';
 import { IoIosHeartDislike } from 'react-icons/io';
 import { AiFillGithub, AiOutlineLoading3Quarters } from 'react-icons/ai';
 import UpdateUser from '@/database/UpdateUser';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { MdComputer } from 'react-icons/md';
 
 export default function ProjectCard({ project }: ProjectCardProps) {
-    const { currentUserData, setCurrentUserData } = useAuth();
+    const { currentUser, currentUserData, setCurrentUserData } = useAuth();
     const [isFavorited, setIsFavorited] = useState<boolean>();
     const [updatingFavorites, setUpdatingFavorites] = useState<boolean>(false);
+    const [isCurrentUserProject, setIsCurrentUserProject] = useState<boolean>();
 
     async function HandleFavorite() {
         setUpdatingFavorites(true);
@@ -81,6 +83,30 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
         setUpdatingFavorites(false);
     }
+
+    useEffect(() => {
+        if (currentUser) {
+            if (currentUser?.displayName === project?.owner?.login) {
+                setIsCurrentUserProject(true);
+            }
+        }
+
+        if (currentUserData?.favorite_projects) {
+            for (
+                let i = 0;
+                i < currentUserData?.favorite_projects?.length;
+                i++
+            ) {
+                if (
+                    currentUserData?.favorite_projects[i].name === project.name
+                ) {
+                    setIsFavorited(true);
+                    break;
+                }
+            }
+        }
+    }, [currentUser, currentUserData]);
+
     return (
         <article className="w-full max-w-lg border-2 border-secondary-dark rounded-md p-6">
             <div className="flex justify-between items-center h-12">
@@ -93,26 +119,30 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                         <AiFillGithub size={22} />
                     </a>
                     {project?.homepage && (
-                        <a href={project?.homepage}>Homepage</a>
+                        <a href={project?.homepage}>
+                            <MdComputer size={22} />
+                        </a>
                     )}
-                    <button onClick={HandleFavorite}>
-                        {updatingFavorites ? (
-                            <div className="h-full flex justify-center items-center animate-spin">
-                                <AiOutlineLoading3Quarters
-                                    size={22}
-                                    color="#FDF5BF"
-                                />
-                            </div>
-                        ) : (
-                            <>
-                                {isFavorited ? (
-                                    <IoIosHeartDislike size={22} />
-                                ) : (
-                                    <MdFavorite size={22} />
-                                )}
-                            </>
-                        )}
-                    </button>
+                    {!isCurrentUserProject && (
+                        <button onClick={HandleFavorite}>
+                            {updatingFavorites ? (
+                                <div className="h-full flex justify-center items-center animate-spin">
+                                    <AiOutlineLoading3Quarters
+                                        size={22}
+                                        color="#FDF5BF"
+                                    />
+                                </div>
+                            ) : (
+                                <>
+                                    {isFavorited ? (
+                                        <IoIosHeartDislike size={22} />
+                                    ) : (
+                                        <MdFavorite size={22} />
+                                    )}
+                                </>
+                            )}
+                        </button>
+                    )}
                 </div>
             </div>
             <div>

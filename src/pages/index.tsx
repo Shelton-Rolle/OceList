@@ -9,6 +9,7 @@ import { FeedIssue } from '@/components/FeedIssue';
 import { FeedProject } from '@/components/FeedProject';
 import GetFollowedPosts from '@/database/GetFollowedPosts';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
+import { PageLoader } from '@/components/PageLoader';
 
 export default function Home() {
     const { currentUserData } = useAuth();
@@ -83,11 +84,9 @@ export default function Home() {
             </Head>
             <PageLayout>
                 {loadingFeed ? (
-                    <div className="h-full flex justify-center items-center animate-spin">
-                        <AiOutlineLoading3Quarters size={60} color="#FDF5BF" />
-                    </div>
+                    <PageLoader />
                 ) : (
-                    <div>
+                    <div className="border-r-2 border-default-dark border-opacity-10 w-fit pr-9">
                         {feed?.map((item, index) => {
                             switch (item?.type) {
                                 case 'issue':
