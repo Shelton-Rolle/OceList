@@ -1,14 +1,17 @@
-import { ProjectCardProps } from '@/types/props';
-import CardAvatar from './CardAvatar';
+import { FeedProjectProps } from '@/types/props';
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
+import UpdateUser from '@/database/UpdateUser';
 import { MdFavorite } from 'react-icons/md';
 import { IoIosHeartDislike } from 'react-icons/io';
-import { AiFillGithub, AiOutlineLoading3Quarters } from 'react-icons/ai';
-import UpdateUser from '@/database/UpdateUser';
-import { useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import CardAvatar from './CardAvatar';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
-export default function ProjectCard({ project }: ProjectCardProps) {
-    const { currentUserData, setCurrentUserData } = useAuth();
+export const FeedProject = ({ project }: FeedProjectProps) => {
+    const { currentUser, currentUserData, setCurrentUserData } = useAuth();
+    const [isCurrentUserProject, setIsCurrentUserProject] =
+        useState<boolean>(false);
     const [isFavorited, setIsFavorited] = useState<boolean>();
     const [updatingFavorites, setUpdatingFavorites] = useState<boolean>(false);
 
@@ -81,51 +84,75 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
         setUpdatingFavorites(false);
     }
+
+    useEffect(() => {
+        if (currentUser) {
+            if (currentUser?.displayName === project?.owner?.login) {
+                setIsCurrentUserProject(true);
+            }
+        }
+
+        if (currentUserData?.favorite_projects) {
+            for (
+                let i = 0;
+                i < currentUserData?.favorite_projects?.length;
+                i++
+            ) {
+                if (
+                    currentUserData?.favorite_projects[i].name === project.name
+                ) {
+                    setIsFavorited(true);
+                    break;
+                }
+            }
+        }
+    }, [currentUser, currentUserData]);
+
     return (
-        <article className="w-full max-w-lg border-2 border-secondary-dark rounded-md p-6">
-            <div className="flex justify-between items-center h-12">
+        <article className="border-b-2 border-default-dark border-opacity-10 p-5">
+            <div className="grid grid-cols-12 gap-4">
                 <CardAvatar
                     src={project?.owner?.avatar_url!}
-                    alt="owner avatar"
+                    alt="owner-avatar"
                 />
-                <div className="flex gap-4 items-center">
-                    <a href={project?.html_url}>
-                        <AiFillGithub size={22} />
-                    </a>
-                    {project?.homepage && (
-                        <a href={project?.homepage}>Homepage</a>
-                    )}
-                    <button onClick={HandleFavorite}>
-                        {updatingFavorites ? (
-                            <div className="h-full flex justify-center items-center animate-spin">
-                                <AiOutlineLoading3Quarters
-                                    size={22}
-                                    color="#FDF5BF"
-                                />
-                            </div>
-                        ) : (
-                            <>
-                                {isFavorited ? (
-                                    <IoIosHeartDislike size={22} />
-                                ) : (
-                                    <MdFavorite size={22} />
-                                )}
-                            </>
-                        )}
-                    </button>
+                <div className="col-span-9">
+                    <Link href={`/projects/${project?.id}`}>
+                        <h1 className="line-cutoff-1 font-title text-lg font-bold md:text-xl lg:text-2xl">
+                            {project?.name}
+                        </h1>
+                    </Link>
+                    <Link href={`/${project.owner?.login}`}>
+                        <p className="font-paragraph text-sm text-accent-dark font-light">
+                            {project?.owner?.login}
+                        </p>
+                    </Link>
                 </div>
-            </div>
-            <div>
-                <h2 className="line-cutoff-1 font-title text-2xl font-bold">
-                    {project?.name}
-                </h2>
-                <p className="font-paragraph text-sm text-accent-dark font-light">
-                    {project?.owner?.login}
-                </p>
+                <div className="col-span-1">
+                    {!isCurrentUserProject && (
+                        <button onClick={HandleFavorite}>
+                            {updatingFavorites ? (
+                                <div className="h-full flex justify-center items-center animate-spin">
+                                    <AiOutlineLoading3Quarters
+                                        size={22}
+                                        color="#FDF5BF"
+                                    />
+                                </div>
+                            ) : (
+                                <>
+                                    {isFavorited ? (
+                                        <IoIosHeartDislike size={22} />
+                                    ) : (
+                                        <MdFavorite size={22} />
+                                    )}
+                                </>
+                            )}
+                        </button>
+                    )}
+                </div>
             </div>
             <div className="mt-12 flex items-center gap-7">
                 {project?.languages?.map((language, index) => {
-                    if (index > 2) return;
+                    if (index > 2) return <></>;
                     return (
                         <p
                             className="font-paragraph text-secondary-dark font-light text-sm"
@@ -138,4 +165,4 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             </div>
         </article>
     );
-}
+};

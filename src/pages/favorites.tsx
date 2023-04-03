@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { useAuth } from '@/context/AuthContext';
 import { useEffect, useState } from 'react';
 import { Project } from '@/types/dataObjects';
-import { ProjectCard } from '@/components/ProjectCard';
+import { ProjectCard } from '@/components/FeedProject';
 
 export default function Favorites() {
     const { currentUserData } = useAuth();

@@ -20,7 +20,7 @@ export const PageLayout = ({ children }: PageLayoutProps) => {
                 <PageHeader />
                 <div
                     id="content"
-                    className="pt-14 col-span-9 scrollbar-hide px-7 md:col-span-8 max-w-2xl md:h-screen md:overflow-y-scroll md:overflow-x-hidden"
+                    className="pt-16 scrollbar-hide px-7 col-span-8 md:h-screen md:overflow-y-scroll md:max-w-4xl md:overflow-x-hidden"
                 >
                     {children}
                 </div>

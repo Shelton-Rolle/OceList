@@ -1,13 +1,13 @@
-import { IssueCard } from '@/components/IssueCard';
-import { ProjectCard } from '@/components/ProjectCard';
+import IssueCard from '@/components/IssueCard';
+import ProjectCard from '@/components/ProjectCard';
 import database from '@/firebase/database/databaseInit';
 import { PageLayout } from '@/layouts/PageLayout';
 import { DatabaseProjectData, Issue, Project } from '@/types/dataObjects';
 import { BrowsePageProps } from '@/types/props';
-import { get, child, ref, update } from 'firebase/database';
+import { get, child, ref } from 'firebase/database';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export default function BrowsePage({ projects, issues }: BrowsePageProps) {
     const [searchProjects, setSearchProjects] = useState<boolean>(true);
@@ -84,13 +84,17 @@ export default function BrowsePage({ projects, issues }: BrowsePageProps) {
             } else {
                 const updatedIssues: Issue[] = [];
 
-                issues?.map((issue) => {
-                    if (
-                        issue?.title
-                            ?.toLowerCase()
-                            .includes(query.toLowerCase())
-                    )
-                        updatedIssues.push(issue);
+                issues?.map(async (issue) => {
+                    switch (searchFilter) {
+                        case 'title':
+                            if (
+                                issue?.title
+                                    ?.toLowerCase()
+                                    .includes(query.toLowerCase())
+                            )
+                                updatedIssues.push(issue);
+                            break;
+                    }
                 });
 
                 setDisplayedIssues(updatedIssues);
@@ -101,8 +105,11 @@ export default function BrowsePage({ projects, issues }: BrowsePageProps) {
     return (
         <>
             <Head>
-                <title>Landing</title>
-                <meta name="description" content="Landing Page" />
+                <title>Browse</title>
+                <meta
+                    name="description"
+                    content="Browse a collection of Open Source projects"
+                />
                 <meta
                     name="viewport"
                     content="width=device-width, initial-scale=1"
@@ -110,57 +117,59 @@ export default function BrowsePage({ projects, issues }: BrowsePageProps) {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <PageLayout>
-                <div id="search" className="flex flex-col items-end">
-                    {searchProjects && (
-                        <>
-                            <h1 className="font-medium text-sm mb-1">
-                                Filter By
-                            </h1>
-                            <select
-                                name="search-filter"
-                                id="search-filter"
-                                className="p-4"
-                                onChange={(e) =>
-                                    setSearchFilter(e.target.value)
-                                }
-                            >
-                                <option value="title">Title</option>
-                                <option value="owner">Owner</option>
-                                <option value="language">Language</option>
-                            </select>
-                        </>
-                    )}
+                <div id="search">
+                    <div>
+                        <h1 className="font-bold font-title mb-2">Filter By</h1>
+                        <select
+                            name="search-filter"
+                            id="search-filter"
+                            className="bg-transparent border border-secondary-dark rounded-sm p-2"
+                            onChange={(e) => setSearchFilter(e.target.value)}
+                        >
+                            {searchProjects ? (
+                                <>
+                                    <option value="title">Title</option>
+                                    <option value="owner">Owner</option>
+                                    <option value="language">Language</option>
+                                </>
+                            ) : (
+                                <>
+                                    <option value="title">Title</option>
+                                </>
+                            )}
+                        </select>
+                    </div>
                     <input
                         type="text"
                         id="search-bar"
                         placeholder="Search"
-                        className=" my-5 border border-black rounded-md w-3/4 px-5 py-3 bg-slate-500 text-white placeholder:text-white"
+                        className="px-4 py-3 my-6 rounded-2xl w-full font-paragraph text-sm font-light placeholder:font-paragraph placeholder:font-light placeholder:text-sm placeholder:text-default-dark bg-accent-dark text-default-dark outline-none"
                         onChange={(e) => UpdateDisplayResults(e.target.value)}
                     />
                 </div>
-                <div className="w-full grid grid-cols-2 mb-6">
+                <div className="text-base md:text-xl mb-9">
                     <button
                         onClick={() => ChangeSearch('project')}
-                        className={`py-3 border-b-2 duration-150 ${
+                        className={`py-3 border-b-2 duration-150 w-1/2 border-b-secondary-dark text-secondary-dark ${
                             searchProjects
-                                ? 'border-b-black text-black'
-                                : 'border-b-gray-300 text-gray-300'
+                                ? 'border-opacity-100 opacity-100'
+                                : 'border-opacity-30 opacity-30'
                         }`}
                     >
                         Projects
                     </button>
                     <button
                         onClick={() => ChangeSearch('issue')}
-                        className={`py-3 border-b-2 duration-150 ${
+                        className={`py-3 border-b-2 duration-150 w-1/2 border-b-secondary-dark text-secondary-dark ${
                             searchIssues
-                                ? 'border-b-black text-black'
-                                : 'border-b-gray-300 text-gray-300'
+                                ? 'border-opacity-100 opacity-100'
+                                : 'border-opacity-30 opacity-30'
                         }`}
                     >
                         Issues
                     </button>
                 </div>
-                <section className="grid grid-cols-2 gap-7">
+                <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {searchProjects && (
                         <>
                             {displayedProjects?.map((project, index) => (

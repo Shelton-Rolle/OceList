@@ -40,6 +40,10 @@ export interface ExternalUserProfileProps {
     data: IUser;
 }
 
+export interface FeedIssueProps {
+    issue: Issue;
+}
+
 export interface IssueCardProps {
     issue: Issue;
 }
@@ -64,10 +68,14 @@ export interface NewPostProps {
 export interface PageLayoutProps {
     children: ReactNode | ReactNode[];
 }
+
+export interface ProjectCardProps {
+    project: DatabaseProjectData;
+}
 export interface RepositoryCheckboxProps {
     repo: Project;
 }
-export interface ProjectCardProps {
+export interface FeedProjectProps {
     project: DatabaseProjectData;
 }
 

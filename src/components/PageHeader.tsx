@@ -21,12 +21,12 @@ export const PageHeader = () => {
             }`}
             href={href}
         >
-            {label} {icon}
+            {label} <div>{icon}</div>
         </a>
     );
 
     return (
-        <header className="fixed top-0 left-0 w-full h-16 bg-background-dark bg-opacity-75 backdrop-blur-sm p-2 flex justify-end items-center md:relative md:col-span-4 md:border-r-2 md:border-default-dark md:border-opacity-10 md:h-screen">
+        <header className="fixed top-0 left-0 w-full h-16 bg-background-dark bg-opacity-75 backdrop-blur-sm p-2 flex justify-end items-center md:relative md:col-span-2 md:col-start-2 md:border-r-2 md:border-default-dark md:border-opacity-10 md:h-screen">
             <button
                 className={`relative flex flex-col gap-2 justify-between lg:hidden w-12 z-20 ${
                     isMenuOpen ? 'items-end' : 'items-start'

@@ -5,9 +5,10 @@ import { PageLayout } from '@/layouts/PageLayout';
 import GetProjects from '@/database/GetProjects';
 import GetIssues from '@/database/GetIssues';
 import { DatabaseProjectData, Issue, Post } from '@/types/dataObjects';
-import { IssueCard } from '@/components/IssueCard';
-import { ProjectCard } from '@/components/ProjectCard';
+import { FeedIssue } from '@/components/FeedIssue';
+import { FeedProject } from '@/components/FeedProject';
 import GetFollowedPosts from '@/database/GetFollowedPosts';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 export default function Home() {
     const { currentUserData } = useAuth();
@@ -69,8 +70,11 @@ export default function Home() {
     return (
         <>
             <Head>
-                <title>Simu</title>
-                <meta name="description" content="Landing Page" />
+                <title>Home</title>
+                <meta
+                    name="description"
+                    content="Page that provides user with a collection of open source projects and issues."
+                />
                 <meta
                     name="viewport"
                     content="width=device-width, initial-scale=1"
@@ -79,7 +83,9 @@ export default function Home() {
             </Head>
             <PageLayout>
                 {loadingFeed ? (
-                    <div>Loading Feed</div>
+                    <div className="h-full flex justify-center items-center animate-spin">
+                        <AiOutlineLoading3Quarters size={60} color="#FDF5BF" />
+                    </div>
                 ) : (
                     <div>
                         {feed?.map((item, index) => {
@@ -87,12 +93,12 @@ export default function Home() {
                                 case 'issue':
                                     const issue = item as Issue;
                                     return (
-                                        <IssueCard issue={issue} key={index} />
+                                        <FeedIssue issue={issue} key={index} />
                                     );
                                 case 'project':
                                     const project = item as DatabaseProjectData;
                                     return (
-                                        <ProjectCard
+                                        <FeedProject
                                             project={project}
                                             key={index}
                                         />

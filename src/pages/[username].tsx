@@ -7,7 +7,7 @@ import { PageLayout } from '@/layouts/PageLayout';
 import database from '@/firebase/database/databaseInit';
 import { ref, get, child } from 'firebase/database';
 import { ModalProjectCheckbox } from '@/components/ModalProjectCheckbox';
-import { ProjectCard } from '@/components/ProjectCard';
+import { ProjectCard } from '@/components/FeedProject';
 import CreateProjects from '@/database/CreateProjects';
 import UpdateUser from '@/database/UpdateUser';
 import { GetGithubUserRepos } from '@/firebase/auth/gitHubAuth/octokit';
