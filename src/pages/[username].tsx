@@ -228,10 +228,10 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
     return (
         <>
             <Head>
-                <title>{data?.displayName}'s Profile</title>
+                <title>{profileName}'s Profile</title>
                 <meta
                     name="description"
-                    content={`Profile page of ${data?.displayName}`}
+                    content={`Profile page of ${profileName}`}
                 />
                 <meta
                     name="viewport"
@@ -347,9 +347,7 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                 ) : (
                                     <>
                                         {projects ? (
-                                            <p>
-                                                <PageLoader />
-                                            </p>
+                                            <PageLoader />
                                         ) : (
                                             <p>No Projects Found</p>
                                         )}
