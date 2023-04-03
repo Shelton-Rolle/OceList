@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { RepositoryCheckboxProps } from '@/types/props';
 import { IGithubUser } from '@/types/interfaces';
+import { AiFillCheckCircle } from 'react-icons/ai';
 
 export const RepositoryCheckbox = ({ repo }: RepositoryCheckboxProps) => {
     const { githubData, setGithubData } = useAuth();
@@ -27,7 +28,7 @@ export const RepositoryCheckbox = ({ repo }: RepositoryCheckboxProps) => {
     }
 
     return (
-        <div className="flex">
+        <div className="p-4 bg-accent-dark border border-white border-opacity-30 flex items-center hover:bg-opacity-90 duration-200">
             <input
                 id={repo.name}
                 type="checkbox"
@@ -36,8 +37,14 @@ export const RepositoryCheckbox = ({ repo }: RepositoryCheckboxProps) => {
                     setChecked(e.target.checked);
                     UpdateUserProjects(e.target.checked);
                 }}
+                className="opacity-0"
             />
-            <label htmlFor={repo.name}>{repo.name}</label>
+            <label
+                htmlFor={repo.name}
+                className="font-paragraph font-light text-lg w-full flex items-center justify-between cursor-pointer"
+            >
+                {repo.name} {checked && <AiFillCheckCircle />}
+            </label>
         </div>
     );
 };

@@ -123,7 +123,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                             <MdComputer size={22} />
                         </a>
                     )}
-                    {!isCurrentUserProject && (
+                    {!isCurrentUserProject && currentUser && (
                         <button onClick={HandleFavorite}>
                             {updatingFavorites ? (
                                 <div className="h-full flex justify-center items-center animate-spin">

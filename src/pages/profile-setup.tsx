@@ -13,6 +13,8 @@ import { sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
 import auth from '@/firebase/auth/authInit';
 import GenerateTemporaryPassword from '@/helpers/GenerateTemporaryPassword';
 import GetDefaultBanners from '@/firebase/storage/GetDefaultBanners';
+import { PageLoader } from '@/components/PageLoader';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 export default function ProfileSetup() {
     const {
@@ -23,7 +25,7 @@ export default function ProfileSetup() {
         UpdateProfile,
     } = useAuth();
     const router = useRouter();
-
+    const [finalizing, setFinalizing] = useState<boolean>();
     // This will be an array of Projects
     const [repos, setRepos] = useState<Project[]>();
 
@@ -34,6 +36,7 @@ export default function ProfileSetup() {
     }
 
     async function FinalizeProfileSetup() {
+        setFinalizing(true);
         // Create Project Instances of each project in the database
         await CreateProjects(
             githubData?.githubToken!,
@@ -71,6 +74,7 @@ export default function ProfileSetup() {
                             githubData?.githubToken!,
                             fullUser
                         ).then(async ({ result }) => {
+                            setFinalizing(false);
                             setCurrentUserData(fullUser);
                             await sendEmailVerification(currentUser!);
                             router.push(`/`);
@@ -88,32 +92,70 @@ export default function ProfileSetup() {
     }, []);
 
     return (
-        <div>
-            {!repos ? (
-                <div>Loading</div>
-            ) : (
-                <>
-                    {repos.length < 1 ? (
-                        <p>No Repos Found</p>
-                    ) : (
-                        <>
-                            <h1>
-                                Select which repos you want to list as open
-                                source projects
-                            </h1>
-                            <div id="repos">
-                                {repos.map((repo, index) => (
-                                    <RepositoryCheckbox
-                                        repo={repo}
-                                        key={index}
+        <section className="text-default-dark flex justify-center items-center h-screen max-w-lg mx-auto">
+            <div className="w-fit">
+                {!repos ? (
+                    <PageLoader />
+                ) : (
+                    <div>
+                        {repos.length < 1 ? (
+                            <>
+                                <h1 className="font-title font-bold text-2xl mb-4 md:text-3xl">
+                                    Looks like you&apos;re skipping this step!
+                                </h1>
+                                <p className="font-paragraph font-light leading-8">
+                                    Usually we would display a list of public
+                                    repos we found for your account and ask you
+                                    to choose which you would like to list as
+                                    Open Source projects, but it seems we came
+                                    up empty. Click continue to continue on
+                                    towards the site.
+                                </p>
+                            </>
+                        ) : (
+                            <>
+                                <h1 className="font-title font-bold text-2xl mb-4 md:text-3xl">
+                                    Almost Done!
+                                </h1>
+                                <p className="font-paragraph font-light leading-8">
+                                    Below is a list of all public repositories
+                                    we found for your account. Select which
+                                    projects you would like to be listed as Open
+                                    Source projects. If you aren&apos;t sure
+                                    now, you can continue without selecting any
+                                    and do this later in your profile page.
+                                </p>
+                                <div
+                                    id="repos"
+                                    className="my-6 max-h-44 overflow-y-scroll outline outline-1 outline-default-dark rounded-sm"
+                                >
+                                    {repos.map((repo, index) => (
+                                        <RepositoryCheckbox
+                                            repo={repo}
+                                            key={index}
+                                        />
+                                    ))}
+                                </div>
+                            </>
+                        )}
+                        <button
+                            className="px-8 py-3 font-title font-medium bg-secondary-dark text-background-dark rounded-md"
+                            onClick={FinalizeProfileSetup}
+                        >
+                            {finalizing ? (
+                                <div className="animate-spin">
+                                    <AiOutlineLoading3Quarters
+                                        size={25}
+                                        color="#03080E"
                                     />
-                                ))}
-                            </div>
-                        </>
-                    )}
-                </>
-            )}
-            <button onClick={FinalizeProfileSetup}>Continue</button>
-        </div>
+                                </div>
+                            ) : (
+                                'Continue'
+                            )}
+                        </button>
+                    </div>
+                )}
+            </div>
+        </section>
     );
 }

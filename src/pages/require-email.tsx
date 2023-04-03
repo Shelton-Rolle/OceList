@@ -17,7 +17,7 @@ export default function RequireEmail() {
     }
 
     return (
-        <div>
+        <div className="text-default-dark">
             <h1>Missing email</h1>
             <p>
                 We were not able to retrieve the email associated with your
