@@ -115,11 +115,11 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                     alt="owner avatar"
                 />
                 <div className="flex gap-4 items-center">
-                    <a href={project?.html_url}>
+                    <a href={project?.html_url} target="_blank">
                         <AiFillGithub size={22} />
                     </a>
                     {project?.homepage && (
-                        <a href={project?.homepage}>
+                        <a href={project?.homepage} target="_blank">
                             <MdComputer size={22} />
                         </a>
                     )}

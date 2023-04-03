@@ -228,7 +228,7 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
     return (
         <>
             <Head>
-                <title>{profileName}'s Profile</title>
+                <title>{`${profileName}'s Profile`}</title>
                 <meta
                     name="description"
                     content={`Profile page of ${profileName}`}
@@ -246,7 +246,11 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                     <div className="z-10">
                         <section>
                             <div className="absolute top-0 left-0 w-full">
-                                <div className="relative h-96">
+                                <div
+                                    className={`relative h-96 ${
+                                        isCurrentUser && 'cursor-pointer'
+                                    }`}
+                                >
                                     <Image
                                         src={data?.banner_url!}
                                         alt="banner"
@@ -266,11 +270,6 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                         width={80}
                                         height={80}
                                         priority
-                                        onClick={() => {
-                                            if (isCurrentUser) {
-                                                setOpenAvatarModal(true);
-                                            }
-                                        }}
                                     />
                                 </div>
                             </div>
@@ -288,7 +287,10 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                 </p>
                             </div>
                             {!isCurrentUser && (
-                                <button onClick={FollowUser}>
+                                <button
+                                    className="px-5 py-4 rounded-md bg-default-dark text-background-dark font-paragraph font-light text-sm"
+                                    onClick={FollowUser}
+                                >
                                     {loadingFollow ? (
                                         <>Loading</>
                                     ) : (
