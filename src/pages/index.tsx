@@ -10,9 +10,11 @@ import { FeedProject } from '@/components/FeedProject';
 import GetFollowedPosts from '@/database/GetFollowedPosts';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { PageLoader } from '@/components/PageLoader';
+import { useRouter } from 'next/router';
 
 export default function Home() {
-    const { currentUserData } = useAuth();
+    const router = useRouter();
+    const { currentUser, currentUserData } = useAuth();
     const [feed, setFeed] = useState<(DatabaseProjectData | Issue | Post)[]>(
         []
     );
@@ -67,6 +69,12 @@ export default function Home() {
             }
         }
     }, [currentUserData]);
+
+    useEffect(() => {
+        if (!loadingFeed && !currentUser) {
+            router.push('/browse');
+        }
+    }, [loadingFeed]);
 
     return (
         <>

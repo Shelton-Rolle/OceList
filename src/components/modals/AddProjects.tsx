@@ -20,7 +20,7 @@ export const AddProjects = ({
         await CreateProjects(userData?.githubToken!, newProjects).then(
             async () => {
                 const updatedUserProjectsArray: DatabaseProjectData[] =
-                    existingProjects;
+                    existingProjects as DatabaseProjectData[];
 
                 const mutatedProjects = await MutateProjectObjects(
                     userData?.githubToken!,
