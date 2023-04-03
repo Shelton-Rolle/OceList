@@ -19,6 +19,7 @@ export default function Home() {
         []
     );
     const [loadingFeed, setLoadingFeed] = useState<boolean>();
+    const [checkedLoadingOnce, setCheckedLoadingOnce] = useState<boolean>();
 
     async function Shuffle(
         array: (DatabaseProjectData | Issue | Post)[]
@@ -70,12 +71,6 @@ export default function Home() {
         }
     }, [currentUserData]);
 
-    useEffect(() => {
-        if (!loadingFeed && !currentUser) {
-            router.push('/browse');
-        }
-    }, [loadingFeed]);
-
     return (
         <>
             <Head>
@@ -94,34 +89,59 @@ export default function Home() {
                 {loadingFeed ? (
                     <PageLoader />
                 ) : (
-                    <div className="border-r-2 border-default-dark border-opacity-10 w-fit pr-10">
-                        {feed?.map((item, index) => {
-                            switch (item?.type) {
-                                case 'issue':
-                                    const issue = item as Issue;
-                                    return (
-                                        <FeedIssue issue={issue} key={index} />
-                                    );
-                                case 'project':
-                                    const project = item as DatabaseProjectData;
-                                    return (
-                                        <FeedProject
-                                            project={project}
-                                            key={index}
-                                        />
-                                    );
-                                case 'post':
-                                    const post = item as Post;
-                                    return (
-                                        <div key={index}>
-                                            <h1 className="font-bold">
-                                                {post?.owner?.displayName}
-                                            </h1>
-                                            <p>{post?.body}</p>
-                                        </div>
-                                    );
-                            }
-                        })}
+                    <div>
+                        {feed.length > 0 ? (
+                            <div className="border-r-2 border-default-dark border-opacity-10 w-fit min-w-[345px] pr-10">
+                                {feed?.map((item, index) => {
+                                    switch (item?.type) {
+                                        case 'issue':
+                                            const issue = item as Issue;
+                                            return (
+                                                <FeedIssue
+                                                    issue={issue}
+                                                    key={index}
+                                                />
+                                            );
+                                        case 'project':
+                                            const project =
+                                                item as DatabaseProjectData;
+                                            return (
+                                                <FeedProject
+                                                    project={project}
+                                                    key={index}
+                                                />
+                                            );
+                                        case 'post':
+                                            const post = item as Post;
+                                            return (
+                                                <div key={index}>
+                                                    <h1 className="font-bold">
+                                                        {
+                                                            post?.owner
+                                                                ?.displayName
+                                                        }
+                                                    </h1>
+                                                    <p>{post?.body}</p>
+                                                </div>
+                                            );
+                                    }
+                                })}
+                            </div>
+                        ) : (
+                            <div className="w-3/4 min-w-[340px]">
+                                <h1 className="font-title font-bold text-2xl mb-4 md:text-3xl">
+                                    Start Browsing Now!
+                                </h1>
+                                <p className="font-paragraph font-light leading-8">
+                                    Head over to the browse page to start
+                                    browsing all the projects we have listed! If
+                                    you&apos;d like to favorite projects or
+                                    maybe list projects of your own, head over
+                                    to the login page to login with your GitHub
+                                    account and get started!
+                                </p>
+                            </div>
+                        )}
                     </div>
                 )}
             </PageLayout>

@@ -152,7 +152,7 @@ export const FeedProject = ({ project }: FeedProjectProps) => {
             </div>
             <div className="mt-12 flex items-center gap-7">
                 {project?.languages?.map((language, index) => {
-                    if (index > 2) return <></>;
+                    if (index > 2) return;
                     return (
                         <p
                             className="font-paragraph text-secondary-dark font-light text-sm"
