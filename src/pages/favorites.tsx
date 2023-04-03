@@ -44,7 +44,7 @@ export default function Favorites() {
                 ) : (
                     <>
                         {favorites?.length! > 0 ? (
-                            <div className=" mt-3 grid grid-cols-2 gap-4">
+                            <div className="mt-3 grid lg:grid-cols-2 gap-4">
                                 {favorites?.map((favorite, index) => (
                                     <ProjectCard
                                         project={

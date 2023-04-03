@@ -146,12 +146,16 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                 </div>
             </div>
             <div>
-                <h2 className="line-cutoff-1 font-title text-2xl font-bold">
-                    {project?.name}
-                </h2>
-                <p className="font-paragraph text-sm text-accent-dark font-light">
-                    {project?.owner?.login}
-                </p>
+                <a href={`/projects/${project?.id}`}>
+                    <h2 className="line-cutoff-1 font-title text-2xl font-bold">
+                        {project?.name}
+                    </h2>
+                </a>
+                <a href={`/${project?.owner?.login}`}>
+                    <p className="font-paragraph text-sm text-accent-dark font-light">
+                        {project?.owner?.login}
+                    </p>
+                </a>
             </div>
             <div className="mt-12 flex items-center gap-7">
                 {project?.languages?.map((language, index) => {
