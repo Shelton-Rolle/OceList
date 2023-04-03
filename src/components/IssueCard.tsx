@@ -1,28 +1,13 @@
 import { IssueCardProps } from '@/types/props';
 import CardAvatar from './CardAvatar';
-import { Project } from '@/types/dataObjects';
-import { useState, useEffect } from 'react';
 
 export default function IssueCard({ issue }: IssueCardProps) {
-    const [repository, setRepository] = useState<Project>();
-
-    async function fetchRepository() {
-        await fetch(issue?.repository_url!)
-            .then((res) => res.json())
-            .then((res) => setRepository(res))
-            .catch((error) => console.error(error));
-    }
-
-    useEffect(() => {
-        fetchRepository();
-    }, []);
-
     return (
         <article className="w-full max-w-lg border-2 border-secondary-dark rounded-md p-6">
             <div className="h-12 flex justify-between items-center">
-                {repository?.owner?.avatar_url && (
+                {issue?.repository?.owner?.avatar_url && (
                     <CardAvatar
-                        src={repository?.owner?.avatar_url}
+                        src={issue?.repository?.owner?.avatar_url}
                         alt="parent repo owner"
                     />
                 )}
@@ -52,11 +37,11 @@ export default function IssueCard({ issue }: IssueCardProps) {
                     {issue?.title}
                 </h2>
                 <a
-                    href={`/projects/${repository?.id}`}
+                    href={`/projects/${issue?.repository?.id}`}
                     className="duration-150 cursor-pointer hover:opacity-60"
                 >
                     <p className="font-paragraph text-sm text-accent-dark font-light">
-                        {repository?.name}
+                        {issue?.repository?.name}
                     </p>
                 </a>
             </div>

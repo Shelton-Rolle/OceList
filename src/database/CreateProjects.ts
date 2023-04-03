@@ -1,5 +1,5 @@
 import MutateProjectObjects from '@/helpers/MutateProjectObjects';
-import { DatabaseProjectData, Project } from '@/types/dataObjects';
+import { Project } from '@/types/dataObjects';
 import CreateIssues from './CreateIssues';
 
 export default async function CreateProjects(
@@ -8,7 +8,7 @@ export default async function CreateProjects(
 ) {
     // Create Issue Instances for each issue in each projects
     await projects.map(async (project: Project) => {
-        await CreateIssues(project?.issues!);
+        await CreateIssues(project, project?.issues!);
     });
     const mutatedProjects = await MutateProjectObjects(token, projects);
 

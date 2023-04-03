@@ -1,21 +1,15 @@
-import { Issue } from '@/types/dataObjects';
+import { Issue, Project } from '@/types/dataObjects';
 
-export default async function CreateIssues(issues: Issue[]) {
+export default async function CreateIssues(project: Project, issues: Issue[]) {
     const issueData: any[] = [];
     for (let i = 0; i < issues.length; i++) {
         const { repository_url } = issues[i];
 
-        await fetch(repository_url!)
-            .then((res) => res.json())
-            .then((data) => {
-                const { id, name } = data;
-                issueData.push({
-                    ...issues[i],
-                    project: data,
-                    type: 'issue',
-                });
-            })
-            .catch((err) => console.error(err));
+        issueData.push({
+            ...issues[i],
+            repository: project,
+            type: 'issue',
+        });
     }
 
     const data = {

@@ -91,7 +91,7 @@ export default function Home() {
                 ) : (
                     <div>
                         {feed.length > 0 ? (
-                            <div className="border-r-2 border-default-dark border-opacity-10 w-fit min-w-[345px] pr-10">
+                            <div className="min-w-[345px] w-fit grid grid-cols-1 lg:grid-cols-2 gap-4">
                                 {feed?.map((item, index) => {
                                     switch (item?.type) {
                                         case 'issue':

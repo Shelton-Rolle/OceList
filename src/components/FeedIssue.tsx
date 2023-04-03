@@ -1,27 +1,12 @@
-import { Project } from '@/types/dataObjects';
 import { FeedIssueProps } from '@/types/props';
-import React, { useEffect, useState } from 'react';
 import CardAvatar from './CardAvatar';
 
 export const FeedIssue = ({ issue }: FeedIssueProps) => {
-    const [repository, setRepository] = useState<Project>();
-
-    async function fetchRepository() {
-        await fetch(issue?.repository_url!)
-            .then((res) => res.json())
-            .then((res) => setRepository(res))
-            .catch((error) => console.error(error));
-    }
-
-    useEffect(() => {
-        fetchRepository();
-    }, []);
-
     return (
-        <article className="border-b-2 border-default-dark border-opacity-10 px-5 py-8 max-w-lg">
+        <article className="border-b-2 border-x-2 border-default-dark border-opacity-10 px-5 py-8 max-w-lg">
             <div className="grid grid-cols-12 gap-4">
                 <CardAvatar
-                    src={repository?.owner?.avatar_url!}
+                    src={issue?.repository?.owner?.avatar_url!}
                     alt="owner-avatar"
                 />
                 <div className="col-span-10">
@@ -30,9 +15,9 @@ export const FeedIssue = ({ issue }: FeedIssueProps) => {
                             {issue?.title}
                         </h2>
                     </a>
-                    <a href={`/projects/${repository?.id}`}>
+                    <a href={`/projects/${issue?.repository?.id}`}>
                         <p className="font-paragraph text-sm text-accent-dark font-light">
-                            {repository?.name}
+                            {issue?.repository?.name}
                         </p>
                     </a>
                 </div>
