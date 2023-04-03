@@ -51,7 +51,6 @@ export interface IssueCardProps {
 export interface NavItemProps {
     label: string;
     href: string;
-    icon: ReactNode;
     active: boolean;
 }
 

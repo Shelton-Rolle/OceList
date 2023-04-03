@@ -5,23 +5,23 @@ module.exports = {
         extend: {
             colors: {
                 primary: {
-                    light: '#2E2D4D',
+                    light: '#EE6C4D',
                     dark: '#FFD5FF',
                 },
                 secondary: {
-                    light: '#3FA7D6',
+                    light: '#9381FF',
                     dark: '#FDF5BF',
                 },
                 accent: {
-                    light: '#FDF5BF',
+                    light: '#FFC2D1',
                     dark: '#414068',
                 },
                 default: {
-                    light: '#2D2E2E',
+                    light: '#293241',
                     dark: '#9CFFFA',
                 },
                 background: {
-                    light: '#FFFFFF',
+                    light: '#E0FBFC',
                     dark: '#03080E',
                 },
             },

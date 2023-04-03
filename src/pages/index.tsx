@@ -91,7 +91,7 @@ export default function Home() {
                 ) : (
                     <div>
                         {feed.length > 0 ? (
-                            <div className="min-w-[345px] w-fit grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div>
                                 {feed?.map((item, index) => {
                                     switch (item?.type) {
                                         case 'issue':
@@ -128,11 +128,9 @@ export default function Home() {
                                 })}
                             </div>
                         ) : (
-                            <div className="w-3/4 min-w-[340px]">
-                                <h1 className="font-title font-bold text-2xl mb-4 md:text-3xl">
-                                    Start Browsing Now!
-                                </h1>
-                                <p className="font-paragraph font-light leading-8">
+                            <div>
+                                <h1>Start Browsing Now!</h1>
+                                <p>
                                     Head over to the browse page to start
                                     browsing all the projects we have listed! If
                                     you&apos;d like to favorite projects or

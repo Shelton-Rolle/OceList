@@ -1,79 +1,43 @@
-import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { ReactNode, useState } from 'react';
-import { AiOutlineHome } from 'react-icons/ai';
-import { BiSearchAlt } from 'react-icons/bi';
-import { CgProfile } from 'react-icons/cg';
-import { MdFavorite } from 'react-icons/md';
-import { IoMdSettings } from 'react-icons/io';
+import { useState } from 'react';
 import { NavItemProps } from '@/types/props';
 import { useRouter } from 'next/router';
-import { IoMdLogIn } from 'react-icons/io';
 
 export const PageHeader = () => {
     const router = useRouter();
     const { currentUser } = useAuth();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    const NavItem = ({ label, href, icon, active }: NavItemProps) => (
-        <a
-            className={`relative font-title text-h6 flex items-center justify-end gap-5 ${
-                active && 'text-secondary-dark'
-            }`}
-            href={href}
-        >
-            {label} <div>{icon}</div>
+    const NavItem = ({ label, href, active }: NavItemProps) => (
+        <a className={`${active && 'text-secondary-light'}`} href={href}>
+            {label}
         </a>
     );
 
     return (
-        <header className="fixed top-0 left-0 w-full h-16 bg-background-dark bg-opacity-75 backdrop-blur-sm p-2 flex justify-end items-center md:relative md:col-span-2 md:col-start-2 md:border-r-2 md:border-default-dark md:border-opacity-10 md:h-screen z-20 md:overflow-y-scroll .scrollbar-hide">
+        <header className="relative p-6">
             <button
-                className={`relative flex flex-col gap-2 justify-between lg:hidden w-12 z-20 ${
-                    isMenuOpen ? 'items-end' : 'items-start'
-                } md:hidden`}
+                className=" w-12 flex flex-col gap-1 ml-auto md:hidden"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-                <div
-                    className={`h-1 bg-white rounded-sm ${
-                        isMenuOpen
-                            ? 'animate-open-line-1'
-                            : 'animate-close-line-1'
-                    }`}
-                />
-                <div
-                    className={`h-1 bg-white rounded-sm ${
-                        isMenuOpen
-                            ? 'animate-open-line-2'
-                            : 'animate-close-line-2'
-                    }`}
-                />
-                <div
-                    className={`h-1 bg-white rounded-sm ${
-                        isMenuOpen
-                            ? 'animate-open-line-3'
-                            : 'animate-close-line-3'
-                    }`}
-                />
+                <div className="w-full h-1 bg-black rounded-full ml-auto" />
+                <div className="w-1/2 h-1 bg-black rounded-full ml-auto" />
+                <div className="w-1/4 h-1 bg-black rounded-full ml-auto" />
             </button>
             <nav
-                className={`absolute top-0 left-0 bg-background-dark w-full h-screen p-7 ${
-                    !isMenuOpen ? 'max-md:hidden' : 'max-md:block'
-                } md:block`}
+                className={`absolute top-0 ${
+                    isMenuOpen ? 'left-0' : '-left-full'
+                } w-full h-screen bg-background-light`}
             >
-                <div className="flex flex-col gap-11 mt-14">
-                    {currentUser && (
-                        <NavItem
-                            label="Home"
-                            href="/"
-                            icon={<AiOutlineHome />}
-                            active={router.asPath === '/'}
-                        />
-                    )}
+                <div>
+                    <NavItem
+                        label="Ocelist"
+                        href="/"
+                        active={router.asPath === '/'}
+                    />
                     <NavItem
                         label="Browse"
                         href="/browse"
-                        icon={<BiSearchAlt />}
                         active={router.asPath.split('/')[1] === 'browse'}
                     />
                     {currentUser ? (
@@ -81,13 +45,11 @@ export const PageHeader = () => {
                             <NavItem
                                 label="Profile"
                                 href={`/${currentUser?.displayName}`}
-                                icon={<CgProfile />}
                                 active={router.query.username ? true : false}
                             />
                             <NavItem
                                 label="Favorites"
                                 href="/favorites"
-                                icon={<MdFavorite />}
                                 active={
                                     router.asPath.split('/')[1] === 'favorites'
                                 }
@@ -96,7 +58,6 @@ export const PageHeader = () => {
                                 <NavItem
                                     label="Settings"
                                     href="/profile/settings"
-                                    icon={<IoMdSettings />}
                                     active={
                                         router.asPath.split('/')[2] ===
                                         'settings'
@@ -108,7 +69,6 @@ export const PageHeader = () => {
                         <NavItem
                             label="Login"
                             href="/login"
-                            icon={<IoMdLogIn />}
                             active={router.asPath.split('/')[1] === 'login'}
                         />
                     )}
