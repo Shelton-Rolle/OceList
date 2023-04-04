@@ -60,6 +60,23 @@ export default function ProjectPage({
         });
     }
 
+    function UpdateView(selection: string) {
+        switch (selection) {
+            case 'description':
+                if (showIssues) {
+                    setShowIssues(false);
+                    setShowDescription(true);
+                }
+                break;
+            case 'issues':
+                if (showDescription) {
+                    setShowDescription(false);
+                    setShowIssues(true);
+                }
+                break;
+        }
+    }
+
     useEffect(() => {
         if (currentUser) {
             if (currentUser.displayName === owner.displayName) {
@@ -92,7 +109,7 @@ export default function ProjectPage({
                 <div>
                     {isOwner && (
                         <section id="owner-actions" className="mb-9">
-                            <h1 className="font-roboto font-bold text-base text-default-light">
+                            <h1 className="font-roboto font-bold text-base text-default-light lg:text-2xl">
                                 Owner Actions
                             </h1>
                             <div
@@ -116,10 +133,10 @@ export default function ProjectPage({
                     )}
                     <section id="project-details" className="mb-9">
                         <div id="project-identity">
-                            <p className="font-poppins font-normal text-sm text-accent-light">
+                            <p className="font-poppins font-normal text-sm text-accent-light lg:text-lg">
                                 {project?.owner?.login}
                             </p>
-                            <h2 className="font-poppins font-bold text-2xl text-primary-light">
+                            <h2 className="font-poppins font-bold text-2xl text-primary-light lg:text-5xl uppercase">
                                 {project?.name}
                             </h2>
                         </div>
@@ -172,51 +189,107 @@ export default function ProjectPage({
                             )}
                         </div>
                     </section>
-                    <div>
+                    <section id="contributors" className="mb-8">
                         <h4 className="font-roboto font-bold text-xl text-default-light mb-3">
                             Contributors
                         </h4>
-                        {project?.contributors?.map((contributor, index) => (
-                            <div
-                                key={index}
-                                className="relative w-8 h-8 rounded-full overflow-hidden"
-                            >
-                                <Image
-                                    src={contributor?.avatar_url}
-                                    alt="contributor-avatar"
-                                    fill
-                                />
-                            </div>
-                        ))}
-                    </div>
-                    <section id="content">
-                        <div>
-                            <button>Description</button>
-                            <button>Issues</button>
-                        </div>
-                        {readme && (
-                            <div id="readme">
-                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                    {readme}
-                                </ReactMarkdown>
-                            </div>
-                        )}
-                        <div>
-                            {project?.issues?.map((issue, index) => (
+                        {project?.contributors?.map((contributor, index) => {
+                            if (index > 19) return;
+                            if (index === 19) {
+                                const totalContributors =
+                                    project?.contributors?.length!;
+
+                                if (totalContributors > 500) {
+                                    return (
+                                        <div className="relative w-10 h-10 rounded-full overflow-hidden text-xs flex justify-center items-center bg-slate-200">
+                                            500+
+                                        </div>
+                                    );
+                                } else {
+                                    return (
+                                        <div className="relative w-10 h-10 rounded-full overflow-hidden text-xs flex justify-center items-center bg-slate-200">
+                                            {totalContributors}
+                                        </div>
+                                    );
+                                }
+                            }
+
+                            return (
                                 <div
                                     key={index}
-                                    className="outline outline-2 outline-black my-3 p-5 max-w-xs"
+                                    className="relative w-10 h-10 rounded-full overflow-hidden"
                                 >
-                                    <h4 className="text-lg font-bold">
-                                        {issue?.title}
-                                    </h4>
-                                    <p>{issue?.body}</p>
-                                    <p className="text-gray-400 text-sm">
-                                        {issue?.user?.login}
-                                    </p>
+                                    <Image
+                                        src={contributor?.avatar_url}
+                                        alt="contributor-avatar"
+                                        fill
+                                    />
                                 </div>
-                            ))}
+                            );
+                        })}
+                    </section>
+                    <section id="content">
+                        <div className="mt-5 mb-12">
+                            <button
+                                className={`border-b-2 rouned-sm px-4 pb-1 w-full max-w-[120px] ${
+                                    showDescription
+                                        ? 'border-default-light text-default-light'
+                                        : 'border-accent-light text-accent-light'
+                                }`}
+                                onClick={() => UpdateView('description')}
+                            >
+                                Description
+                            </button>
+                            <button
+                                className={`border-b-2 rouned-sm px-4 pb-1 w-full max-w-[120px] ${
+                                    showIssues
+                                        ? 'border-default-light text-default-light'
+                                        : 'border-accent-light text-accent-light'
+                                }`}
+                                onClick={() => UpdateView('issues')}
+                            >
+                                Issues
+                            </button>
                         </div>
+                        {showDescription && (
+                            <>
+                                {readme && (
+                                    <div id="readme">
+                                        <ReactMarkdown
+                                            remarkPlugins={[remarkGfm]}
+                                        >
+                                            {readme}
+                                        </ReactMarkdown>
+                                    </div>
+                                )}
+                            </>
+                        )}
+                        {showIssues && (
+                            <div>
+                                {project?.issues?.length! > 0 ? (
+                                    <>
+                                        {project?.issues?.map(
+                                            (issue, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="outline outline-2 outline-black my-3 p-5 max-w-xs"
+                                                >
+                                                    <h4 className="text-lg font-bold">
+                                                        {issue?.title}
+                                                    </h4>
+                                                    <p>{issue?.body}</p>
+                                                    <p className="text-gray-400 text-sm">
+                                                        {issue?.user?.login}
+                                                    </p>
+                                                </div>
+                                            )
+                                        )}
+                                    </>
+                                ) : (
+                                    <p>No Issues Found.</p>
+                                )}
+                            </div>
+                        )}
                     </section>
                 </div>
             </PageLayout>

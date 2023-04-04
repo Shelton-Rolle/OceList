@@ -33,7 +33,7 @@ module.exports = {
                 'mobile-card': '261px',
             },
             maxWidth: {
-                tablet: '556px',
+                tablet: '720px',
                 desktop: '1280px',
                 'mobile-card': '261px',
             },
