@@ -37,54 +37,61 @@ export default function ProfileSetup() {
 
     async function FinalizeProfileSetup() {
         setFinalizing(true);
-        // Create Project Instances of each project in the database
-        await CreateProjects(
-            githubData?.githubToken!,
-            Object.values(githubData?.projects)
-        )
-            .then(async () => {
-                const assignedIssues = await GetGitHubUserIssues(
-                    githubData?.githubToken!
-                );
-                const fullUser: IUser = {
-                    ...githubData,
-                    assignedIssues,
-                };
+        if (repos?.length! > 0) {
+            // Create Project Instances of each project in the database
+            await CreateProjects(
+                githubData?.githubToken!,
+                Object.values(githubData?.projects)
+            )
+                .then(async () => {
+                    const assignedIssues = await GetGitHubUserIssues(
+                        githubData?.githubToken!
+                    );
+                    const fullUser: IUser = {
+                        ...githubData,
+                        assignedIssues,
+                    };
 
-                await UpdateProfile(
-                    githubData?.login!,
-                    githubData?.avatar_url!
-                ).then(async () => {
-                    fullUser.displayName = githubData?.login!;
-                    fullUser.photoURL = githubData?.avatar_url!;
-                    await GetDefaultBanners().then(async (defaultBanners) => {
-                        fullUser.banner_url =
-                            defaultBanners[
-                                Math.floor(
-                                    Math.random() * defaultBanners.length
-                                )
-                            ];
+                    await UpdateProfile(
+                        githubData?.login!,
+                        githubData?.avatar_url!
+                    ).then(async () => {
+                        fullUser.displayName = githubData?.login!;
+                        fullUser.photoURL = githubData?.avatar_url!;
+                        await GetDefaultBanners().then(
+                            async (defaultBanners) => {
+                                fullUser.banner_url =
+                                    defaultBanners[
+                                        Math.floor(
+                                            Math.random() *
+                                                defaultBanners.length
+                                        )
+                                    ];
 
-                        // Generate a temporary password for the user
-                        const password = GenerateTemporaryPassword();
-                        await updateUserPassword(password);
+                                // Generate a temporary password for the user
+                                const password = GenerateTemporaryPassword();
+                                await updateUserPassword(password);
 
-                        // Code for signing up with github
-                        await CreateUser(
-                            githubData?.githubToken!,
-                            fullUser
-                        ).then(async ({ result }) => {
-                            setFinalizing(false);
-                            setCurrentUserData(fullUser);
-                            await sendEmailVerification(currentUser!);
-                            router.push(`/`);
-                        });
+                                // Code for signing up with github
+                                await CreateUser(
+                                    githubData?.githubToken!,
+                                    fullUser
+                                ).then(async ({ result }) => {
+                                    setFinalizing(false);
+                                    setCurrentUserData(fullUser);
+                                    await sendEmailVerification(currentUser!);
+                                    router.push(`/`);
+                                });
+                            }
+                        );
                     });
+                })
+                .catch((error) => {
+                    console.log('Finalize Profile Error: ', error);
                 });
-            })
-            .catch((error) => {
-                console.log('Finalize Profile Error: ', error);
-            });
+        } else {
+            router.push('/');
+        }
     }
 
     useEffect(() => {
@@ -92,7 +99,7 @@ export default function ProfileSetup() {
     }, []);
 
     return (
-        <section className="text-default-dark flex justify-center items-center h-screen max-w-lg mx-auto">
+        <section className="flex justify-center items-center h-screen max-w-lg mx-auto">
             <div className="w-fit">
                 {!repos ? (
                     <PageLoader />
@@ -100,10 +107,10 @@ export default function ProfileSetup() {
                     <div>
                         {repos.length < 1 ? (
                             <>
-                                <h1 className="font-title font-bold text-2xl mb-4 md:text-3xl">
+                                <h1 className="font-roboto font-bold text-2xl mb-4 md:text-3xl text-primary-light">
                                     Looks like you&apos;re skipping this step!
                                 </h1>
-                                <p className="font-paragraph font-light leading-8">
+                                <p className="font-poppins font-light leading-8 text-default-light">
                                     Usually we would display a list of public
                                     repos we found for your account and ask you
                                     to choose which you would like to list as
@@ -139,7 +146,7 @@ export default function ProfileSetup() {
                             </>
                         )}
                         <button
-                            className="px-8 py-3 font-title font-medium bg-secondary-dark text-background-dark rounded-md"
+                            className="px-8 py-3 font-title font-medium bg-secondary-dark text-background-dark rounded-md mt-8"
                             onClick={FinalizeProfileSetup}
                         >
                             {finalizing ? (
