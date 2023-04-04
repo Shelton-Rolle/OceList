@@ -329,7 +329,10 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                 ) : (
                                     <>
                                         {projects ? (
-                                            <PageLoader />
+                                            <PageLoader
+                                                size={18}
+                                                color="#9381FF"
+                                            />
                                         ) : (
                                             <p>No Projects Found</p>
                                         )}

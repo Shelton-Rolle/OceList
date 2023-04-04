@@ -105,11 +105,6 @@ export default function Settings() {
     }
 
     useEffect(() => {
-        console.log('Current User: ', currentUser);
-        console.log('Current User Data: ', currentUserData);
-    }, [currentUser, currentUserData]);
-
-    useEffect(() => {
         let isConnected = false;
         currentUser?.providerData.map((provider) => {
             if (provider?.providerId === 'github.com') {
@@ -267,7 +262,7 @@ export default function Settings() {
                         )}
                     </>
                 ) : (
-                    <PageLoader />
+                    <PageLoader size={60} color="#9381FF" />
                 )}
             </PageLayout>
         </>

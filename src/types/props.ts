@@ -69,6 +69,11 @@ export interface PageLayoutProps {
     modalOpen?: boolean;
 }
 
+export interface PageLoaderProps {
+    size: number;
+    color: string;
+}
+
 export interface ProjectCardProps {
     project: DatabaseProjectData;
 }

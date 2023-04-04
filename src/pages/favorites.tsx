@@ -40,7 +40,7 @@ export default function Favorites() {
             </Head>
             <PageLayout>
                 {loadingData ? (
-                    <PageLoader />
+                    <PageLoader size={60} color="#9381FF" />
                 ) : (
                     <>
                         {favorites?.length! > 0 ? (

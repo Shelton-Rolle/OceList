@@ -102,7 +102,7 @@ export default function ProfileSetup() {
         <section className="flex justify-center items-center h-screen max-w-lg mx-auto px-4">
             <div className="w-fit">
                 {!repos ? (
-                    <PageLoader />
+                    <PageLoader size={60} color="#9381FF" />
                 ) : (
                     <div>
                         {repos.length < 1 ? (
