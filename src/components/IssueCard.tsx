@@ -1,29 +1,39 @@
-import { Project } from '@/types/dataObjects';
 import { IssueCardProps } from '@/types/props';
-import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import CardAvatar from './CardAvatar';
 
-export const IssueCard = ({ issue }: IssueCardProps) => {
-    const [repository, setRepository] = useState<Project>();
-
-    async function fetchRepository() {
-        await fetch(issue?.repository_url!)
-            .then((res) => res.json())
-            .then((res) => setRepository(res))
-            .catch((error) => console.error(error));
-    }
-
-    useEffect(() => {
-        fetchRepository();
-    }, []);
-
+export default function IssueCard({ issue }: IssueCardProps) {
     return (
-        <div className="outline outline-1 outline-black rounded-sm p-4">
-            <a href={issue?.html_url} target="_blank">
-                <h2 className="text-2xl">{issue?.title}</h2>
-            </a>
-            <p className="text-sm text-gray-400">{repository?.name}</p>
-            <p className="mt-6">{issue?.body}</p>
-        </div>
+        <article className="p-8 bg-white rounded-md border-2 border-accent-light max-md:mx-auto">
+            <div>
+                <a href={issue?.html_url} className="mb-3">
+                    <p className="font-roboto font-bold text-primary-light text-xl line-cutoff-1 w-mobile-card duration-200 hover:underline">
+                        {issue?.title}
+                    </p>
+                </a>
+                <a href={issue?.repository?.html_url}>
+                    <p className="font-poppins font-medium text-default-light text-sm duration-200 hover:underline">
+                        {issue?.repository?.name}
+                    </p>
+                </a>
+            </div>
+            <div className="flex items-center gap-2 mt-5">
+                <div
+                    className={`w-2 h-2 rounded-full ${
+                        issue?.state === 'open'
+                            ? 'bg-issue-state-open'
+                            : 'bg-issue-state-closed'
+                    }`}
+                />
+                <p
+                    className={`font-poppins font-normal text-base ${
+                        issue?.state === 'open'
+                            ? 'text-issue-state-open'
+                            : 'text-issue-state-closed'
+                    }`}
+                >
+                    {issue?.state}
+                </p>
+            </div>
+        </article>
     );
-};
+}

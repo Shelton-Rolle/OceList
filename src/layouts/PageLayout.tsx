@@ -1,27 +1,22 @@
+import PageFooter from '@/components/PageFooter';
 import { PageHeader } from '@/components/PageHeader';
-import { useAuth } from '@/context/AuthContext';
 import { PageLayoutProps } from '@/types/props';
-import { useEffect, useState } from 'react';
 
-export const PageLayout = ({ children }: PageLayoutProps) => {
-    const { currentUser, currentUserData } = useAuth();
-    const [isLoadingPage, setIsLoadingPage] = useState<boolean>(true);
-
-    useEffect(() => {
-        if (currentUser && currentUserData) {
-            setIsLoadingPage(false);
-        }
-    }, [currentUser, currentUserData]);
-
+export const PageLayout = ({ children, modalOpen }: PageLayoutProps) => {
     return (
-        <main className="grid grid-cols-12 pt-20 px-8 max-w-7xl mx-auto h-screen gap-10">
+        <main
+            className={`text-default-light flex flex-col justify-between min-h-screen ${
+                modalOpen && 'h-screen overflow-hidden'
+            }`}
+        >
             <PageHeader />
             <div
                 id="content"
-                className="col-span-9 overflow-y-scroll scrollbar-hide px-7"
+                className="mx-auto md:max-w-tablet lg:max-w-desktop w-full mt-7 md:mt-9 lg:mt-11 max-md:px-6 lg:px-6"
             >
                 {children}
             </div>
+            <PageFooter />
         </main>
     );
 };

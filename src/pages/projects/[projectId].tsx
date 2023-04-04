@@ -1,10 +1,8 @@
 import { useAuth } from '@/context/AuthContext';
 import DeleteProject from '@/database/DeleteProject';
-import GetProject from '@/database/GetProject';
 import UpdateProject from '@/database/UpdateProject';
 import database from '@/firebase/database/databaseInit';
 import { PageLayout } from '@/layouts/PageLayout';
-import { GithubUserObject } from '@/types/dataObjects';
 import { ProjectPageProps } from '@/types/props';
 import { ref, get, child } from 'firebase/database';
 import { GetServerSideProps } from 'next';
@@ -14,6 +12,16 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
+import { MdDelete } from 'react-icons/md';
+import { TfiReload } from 'react-icons/tfi';
+import {
+    GoRepoForked,
+    GoStar,
+    GoEye,
+    GoMarkGithub,
+    GoBrowser,
+} from 'react-icons/go';
+import remarkGfm from 'remark-gfm';
 
 export default function ProjectPage({
     projectId,
@@ -22,9 +30,10 @@ export default function ProjectPage({
 }: ProjectPageProps) {
     const { currentUser } = useAuth();
     const router = useRouter();
-    const [contributors, setContributors] = useState<GithubUserObject[]>([]);
     const [isOwner, setIsOwner] = useState<boolean>();
     const [readme, setReadme] = useState<string>();
+    const [showDescription, setShowDescription] = useState<boolean>(true);
+    const [showIssues, setShowIssues] = useState<boolean>(false);
 
     async function Delete() {
         await DeleteProject(owner, project)
@@ -49,6 +58,23 @@ export default function ProjectPage({
                 console.log('Update Error');
             }
         });
+    }
+
+    function UpdateView(selection: string) {
+        switch (selection) {
+            case 'description':
+                if (showIssues) {
+                    setShowIssues(false);
+                    setShowDescription(true);
+                }
+                break;
+            case 'issues':
+                if (showDescription) {
+                    setShowDescription(false);
+                    setShowIssues(true);
+                }
+                break;
+        }
     }
 
     useEffect(() => {
@@ -82,78 +108,188 @@ export default function ProjectPage({
             <PageLayout>
                 <div>
                     {isOwner && (
-                        <>
-                            <button
-                                className="outline outline-2 outline-black rounded-sm p-5 my-4"
-                                onClick={Delete}
-                            >
-                                Delete Project
-                            </button>
-                            <button
-                                className="outline outline-2 outline-black rounded-sm p-5 my-4"
-                                onClick={Reload}
-                            >
-                                Reload Project
-                            </button>
-                        </>
-                    )}
-                    <h1>{project?.name}</h1>
-                    <p>Owner: {project?.owner?.login}</p>
-                    <Link href={project?.html_url!}>Repo Link</Link>
-                    {project?.homepage && (
-                        <Link href={project?.homepage!}>Repo Homepage</Link>
-                    )}
-                    <div>
-                        <h2>Contributors</h2>
-                        {project?.contributors?.map((contributor, index) => (
+                        <section id="owner-actions" className="mb-9">
+                            <h1 className="font-roboto font-bold text-base text-default-light lg:text-2xl">
+                                Owner Actions
+                            </h1>
                             <div
-                                key={index}
-                                className="relative w-8 h-8 rounded-full overflow-hidden"
+                                id="actions"
+                                className="mt-2 flex items-center gap-5 w-full"
                             >
-                                <Image
-                                    src={contributor?.avatar_url}
-                                    alt="contributor-avatar"
-                                    fill
-                                />
+                                <button
+                                    className="border-2 border-default-light rounded-md flex items-center gap-4 p-3 text-xs lg:gap-2 lg:text-base"
+                                    onClick={Delete}
+                                >
+                                    <MdDelete /> Delete Project
+                                </button>
+                                <button
+                                    className="border-2 border-default-light rounded-md flex items-center gap-4 p-3 text-xs lg:gap-2 lg:text-base"
+                                    onClick={Reload}
+                                >
+                                    <TfiReload /> Reload Project
+                                </button>
                             </div>
-                        ))}
-                    </div>
-                    <section className="flex items-center gap-7 my-16">
-                        <p>{project?.forks ? project?.forks : 0} Forks</p>
-                        <p>
-                            {project?.stargazers
-                                ? project?.stargazers?.length
-                                : 0}{' '}
-                            Stars
-                        </p>
-                        <p>
-                            {project?.subscribers
-                                ? project?.subscribers?.length
-                                : 0}{' '}
-                            Watchers
-                        </p>
-                    </section>
-                    <p>License: {project?.license?.name}</p>
-
-                    <div id="readme">
-                        <ReactMarkdown>{readme!}</ReactMarkdown>
-                    </div>
-
-                    <section>
-                        {project?.issues?.map((issue, index) => (
-                            <div
-                                key={index}
-                                className="outline outline-2 outline-black my-3 p-5 max-w-xs"
-                            >
-                                <h4 className="text-lg font-bold">
-                                    {issue?.title}
-                                </h4>
-                                <p>{issue?.body}</p>
-                                <p className="text-gray-400 text-sm">
-                                    {issue?.user?.login}
+                        </section>
+                    )}
+                    <section id="project-details" className="mb-9">
+                        <div id="project-identity">
+                            <p className="font-poppins font-normal text-sm text-accent-light lg:text-lg">
+                                {project?.owner?.login}
+                            </p>
+                            <h2 className="font-poppins font-bold text-2xl text-primary-light lg:text-5xl uppercase">
+                                {project?.name}
+                            </h2>
+                        </div>
+                        <div
+                            id="analytics"
+                            className="flex items-center gap-5 mt-3"
+                        >
+                            <div className="flex items-center gap-2 text-default-light font-normal font-poppins text-sm">
+                                <p>{project?.forks ? project?.forks : 0}</p>
+                                <GoRepoForked />
+                            </div>
+                            <div className="flex items-center gap-2 text-default-light font-normal font-poppins text-sm">
+                                <p>
+                                    {project?.stargazers
+                                        ? project?.stargazers?.length
+                                        : 0}
                                 </p>
+                                <GoStar />
                             </div>
-                        ))}
+                            <div className="flex items-center gap-2 text-default-light font-normal font-poppins text-sm">
+                                <p>
+                                    {project?.subscribers
+                                        ? project?.subscribers?.length
+                                        : 0}
+                                </p>
+                                <GoEye />
+                            </div>
+                        </div>
+                    </section>
+                    <section id="links" className="mb-9">
+                        <h3 className="font-roboto font-bold text-xl text-default-light mb-3">
+                            Links
+                        </h3>
+                        <div className="flex items-center gap-5 text-2xl ">
+                            <a
+                                href={project?.html_url!}
+                                target="_blank"
+                                className="relative hover:text-secondary-light duration-150"
+                            >
+                                <GoMarkGithub />
+                            </a>
+                            {project?.homepage && (
+                                <a
+                                    href={project?.homepage!}
+                                    target="_blank"
+                                    className="relative hover:text-secondary-light duration-150"
+                                >
+                                    <GoBrowser />
+                                </a>
+                            )}
+                        </div>
+                    </section>
+                    <section id="contributors" className="mb-8">
+                        <h4 className="font-roboto font-bold text-xl text-default-light mb-3">
+                            Contributors
+                        </h4>
+                        {project?.contributors?.map((contributor, index) => {
+                            if (index > 19) return;
+                            if (index === 19) {
+                                const totalContributors =
+                                    project?.contributors?.length!;
+
+                                if (totalContributors > 500) {
+                                    return (
+                                        <div className="relative w-10 h-10 rounded-full overflow-hidden text-xs flex justify-center items-center bg-slate-200">
+                                            500+
+                                        </div>
+                                    );
+                                } else {
+                                    return (
+                                        <div className="relative w-10 h-10 rounded-full overflow-hidden text-xs flex justify-center items-center bg-slate-200">
+                                            {totalContributors}
+                                        </div>
+                                    );
+                                }
+                            }
+
+                            return (
+                                <div
+                                    key={index}
+                                    className="relative w-10 h-10 rounded-full overflow-hidden"
+                                >
+                                    <Image
+                                        src={contributor?.avatar_url}
+                                        alt="contributor-avatar"
+                                        fill
+                                    />
+                                </div>
+                            );
+                        })}
+                    </section>
+                    <section id="content">
+                        <div className="mt-5 mb-12">
+                            <button
+                                className={`border-b-2 rouned-sm px-4 pb-1 w-full max-w-[120px] ${
+                                    showDescription
+                                        ? 'border-default-light text-default-light'
+                                        : 'border-accent-light text-accent-light'
+                                }`}
+                                onClick={() => UpdateView('description')}
+                            >
+                                Description
+                            </button>
+                            <button
+                                className={`border-b-2 rouned-sm px-4 pb-1 w-full max-w-[120px] ${
+                                    showIssues
+                                        ? 'border-default-light text-default-light'
+                                        : 'border-accent-light text-accent-light'
+                                }`}
+                                onClick={() => UpdateView('issues')}
+                            >
+                                Issues
+                            </button>
+                        </div>
+                        {showDescription && (
+                            <>
+                                {readme && (
+                                    <div id="readme">
+                                        <ReactMarkdown
+                                            remarkPlugins={[remarkGfm]}
+                                        >
+                                            {readme}
+                                        </ReactMarkdown>
+                                    </div>
+                                )}
+                            </>
+                        )}
+                        {showIssues && (
+                            <div>
+                                {project?.issues?.length! > 0 ? (
+                                    <>
+                                        {project?.issues?.map(
+                                            (issue, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="outline outline-2 outline-black my-3 p-5 max-w-xs"
+                                                >
+                                                    <h4 className="text-lg font-bold">
+                                                        {issue?.title}
+                                                    </h4>
+                                                    <p>{issue?.body}</p>
+                                                    <p className="text-gray-400 text-sm">
+                                                        {issue?.user?.login}
+                                                    </p>
+                                                </div>
+                                            )
+                                        )}
+                                    </>
+                                ) : (
+                                    <p>No Issues Found.</p>
+                                )}
+                            </div>
+                        )}
                     </section>
                 </div>
             </PageLayout>

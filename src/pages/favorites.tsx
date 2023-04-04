@@ -2,8 +2,10 @@ import { PageLayout } from '@/layouts/PageLayout';
 import Head from 'next/head';
 import { useAuth } from '@/context/AuthContext';
 import { useEffect, useState } from 'react';
-import { Project } from '@/types/dataObjects';
-import { ProjectCard } from '@/components/ProjectCard';
+import { DatabaseProjectData, Project } from '@/types/dataObjects';
+import ProjectCard from '@/components/ProjectCard';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
+import { PageLoader } from '@/components/PageLoader';
 
 export default function Favorites() {
     const { currentUserData } = useAuth();
@@ -38,14 +40,16 @@ export default function Favorites() {
             </Head>
             <PageLayout>
                 {loadingData ? (
-                    <div>Loading Data</div>
+                    <PageLoader size={60} color="#9381FF" />
                 ) : (
                     <>
                         {favorites?.length! > 0 ? (
-                            <div className=" mt-3 grid grid-cols-2 gap-4">
+                            <div className="mt-3 grid lg:grid-cols-2 gap-4">
                                 {favorites?.map((favorite, index) => (
                                     <ProjectCard
-                                        project={favorite}
+                                        project={
+                                            favorite as DatabaseProjectData
+                                        }
                                         key={index}
                                     />
                                 ))}

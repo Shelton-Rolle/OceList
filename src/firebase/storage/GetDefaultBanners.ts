@@ -11,7 +11,6 @@ export default async function GetDefaultBanners(): Promise<string[]> {
 
     for (let i = 0; i < defaultPaths.length; i++) {
         await GetImageURL(defaultPaths[i]).then((url) => {
-            console.log('URL: ', url);
             defaultBanners.push(url!);
         });
     }

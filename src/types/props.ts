@@ -17,6 +17,11 @@ export interface BrowsePageProps {
     issues: Issue[];
 }
 
+export interface CardAvatarProps {
+    src: string;
+    alt: string;
+}
+
 export interface ChangeAvatarProps {
     setModal: Dispatch<SetStateAction<boolean>>;
     userData: IUser;
@@ -35,8 +40,18 @@ export interface ExternalUserProfileProps {
     data: IUser;
 }
 
+export interface FeedIssueProps {
+    issue: Issue;
+}
+
 export interface IssueCardProps {
     issue: Issue;
+}
+
+export interface NavItemProps {
+    label: string | ReactNode;
+    href: string;
+    active: boolean;
 }
 
 export interface ModalLayoutProps {
@@ -51,11 +66,21 @@ export interface NewPostProps {
 
 export interface PageLayoutProps {
     children: ReactNode | ReactNode[];
+    modalOpen?: boolean;
+}
+
+export interface PageLoaderProps {
+    size: number;
+    color: string;
+}
+
+export interface ProjectCardProps {
+    project: DatabaseProjectData;
 }
 export interface RepositoryCheckboxProps {
     repo: Project;
 }
-export interface ProjectCardProps {
+export interface FeedProjectProps {
     project: DatabaseProjectData;
 }
 

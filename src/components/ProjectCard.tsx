@@ -1,15 +1,18 @@
 import { ProjectCardProps } from '@/types/props';
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { useAuth } from '@/context/AuthContext';
+import CardAvatar from './CardAvatar';
+import { MdFavorite } from 'react-icons/md';
+import { IoIosHeartDislike } from 'react-icons/io';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import UpdateUser from '@/database/UpdateUser';
+import { useEffect, useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { GoMarkGithub, GoBrowser } from 'react-icons/go';
 
-export const ProjectCard = ({ project }: ProjectCardProps) => {
+export default function ProjectCard({ project }: ProjectCardProps) {
     const { currentUser, currentUserData, setCurrentUserData } = useAuth();
-    const [isCurrentUserProject, setIsCurrentUserProject] =
-        useState<boolean>(false);
     const [isFavorited, setIsFavorited] = useState<boolean>();
     const [updatingFavorites, setUpdatingFavorites] = useState<boolean>(false);
+    const [isCurrentUserProject, setIsCurrentUserProject] = useState<boolean>();
 
     async function HandleFavorite() {
         setUpdatingFavorites(true);
@@ -105,36 +108,71 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
     }, [currentUser, currentUserData]);
 
     return (
-        <div className="outline outline-1 outline-black rounded-sm p-6">
-            <div className="flex justify-between items-center">
-                <Link href={`/projects/${project?.id}`}>
-                    <h2 className="text-2xl">{project?.name}</h2>
-                </Link>
-                {!isCurrentUserProject && (
-                    <button
-                        onClick={HandleFavorite}
-                        className="outline outline-1 outline-black rounded-sm p-3"
-                    >
+        <article className="w-full max-w-mobile-card bg-white p-8 pb-0 border-2 border-accent-light rounded-md grid grid-rows-3 max-h-80 max-md:mx-auto">
+            <div className="mb-6">
+                <a href={`/projects/${project?.id}`}>
+                    <p className="font-roboto font-bold text-xl text-primary-light line-cutoff-1">
+                        {project?.name}
+                    </p>
+                </a>
+                <a href={`/${project?.owner?.login}`}>
+                    <p className="font-poppins font-medium text-sm">
+                        {project?.owner?.login}
+                    </p>
+                </a>
+            </div>
+            <div className="mb-8">
+                <p className="font-roboto font-medium text-base mb-2">
+                    Languages
+                </p>
+                <ul className="flex flex-col gap-1 list-disc">
+                    {project?.languages?.map((language, index) => {
+                        if (index > 2) return;
+                        return (
+                            <li
+                                key={index}
+                                className="font-poppins font-light text-xs lg:text-sm"
+                            >
+                                {language}
+                            </li>
+                        );
+                    })}
+                </ul>
+            </div>
+
+            <div className="flex items-center gap-4">
+                <a href={project?.html_url} target="_blank">
+                    <GoMarkGithub color="#9381FF" size={22} />
+                </a>
+                {project?.homepage && (
+                    <a href={project?.homepage} target="_blank">
+                        <GoBrowser color="#9381FF" size={22} />
+                    </a>
+                )}
+                {!isCurrentUserProject && currentUser && (
+                    <button onClick={HandleFavorite}>
                         {updatingFavorites ? (
-                            'Loading'
+                            <div>
+                                <AiOutlineLoading3Quarters
+                                    color="#9381FF"
+                                    size={22}
+                                />
+                            </div>
                         ) : (
-                            <>{isFavorited ? 'Favorited' : 'Favorite'}</>
+                            <>
+                                {isFavorited ? (
+                                    <IoIosHeartDislike
+                                        color="#9381FF"
+                                        size={22}
+                                    />
+                                ) : (
+                                    <MdFavorite color="#9381FF" size={22} />
+                                )}
+                            </>
                         )}
                     </button>
                 )}
             </div>
-            <Link href={`/${project.owner?.login}`}>
-                <p className="text-sm text-gray-400 hover:text-blue-400 duration-150">
-                    {project.owner?.login}
-                </p>
-            </Link>
-            <div className="flex gap-3 mt-5">
-                {project?.languages?.map((language, index) => (
-                    <p className="" key={index}>
-                        {language}
-                    </p>
-                ))}
-            </div>
-        </div>
+        </article>
     );
-};
+}

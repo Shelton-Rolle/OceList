@@ -1,26 +1,21 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { GetServerSideProps } from 'next';
-import GetUser from '@/database/GetUser';
 import Head from 'next/head';
 import { PageLayout } from '@/layouts/PageLayout';
 import database from '@/firebase/database/databaseInit';
 import { ref, get, child } from 'firebase/database';
-import { ModalProjectCheckbox } from '@/components/ModalProjectCheckbox';
-import { ProjectCard } from '@/components/ProjectCard';
-import CreateProjects from '@/database/CreateProjects';
 import UpdateUser from '@/database/UpdateUser';
 import { GetGithubUserRepos } from '@/firebase/auth/gitHubAuth/octokit';
-import UploadImage from '@/firebase/storage/UploadImage';
-import MutateProjectObjects from '@/helpers/MutateProjectObjects';
 import { Project, DatabaseProjectData, IUser } from '@/types/dataObjects';
-import { useRouter } from 'next/router';
 import Image from 'next/image';
-import UploadBanner from '@/firebase/storage/UploadBanner';
 import { NewPost } from '@/components/modals/NewPost';
 import { ChangeBanner } from '@/components/modals/ChangeBanner';
 import { ChangeAvatar } from '@/components/modals/ChangeAvatar';
 import { AddProjects } from '@/components/modals/AddProjects';
+import ProjectCard from '@/components/ProjectCard';
+import { PageLoader } from '@/components/PageLoader';
+import { RiUserFollowFill } from 'react-icons/ri';
 
 interface ProfilePageProps {
     profileName: string;
@@ -70,8 +65,6 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                 }
             }
 
-            console.log('Following Index: ', followingIndex);
-            console.log('Follower Index: ', followerIndex);
             if (followingIndex !== undefined) {
                 followingList?.splice(followingIndex, 1);
             }
@@ -227,191 +220,127 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
     return (
         <>
             <Head>
-                <title>Landing</title>
-                <meta name="description" content="Landing Page" />
+                <title>{`${profileName}'s Profile`}</title>
+                <meta
+                    name="description"
+                    content={`Profile page of ${profileName}`}
+                />
                 <meta
                     name="viewport"
                     content="width=device-width, initial-scale=1"
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <PageLayout>
+            <PageLayout modalOpen={openProjectModal}>
                 {data === null ? (
                     <h1>User Not Found</h1>
                 ) : (
                     <div>
-                        <header>
-                            <div className="relative flex items-center h-64 mb-16">
-                                <div className="top-0 left-0 w-full h-full absolute overflow-hidden">
-                                    <Image
-                                        src={data?.banner_url!}
-                                        alt="banner"
-                                        priority
-                                        fill
-                                        className="object-cover"
-                                        onClick={() => {
-                                            if (isCurrentUser) {
-                                                setOpenBannerModal(true);
-                                            }
-                                        }}
-                                    />
-                                </div>
-                                <div className="absolute -bottom-12 left-7 rounded-full overflow-hidden mr-5">
-                                    <Image
-                                        src={data?.photoURL!}
-                                        alt="avatar"
-                                        width={100}
-                                        height={100}
-                                        onClick={() => {
-                                            if (isCurrentUser) {
-                                                setOpenAvatarModal(true);
-                                            }
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                            <div className="flex items-center justify-between my-6">
-                                <div>
-                                    <p className="text-3xl">
-                                        {data?.displayName}
-                                    </p>
-                                    <p className="text-base text-gray-400">
-                                        {data?.follower_count
-                                            ? data?.follower_count
-                                            : '0'}{' '}
-                                        Followers
-                                    </p>
-                                </div>
-                                {!isCurrentUser && (
+                        <section className="relative">
+                            <div
+                                id="profile-banner"
+                                className="relative h-96 w-screen max-md:-mx-6 md:w-full duration-200 cursor-pointer"
+                            >
+                                <Image
+                                    src={data?.banner_url!}
+                                    alt="banner"
+                                    priority
+                                    fill
+                                    className="object-cover"
+                                />
+                                {isCurrentUser && (
                                     <button
-                                        onClick={FollowUser}
-                                        className={`outline outline-1 outline-black rounded-sm px-3 py-2 my-4`}
+                                        className="absolute w-full h-full bg-black bg-opacity-0 duration-200 hover:bg-opacity-60 flex justify-center items-center text-background-light text-opacity-0 hover:text-opacity-100"
+                                        onClick={() => setOpenBannerModal(true)}
                                     >
-                                        {loadingFollow ? (
-                                            <>Loading</>
-                                        ) : (
-                                            <>
-                                                {isFollowing
-                                                    ? 'Following'
-                                                    : 'Follow'}
-                                            </>
-                                        )}
+                                        Update Banner
                                     </button>
                                 )}
                             </div>
-                        </header>
-                        {isCurrentUser && (
-                            <div>
-                                <button
-                                    className="outline outline-2 outline-black rounded-md px-4 py-2"
-                                    onClick={() => setOpenNewPostModal(true)}
-                                >
-                                    Create Post
-                                </button>
+                            <div className="absolute -bottom-10 left-0 rounded-full overflow-hidden md:left-6">
+                                <Image
+                                    src={data?.photoURL!}
+                                    alt="avatar"
+                                    width={80}
+                                    height={80}
+                                    priority
+                                />
                             </div>
-                        )}
-                        <div className="w-full grid grid-cols-3 mb-6">
-                            <button
-                                onClick={() => ChangeView('project')}
-                                className={`py-3 border-b-2 duration-150 ${
-                                    viewProjects
-                                        ? 'border-b-black text-black'
-                                        : 'border-b-gray-300 text-gray-300'
-                                }`}
-                            >
-                                Projects
-                            </button>
-                            <button
-                                onClick={() => ChangeView('posts')}
-                                className={`py-3 border-b-2 duration-150 ${
-                                    viewPosts
-                                        ? 'border-b-black text-black'
-                                        : 'border-b-gray-300 text-gray-300'
-                                }`}
-                            >
-                                Posts
-                            </button>
-                            <button
-                                onClick={() => ChangeView('activity')}
-                                className={`py-3 border-b-2 duration-150 ${
-                                    viewActivity
-                                        ? 'border-b-black text-black'
-                                        : 'border-b-gray-300 text-gray-300'
-                                }`}
-                            >
-                                Activity
-                            </button>
-                        </div>
-                        {viewProjects && (
-                            <section className="">
+                        </section>
+                        <section className="py-12 flex items-start justify-between max-w-sm md:px-6">
+                            <div>
+                                <p className="font-poppins font-medium text-2xl text-default-light">
+                                    {data?.displayName}
+                                </p>
+                                <p className="font-poppins font-light text-default-light text-sm">
+                                    {data?.follower_count
+                                        ? data?.follower_count
+                                        : '0'}{' '}
+                                    Followers
+                                </p>
+                            </div>
+                            {!isCurrentUser && (
+                                <button
+                                    className="flex items-center px-3 py-1 text-sm bg-default-light text-background-light rounded-md"
+                                    onClick={FollowUser}
+                                >
+                                    {loadingFollow ? (
+                                        <>Loading</>
+                                    ) : (
+                                        <>
+                                            {isFollowing ? (
+                                                <>
+                                                    Following{' '}
+                                                    <RiUserFollowFill />
+                                                </>
+                                            ) : (
+                                                <>Follow</>
+                                            )}
+                                        </>
+                                    )}
+                                </button>
+                            )}
+                        </section>
+                        <section>
+                            <div className="flex justify-between items-start mb-7">
+                                <h1 className="font-roboto font-bold text-lg text-default-light">
+                                    Projects
+                                </h1>
                                 {isCurrentUser && (
-                                    <div className="flex justify-end items-center">
-                                        <button
-                                            onClick={() =>
-                                                setOpenProjectModal(true)
-                                            }
-                                            className="border-2 border-blue-300 py-1 px-3 rounded-md text-blue-300 my-4 text-2xl"
-                                        >
-                                            Add Project
-                                        </button>
-                                    </div>
+                                    <button
+                                        className="px-3 py-2 text-sm bg-default-light text-background-light rounded-md"
+                                        onClick={() =>
+                                            setOpenProjectModal(true)
+                                        }
+                                    >
+                                        Add Project
+                                    </button>
                                 )}
+                            </div>
+                            <div className="flex flex-wrap gap-6">
                                 {projectsList ? (
-                                    <div className="grid grid-cols-2 gap-7">
+                                    <>
                                         {projectsList?.map((project, index) => (
                                             <ProjectCard
                                                 project={project}
                                                 key={index}
                                             />
                                         ))}
-                                    </div>
+                                    </>
                                 ) : (
                                     <>
                                         {projects ? (
-                                            <p>Loading</p>
+                                            <PageLoader
+                                                size={18}
+                                                color="#9381FF"
+                                            />
                                         ) : (
                                             <p>No Projects Found</p>
                                         )}
                                     </>
                                 )}
-                            </section>
-                        )}
-                        {viewPosts && (
-                            <section>
-                                {data?.posts ? (
-                                    <>
-                                        {data?.posts?.map((post, index) => (
-                                            <p key={index}>{post.body}</p>
-                                        ))}
-                                    </>
-                                ) : (
-                                    <p>No Posts Found.</p>
-                                )}
-                            </section>
-                        )}
-                        {viewActivity && (
-                            <section className="">
-                                {assignedIssues?.map((issue, index) => (
-                                    <div
-                                        key={index}
-                                        className="outline outline-2 outline-black my-3 p-5 max-w-xs"
-                                    >
-                                        <h4 className="text-lg font-bold">
-                                            {issue?.title}
-                                        </h4>
-                                        <p>{issue?.body}</p>
-                                        <div className="flex items-center gap-5">
-                                            <p className="text-gray-400 text-sm">
-                                                {issue?.user?.login}
-                                            </p>
-                                            <p className="text-gray-400 text-sm">
-                                                {issue?.repository?.name}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </section>
-                        )}
+                            </div>
+                        </section>
                         {openProjectModal && (
                             <AddProjects
                                 projects={modalProjects!}
@@ -420,22 +349,9 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                 userData={data}
                             />
                         )}
-                        {openAvatarModal && (
-                            <ChangeAvatar
-                                setModal={setOpenAvatarModal}
-                                userData={data}
-                            />
-                        )}
                         {openBannerModal && (
                             <ChangeBanner
                                 setModal={setOpenBannerModal}
-                                userData={data}
-                            />
-                        )}
-                        {openNewPostModal && (
-                            <NewPost
-                                projects={data?.projects!}
-                                setModal={setOpenNewPostModal}
                                 userData={data}
                             />
                         )}

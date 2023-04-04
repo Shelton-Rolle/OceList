@@ -26,6 +26,7 @@ import githubProvider from '@/firebase/auth/gitHubAuth/githubInit';
 import UploadImage from '@/firebase/storage/UploadImage';
 import RemoveProjects from '@/database/RemoveProjects';
 import { PageLayout } from '@/layouts/PageLayout';
+import { PageLoader } from '@/components/PageLoader';
 
 export default function Settings() {
     const router = useRouter();
@@ -104,11 +105,6 @@ export default function Settings() {
     }
 
     useEffect(() => {
-        console.log('Current User: ', currentUser);
-        console.log('Current User Data: ', currentUserData);
-    }, [currentUser, currentUserData]);
-
-    useEffect(() => {
         let isConnected = false;
         currentUser?.providerData.map((provider) => {
             if (provider?.providerId === 'github.com') {
@@ -122,8 +118,11 @@ export default function Settings() {
     return (
         <>
             <Head>
-                <title>Landing</title>
-                <meta name="description" content="Landing Page" />
+                <title>Settings</title>
+                <meta
+                    name="description"
+                    content={`Settings page for ${currentUser?.displayName}`}
+                />
                 <meta
                     name="viewport"
                     content="width=device-width, initial-scale=1"
@@ -133,11 +132,12 @@ export default function Settings() {
             <PageLayout>
                 {currentUser ? (
                     <>
-                        <section className="w-full mb-7">
-                            <h2 className="text-2xl font-bold mb-3">
+                        <section>
+                            <h1 className="font-title font-medium text-2xl mb-4">
                                 Change Email
-                            </h2>
+                            </h1>
                             <form
+                                className="flex flex-col md:flex-row gap-4"
                                 onSubmit={(e) => {
                                     e.preventDefault();
                                     UpdateEmail();
@@ -146,24 +146,24 @@ export default function Settings() {
                                 <input
                                     type="text"
                                     id="email"
+                                    className="px-4 py-2 border-2 border-accent-dark rounded-md bg-transparent font-paragraph font-light text-sm placeholder:font-paragraph placeholder:font-light placeholder:text-sm placeholder:opacity-40 outline-none"
                                     placeholder={currentUser?.email!}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="p-3 rounded-md border border-black w-full max-w-md mr-4"
                                 />
                                 <button
-                                    className="border border-black py-3 px-5 rounded-md"
                                     type="submit"
                                     disabled={email ? false : true}
+                                    className="bg-accent-dark text-default-dark px-4 py-3 rounded-md max-md:mt-5"
                                 >
                                     Update Email
                                 </button>
                             </form>
                         </section>
-                        <section className="mb-16">
-                            <h4 className="text-xl font-medium mb-2">
+                        <section className="mt-10">
+                            <h2 className="font-title font-medium text-xl mb-4 md:text-2xl">
                                 Why can I not change my username?
-                            </h4>
-                            <p className="text-base font-light text-gray-400 w-3/4 leading-6">
+                            </h2>
+                            <p className="font-paragraph font-light leading-8 text-sm md:text-base">
                                 To ensure consistency between projects and
                                 users, we require that your username match your
                                 github username. This helps prevent users from
@@ -172,22 +172,24 @@ export default function Settings() {
                                 owns which projects here on Simu.
                             </p>
                         </section>
-                        <section className="flex flex-col gap-4">
-                            <h2 className="font-medium text-2xl mb-5 text-red-500">
+                        <section className="mt-10">
+                            <h4 className="font-title font-medium text-2xl text-red-500 mb-8">
                                 Danger Zone
-                            </h2>
-                            <button
-                                onClick={logout}
-                                className="rounded-md w-60 py-3 bg-red-500 text-white"
-                            >
-                                Logout
-                            </button>
-                            <button
-                                onClick={deleteUserAccount}
-                                className="rounded-md w-60 py-3 bg-red-500 text-white"
-                            >
-                                Delete Account
-                            </button>
+                            </h4>
+                            <div className="flex flex-col gap-4 md:flex-row">
+                                <button
+                                    className="px-6 py-3 rounded-md bg-red-500 text-default-dark"
+                                    onClick={logout}
+                                >
+                                    Logout
+                                </button>
+                                <button
+                                    className="px-6 py-3 rounded-md bg-red-500 text-default-dark"
+                                    onClick={deleteUserAccount}
+                                >
+                                    Delete Account
+                                </button>
+                            </div>
                         </section>
                         {requiresReAuthenticate && (
                             <div>
@@ -210,7 +212,6 @@ export default function Settings() {
                                                     );
                                                 });
                                             }}
-                                            className="text-blue-500"
                                         >
                                             Reset Password
                                         </button>
@@ -218,13 +219,8 @@ export default function Settings() {
                                 )}
                                 {reAuthenticateNotifications.includes(
                                     'email-sent'
-                                ) && (
-                                    <p className="text-green-500">Email Sent</p>
-                                )}
-                                <form
-                                    className="flex flex-col items-start"
-                                    onSubmit={ReAuthenticate}
-                                >
+                                ) && <p>Email Sent</p>}
+                                <form onSubmit={ReAuthenticate}>
                                     <label htmlFor="previousEmail">
                                         Enter Previous Email:{' '}
                                         <input
@@ -247,18 +243,13 @@ export default function Settings() {
                                             }
                                         />
                                     </label>
-                                    <button
-                                        className="border border-black rounded-sm p-2"
-                                        type="submit"
-                                    >
-                                        Update
-                                    </button>
+                                    <button type="submit">Update</button>
                                 </form>
                             </div>
                         )}
                     </>
                 ) : (
-                    <div>Loading</div>
+                    <PageLoader size={60} color="#9381FF" />
                 )}
             </PageLayout>
         </>

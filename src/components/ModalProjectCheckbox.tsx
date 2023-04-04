@@ -1,5 +1,6 @@
 import { Project } from '@/types/dataObjects';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { AiFillCheckCircle } from 'react-icons/ai';
 
 export const ModalProjectCheckbox = ({
     project,
@@ -41,23 +42,31 @@ export const ModalProjectCheckbox = ({
     }, []);
 
     return (
-        <div>
-            <label>
-                <input
-                    type="checkbox"
-                    checked={
-                        existingProject ? existingProject : addToNewProjects
-                    }
-                    onChange={
-                        existingProject
-                            ? () => {}
-                            : (e) =>
-                                  UpdateNewProjects(e.target.checked, project)
-                    }
-                />
-                {project?.name} | {existingProject && 'ADDED'}
+        <div className="border-b-2 border-background-light py-3 flex items-center text-default-light pr-5 text-sm border-2 border-b-accent-light">
+            <input
+                id={project?.name}
+                type="checkbox"
+                checked={existingProject ? existingProject : addToNewProjects}
+                onChange={
+                    existingProject
+                        ? () => {}
+                        : (e) => UpdateNewProjects(e.target.checked, project)
+                }
+                className="opacity-0"
+            />
+            <label
+                htmlFor={project?.name}
+                className="font-paragraph font-light text-lg w-full flex items-center justify-between cursor-pointer"
+            >
+                {project?.name}{' '}
+                {existingProject ? (
+                    <AiFillCheckCircle />
+                ) : addToNewProjects ? (
+                    <AiFillCheckCircle />
+                ) : (
+                    ''
+                )}
             </label>
-            <p>--------------</p>
         </div>
     );
 };

@@ -43,7 +43,13 @@ export default async function MutateProjectObjects(
             name!
         );
 
-        const readme = await GetProjectReadme(token, owner?.login!, name!);
+        const readme = await GetProjectReadme(
+            token,
+            owner?.login!,
+            name!
+        ).catch((error) => {
+            return '# Missing READme';
+        });
 
         const contributors = await GetProjectContributors(
             token,
