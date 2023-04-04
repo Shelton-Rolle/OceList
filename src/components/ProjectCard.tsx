@@ -131,7 +131,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                         return (
                             <li
                                 key={index}
-                                className="font-poppins font-light text-xs"
+                                className="font-poppins font-light text-xs lg:text-sm"
                             >
                                 {language}
                             </li>
