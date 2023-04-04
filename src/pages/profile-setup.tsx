@@ -134,7 +134,7 @@ export default function ProfileSetup() {
                                 </p>
                                 <div
                                     id="repos"
-                                    className="my-6 max-h-44 overflow-y-scroll outline outline-1 outline-default-dark rounded-sm"
+                                    className="my-6 max-h-44 overflow-y-scroll border-2 border-default-light rounded-md"
                                 >
                                     {repos.map((repo, index) => (
                                         <RepositoryCheckbox
@@ -146,7 +146,7 @@ export default function ProfileSetup() {
                             </>
                         )}
                         <button
-                            className="px-8 py-3 font-title font-medium bg-secondary-dark text-background-dark rounded-md mt-8"
+                            className="px-8 py-3 font-title font-medium bg-default-light text-background-light rounded-md mt-8"
                             onClick={FinalizeProfileSetup}
                         >
                             {finalizing ? (

@@ -69,7 +69,7 @@ export default function Login() {
                             Login with GitHub to get started!
                         </p>
                         <button
-                            className="bg-[#161b22] px-6 py-3 rounded-md flex items-center gap-4 font-paragraph font-medium text-xl"
+                            className="bg-[#161b22] px-6 py-3 rounded-md flex items-center gap-4 font-paragraph font-medium text-xl text-background-light"
                             onClick={LoginWithGithub}
                         >
                             <AiFillGithub size={30} /> Login With Github

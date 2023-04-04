@@ -68,12 +68,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
             displayName,
             photoURL,
         })
-            .then(() => {
-                console.log('Updated Profile!');
-            })
+            .then(() => {})
             .catch((error) => {
-                console.log('Something went wrong: ', error.code);
-                console.log(error);
                 errorCode = error.code;
             });
 

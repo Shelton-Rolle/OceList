@@ -28,7 +28,7 @@ export const RepositoryCheckbox = ({ repo }: RepositoryCheckboxProps) => {
     }
 
     return (
-        <div className="p-4 bg-accent-dark border border-white border-opacity-30 flex items-center hover:bg-opacity-90 duration-200">
+        <div className="border-b-2 border-background-light py-3 flex items-center bg-default-light text-background-light pr-5">
             <input
                 id={repo.name}
                 type="checkbox"
