@@ -231,7 +231,7 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <PageLayout>
+            <PageLayout modalOpen={openProjectModal}>
                 {data === null ? (
                     <h1>User Not Found</h1>
                 ) : (

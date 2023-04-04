@@ -66,6 +66,7 @@ export interface NewPostProps {
 
 export interface PageLayoutProps {
     children: ReactNode | ReactNode[];
+    modalOpen?: boolean;
 }
 
 export interface ProjectCardProps {

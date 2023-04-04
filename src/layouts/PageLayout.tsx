@@ -2,9 +2,13 @@ import PageFooter from '@/components/PageFooter';
 import { PageHeader } from '@/components/PageHeader';
 import { PageLayoutProps } from '@/types/props';
 
-export const PageLayout = ({ children }: PageLayoutProps) => {
+export const PageLayout = ({ children, modalOpen }: PageLayoutProps) => {
     return (
-        <main className="text-default-light flex flex-col justify-between min-h-screen">
+        <main
+            className={`text-default-light flex flex-col justify-between min-h-screen ${
+                modalOpen && 'h-screen overflow-hidden'
+            }`}
+        >
             <PageHeader />
             <div
                 id="content"

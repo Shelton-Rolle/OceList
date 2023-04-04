@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { NavItemProps } from '@/types/props';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import Link from 'next/link';
 
 export const PageHeader = () => {
     const router = useRouter();
