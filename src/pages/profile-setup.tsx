@@ -99,7 +99,7 @@ export default function ProfileSetup() {
     }, []);
 
     return (
-        <section className="flex justify-center items-center h-screen max-w-lg mx-auto">
+        <section className="flex justify-center items-center h-screen max-w-lg mx-auto px-4">
             <div className="w-fit">
                 {!repos ? (
                     <PageLoader />
