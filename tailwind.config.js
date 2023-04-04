@@ -30,8 +30,8 @@ module.exports = {
                 desktop: '1280px',
             },
             fontFamily: {
-                title: ['Roboto', 'sans serif'],
-                paragraph: ['Poppins', 'Roboto', 'sans serif'],
+                roboto: ['Roboto', 'sans serif'],
+                poppins: ['Poppins', 'Roboto', 'sans serif'],
             },
             fontSize: {
                 h1: '48px',

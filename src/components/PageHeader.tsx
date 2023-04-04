@@ -12,7 +12,7 @@ export const PageHeader = () => {
         <a
             className={`${
                 active && 'text-secondary-light'
-            } font-title font-bold max-md:uppercase text-2xl md:font-paragraph ${
+            } font-roboto font-bold max-md:uppercase text-2xl md:font-poppins ${
                 href === '/'
                     ? 'md:font-bold mt:text-3xl lg:text-4xl'
                     : 'md:font-normal md:text-lg'
@@ -31,21 +31,21 @@ export const PageHeader = () => {
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
                     <div
-                        className={`w-full h-1 bg-default-light rounded-full ml-auto ${
+                        className={`w-full h-1 bg-secondary-light rounded-full ml-auto ${
                             isMenuOpen
                                 ? 'animate-open-line-1'
                                 : 'animate-close-line-1'
                         }`}
                     />
                     <div
-                        className={`w-1/2 h-1 bg-default-light rounded-full ml-auto ${
+                        className={`w-1/2 h-1 bg-secondary-light rounded-full ml-auto ${
                             isMenuOpen
                                 ? 'animate-open-line-2'
                                 : 'animate-close-line-2'
                         }`}
                     />
                     <div
-                        className={`w-1/4 h-1 bg-default-light rounded-full ml-auto ${
+                        className={`w-1/4 h-1 bg-secondary-light rounded-full ml-auto ${
                             isMenuOpen
                                 ? 'animate-open-line-3'
                                 : 'animate-close-line-3'
@@ -54,7 +54,7 @@ export const PageHeader = () => {
                 </button>
             </div>
             <nav
-                className={`max-md:absolute top-0 ${
+                className={`max-md:fixed top-0 ${
                     isMenuOpen ? 'left-0' : '-left-full'
                 } w-full h-screen bg-background-light flex items-center p-6 md:w-full md:h-fit md:fixed md:top-0 md:left-0`}
             >
