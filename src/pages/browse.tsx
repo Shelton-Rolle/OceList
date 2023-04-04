@@ -117,7 +117,7 @@ export default function BrowsePage({ projects, issues }: BrowsePageProps) {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <PageLayout>
-                <div className="relative text-base md:text-xl mb-9 max-w-sm -z-10 lg:mt-11">
+                <div className="relative text-base md:text-xl mb-9 max-w-sm lg:mt-11">
                     <button
                         onClick={() => ChangeSearch('project')}
                         className={`py-3 border-b-2 duration-150 w-1/2 border-b-primary-light text-primary-light font-poppins font-light text-xs lg:text-lg ${
