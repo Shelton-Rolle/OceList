@@ -8,7 +8,7 @@ export const PageLayout = ({ children }: PageLayoutProps) => {
             <PageHeader />
             <div
                 id="content"
-                className="mx-auto md:max-w-tablet lg:max-w-desktop w-full mt-7 md:mt-9 lg:mt-11 max-md:px-6"
+                className="mx-auto md:max-w-tablet lg:max-w-desktop w-full mt-7 md:mt-9 lg:mt-11 max-md:px-6 lg:px-6"
             >
                 {children}
             </div>

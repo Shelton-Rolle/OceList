@@ -55,7 +55,7 @@ export default function Home() {
                         fugiat nulla pariatur.
                     </p>
                 </section>
-                <section id="find-contributors" className="mb-12 lg:mb-32">
+                <section id="find-contributors">
                     <h4 className="font-poppins font-bold text-lg mb-3 text-secondary-light lg:text-[40px]">
                         Looking For Contributors?
                     </h4>

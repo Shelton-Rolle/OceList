@@ -117,13 +117,35 @@ export default function BrowsePage({ projects, issues }: BrowsePageProps) {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <PageLayout>
+                <div className="text-base md:text-xl mb-9 max-w-sm">
+                    <button
+                        onClick={() => ChangeSearch('project')}
+                        className={`py-3 border-b-2 duration-150 w-1/2 border-b-primary-light text-primary-light font-poppins font-light text-xs lg:text-lg ${
+                            searchProjects
+                                ? 'border-opacity-100 opacity-100'
+                                : 'border-opacity-30 opacity-30'
+                        }`}
+                    >
+                        Search Projects
+                    </button>
+                    <button
+                        onClick={() => ChangeSearch('issue')}
+                        className={`py-3 border-b-2 duration-150 w-1/2 border-b-primary-light text-primary-light font-poppins font-light text-xs lg:text-lg ${
+                            searchIssues
+                                ? 'border-opacity-100 opacity-100'
+                                : 'border-opacity-30 opacity-30'
+                        }`}
+                    >
+                        Search Issues
+                    </button>
+                </div>
                 <div id="search">
                     <div>
-                        <h1 className="font-bold font-title mb-2">Filter By</h1>
+                        <h1 className="font-bold font-title mb-2">Search By</h1>
                         <select
                             name="search-filter"
                             id="search-filter"
-                            className="bg-transparent border border-secondary-dark rounded-sm p-2"
+                            className="bg-transparent border border-accent-light rounded-md p-2 w-full cursor-pointer text-xs placeholder:text-xs text-accent-light lg:text-base lg:px-5 lg:py-3"
                             onChange={(e) => setSearchFilter(e.target.value)}
                         >
                             {searchProjects ? (
@@ -143,33 +165,11 @@ export default function BrowsePage({ projects, issues }: BrowsePageProps) {
                         type="text"
                         id="search-bar"
                         placeholder="Search"
-                        className="px-4 py-3 my-6 rounded-2xl w-full font-paragraph text-sm font-light placeholder:font-paragraph placeholder:font-light placeholder:text-sm placeholder:text-default-dark bg-accent-dark text-default-dark outline-none"
+                        className="border-2 border-secondary-light rounded-md py-2 px-5 text-sm placeholder:text-accent-light w-full mt-6 mb-10 outline-none text-default-light font-poppins font-medium lg:text-base lg:px-5 lg:py-3"
                         onChange={(e) => UpdateDisplayResults(e.target.value)}
                     />
                 </div>
-                <div className="text-base md:text-xl mb-9">
-                    <button
-                        onClick={() => ChangeSearch('project')}
-                        className={`py-3 border-b-2 duration-150 w-1/2 border-b-secondary-dark text-secondary-dark ${
-                            searchProjects
-                                ? 'border-opacity-100 opacity-100'
-                                : 'border-opacity-30 opacity-30'
-                        }`}
-                    >
-                        Projects
-                    </button>
-                    <button
-                        onClick={() => ChangeSearch('issue')}
-                        className={`py-3 border-b-2 duration-150 w-1/2 border-b-secondary-dark text-secondary-dark ${
-                            searchIssues
-                                ? 'border-opacity-100 opacity-100'
-                                : 'border-opacity-30 opacity-30'
-                        }`}
-                    >
-                        Issues
-                    </button>
-                </div>
-                <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <section className="flex flex-wrap gap-4 w-full mx-auto">
                     {searchProjects && (
                         <>
                             {displayedProjects?.map((project, index) => (

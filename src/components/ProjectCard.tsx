@@ -108,67 +108,70 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     }, [currentUser, currentUserData]);
 
     return (
-        <article className="w-full max-w-lg border-2 border-secondary-dark rounded-md p-6">
-            <div className="flex justify-between items-center h-12">
-                <CardAvatar
-                    src={project?.owner?.avatar_url!}
-                    alt="owner avatar"
-                />
-                <div className="flex gap-4 items-center">
-                    <a href={project?.html_url} target="_blank">
-                        <AiFillGithub size={22} />
-                    </a>
-                    {project?.homepage && (
-                        <a href={project?.homepage} target="_blank">
-                            <MdComputer size={22} />
-                        </a>
-                    )}
-                    {!isCurrentUserProject && currentUser && (
-                        <button onClick={HandleFavorite}>
-                            {updatingFavorites ? (
-                                <div className="h-full flex justify-center items-center animate-spin">
-                                    <AiOutlineLoading3Quarters
-                                        size={22}
-                                        color="#FDF5BF"
-                                    />
-                                </div>
-                            ) : (
-                                <>
-                                    {isFavorited ? (
-                                        <IoIosHeartDislike size={22} />
-                                    ) : (
-                                        <MdFavorite size={22} />
-                                    )}
-                                </>
-                            )}
-                        </button>
-                    )}
-                </div>
-            </div>
-            <div>
+        <article className="w-full max-w-[261px] bg-white p-8 pb-0 border-2 border-accent-light rounded-md grid grid-rows-3 max-h-80 max-md:mx-auto">
+            <div className="mb-6">
                 <a href={`/projects/${project?.id}`}>
-                    <h2 className="line-cutoff-1 font-title text-2xl font-bold">
+                    <p className="font-roboto font-bold text-xl text-primary-light line-cutoff-1">
                         {project?.name}
-                    </h2>
+                    </p>
                 </a>
                 <a href={`/${project?.owner?.login}`}>
-                    <p className="font-paragraph text-sm text-accent-dark font-light">
+                    <p className="font-poppins font-medium text-sm">
                         {project?.owner?.login}
                     </p>
                 </a>
             </div>
-            <div className="mt-12 flex items-center gap-7">
-                {project?.languages?.map((language, index) => {
-                    if (index > 2) return;
-                    return (
-                        <p
-                            className="font-paragraph text-secondary-dark font-light text-sm"
-                            key={index}
-                        >
-                            {language}
-                        </p>
-                    );
-                })}
+            <div className="mb-8">
+                <p className="font-roboto font-medium text-base mb-2">
+                    Languages
+                </p>
+                <ul className="flex flex-col gap-1 list-disc">
+                    {project?.languages?.map((language, index) => {
+                        if (index > 2) return;
+                        return (
+                            <li
+                                key={index}
+                                className="font-poppins font-light text-xs"
+                            >
+                                {language}
+                            </li>
+                        );
+                    })}
+                </ul>
+            </div>
+
+            <div className="flex items-center gap-4">
+                <a href={project?.html_url} target="_blank">
+                    <AiFillGithub color="#9381FF" size={22} />
+                </a>
+                {project?.homepage && (
+                    <a href={project?.homepage} target="_blank">
+                        <MdComputer color="#9381FF" size={22} />
+                    </a>
+                )}
+                {!isCurrentUserProject && currentUser && (
+                    <button onClick={HandleFavorite}>
+                        {updatingFavorites ? (
+                            <div>
+                                <AiOutlineLoading3Quarters
+                                    color="#9381FF"
+                                    size={22}
+                                />
+                            </div>
+                        ) : (
+                            <>
+                                {isFavorited ? (
+                                    <IoIosHeartDislike
+                                        color="#9381FF"
+                                        size={22}
+                                    />
+                                ) : (
+                                    <MdFavorite color="#9381FF" size={22} />
+                                )}
+                            </>
+                        )}
+                    </button>
+                )}
             </div>
         </article>
     );
