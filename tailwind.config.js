@@ -25,6 +25,10 @@ module.exports = {
                     dark: '#03080E',
                 },
             },
+            maxWidth: {
+                tablet: '556px',
+                desktop: '1280px',
+            },
             fontFamily: {
                 title: ['Roboto', 'sans serif'],
                 paragraph: ['Poppins', 'Roboto', 'sans serif'],
