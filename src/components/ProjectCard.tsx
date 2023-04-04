@@ -2,11 +2,11 @@ import { ProjectCardProps } from '@/types/props';
 import CardAvatar from './CardAvatar';
 import { MdFavorite } from 'react-icons/md';
 import { IoIosHeartDislike } from 'react-icons/io';
-import { AiFillGithub, AiOutlineLoading3Quarters } from 'react-icons/ai';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import UpdateUser from '@/database/UpdateUser';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { MdComputer } from 'react-icons/md';
+import { GoMarkGithub, GoBrowser } from 'react-icons/go';
 
 export default function ProjectCard({ project }: ProjectCardProps) {
     const { currentUser, currentUserData, setCurrentUserData } = useAuth();
@@ -142,11 +142,11 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
             <div className="flex items-center gap-4">
                 <a href={project?.html_url} target="_blank">
-                    <AiFillGithub color="#9381FF" size={22} />
+                    <GoMarkGithub color="#9381FF" size={22} />
                 </a>
                 {project?.homepage && (
                     <a href={project?.homepage} target="_blank">
-                        <MdComputer color="#9381FF" size={22} />
+                        <GoBrowser color="#9381FF" size={22} />
                     </a>
                 )}
                 {!isCurrentUserProject && currentUser && (

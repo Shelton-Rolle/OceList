@@ -173,19 +173,6 @@ export default function Settings() {
                             </p>
                         </section>
                         <section className="mt-10">
-                            <h3 className="font-title font-medium text-2xl mb-4">
-                                Theme
-                            </h3>
-                            <div className="w-full">
-                                <button className="w-1/2 py-4">
-                                    Dark Theme
-                                </button>
-                                <button className="w-1/2 py-4">
-                                    Light Theme
-                                </button>
-                            </div>
-                        </section>
-                        <section className="mt-10">
                             <h4 className="font-title font-medium text-2xl text-red-500 mb-8">
                                 Danger Zone
                             </h4>
