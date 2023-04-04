@@ -18,27 +18,24 @@ export default function RequireEmail() {
         router.push('/profile-setup');
     }
 
-    useEffect(() => {
-        console.log('Current User: ', currentUser);
-    }, [currentUser]);
-
     return (
-        <section className="text-default-dark flex justify-center items-center h-screen max-w-lg mx-auto">
-            <div className="text-default-dark">
+        <section className="w-screen h-screen flex justify-center items-center px-5">
+            <div className="max-w-sm lg:max-w-lg">
                 {currentUser ? (
                     <>
-                        <h1 className="font-title font-bold text-2xl mb-4 md:text-3xl">
+                        <h1 className="font-roboto font-bold text-xl mb-3 text-primary-light md:text-2xl lg:text-4xl">
                             Already Done!
                         </h1>
-                        <p className="mb-10 font-paragraph font-light leading-8">
+                        <p className="font-poppins font-light text-sm md:text-base leading-7 lg:text-lg lg:leading-8">
                             We seem to already have an email on file for your
                             account! Use the link below to head back to the home
                             page.
                         </p>
-                        <div className="py-1 w-fit border-b-2 border-secondary-dark border-opacity-0 duration-200 hover:border-opacity-100">
+
+                        <div className="relative mt-8 lg:mt-20">
                             <Link
                                 href="/"
-                                className="text-secondary-dark text-xl"
+                                className=" border-2 border-secondary-light px-6 py-2 rounded-md w-fit bg-secondary-light text-background-light lg:text-lg lg:px-12 lg:py-4"
                             >
                                 Home
                             </Link>
@@ -46,26 +43,26 @@ export default function RequireEmail() {
                     </>
                 ) : (
                     <>
-                        <h1 className="font-title font-bold text-2xl mb-4 md:text-3xl">
+                        <h1 className="font-roboto font-bold text-xl mb-3 text-primary-light md:text-2xl lg:text-4xl">
                             Missing email
                         </h1>
-                        <p className="font-paragraph font-light leading-8">
+                        <p className="font-poppins font-light text-sm md:text-base leading-7 lg:text-lg lg:leading-8">
                             We were not able to retrieve the email associated
                             with your github account. Please enter the email you
                             would like to use for your profile.
                         </p>
                         <form
-                            className="mt-8 flex flex-col items-start"
+                            className="relative mt-8 lg:mt-20 flex flex-col"
                             onSubmit={(e) => HandleSubmit(e)}
                         >
                             <input
                                 type="text"
                                 placeholder="Email"
-                                className="mt-6 w-full px-4 py-2 rounded-md bg-transparent text-default-dark font-light font-paragraph border-2 border-accent-dark outline-none placeholder:font-paragraph placeholder:font-light placeholder:text-default-dark placeholder:opacity-30"
+                                className="border-2 border-secondary-light rounded-md py-2 px-5 text-sm placeholder:text-accent-light w-full mt-6 mb-5 outline-none text-default-light font-poppins font-medium lg:text-base lg:px-5 lg:py-3"
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                             <button
-                                className="mt-4 px-5 py-3 bg-secondary-dark text-background-dark rounded-md"
+                                className="border-2 border-secondary-light px-6 py-2 rounded-md w-fit bg-secondary-light text-background-light lg:text-lg lg:px-12 lg:py-4"
                                 type="submit"
                             >
                                 Continue
