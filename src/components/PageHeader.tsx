@@ -69,7 +69,7 @@ export const PageHeader = () => {
                             active={router.asPath === '/'}
                         />
                     </div>
-                    <div className="flex flex-col gap-4 md:flex-row lg:gap-7">
+                    <div className="flex flex-col gap-4 md:flex-row md:items-center lg:gap-7">
                         <NavItem
                             label="Browse"
                             href="/browse"
@@ -102,7 +102,7 @@ export const PageHeader = () => {
                                 </div>
                                 <div className="relative max-md:hidden">
                                     <button
-                                        className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-default-light"
+                                        className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-default-light duration-300 hover:border-secondary-light"
                                         onClick={() =>
                                             setOpenProfileMenu(!openProfileMenu)
                                         }
