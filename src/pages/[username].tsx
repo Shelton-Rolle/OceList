@@ -246,6 +246,7 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                                     alt="banner"
                                     priority
                                     fill
+                                    className="object-cover"
                                 />
                                 {isCurrentUser && (
                                     <button
