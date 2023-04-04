@@ -2,6 +2,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useState } from 'react';
 import { NavItemProps } from '@/types/props';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 
 export const PageHeader = () => {
     const router = useRouter();
@@ -10,7 +11,7 @@ export const PageHeader = () => {
 
     const NavItem = ({ label, href, active }: NavItemProps) => (
         <a
-            className={`${
+            className={`relative ${
                 active && 'text-secondary-light'
             } font-roboto font-bold max-md:uppercase text-2xl md:font-poppins ${
                 href === '/'
@@ -27,6 +28,7 @@ export const PageHeader = () => {
         <header className="relative p-6 z-20">
             <div className="fixed right-0 top-0 w-full px-6 py-6 bg-opacity-80 bg-background-light backdrop-blur-sm z-10 md:hidden">
                 <button
+                    id="menu button"
                     className="relative w-12 flex flex-col gap-1 ml-auto md:hidden z-20"
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
@@ -82,13 +84,17 @@ export const PageHeader = () => {
                                         'favorites'
                                     }
                                 />
-                                <NavItem
-                                    label="Profile"
-                                    href={`/${currentUser?.displayName}`}
-                                    active={
-                                        router.query.username ? true : false
-                                    }
-                                />
+                                <button className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-default-light">
+                                    {currentUser ? (
+                                        <Image
+                                            src={currentUser?.photoURL!}
+                                            alt="user avatar image"
+                                            fill
+                                        />
+                                    ) : (
+                                        <div className="absolute top-0 left-0 w-full h-full bg-slate-400 animate-pulse" />
+                                    )}
+                                </button>
                             </>
                         ) : (
                             <NavItem

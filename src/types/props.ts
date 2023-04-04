@@ -49,7 +49,7 @@ export interface IssueCardProps {
 }
 
 export interface NavItemProps {
-    label: string;
+    label: string | ReactNode;
     href: string;
     active: boolean;
 }

@@ -153,7 +153,7 @@ export default function ProfileSetup() {
                                 <div className="animate-spin">
                                     <AiOutlineLoading3Quarters
                                         size={25}
-                                        color="#03080E"
+                                        color="#E0FBFC"
                                     />
                                 </div>
                             ) : (

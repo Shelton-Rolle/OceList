@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /require-email
+Disallow: /profile-setup
+
+User-agent: *
+Allow: /
