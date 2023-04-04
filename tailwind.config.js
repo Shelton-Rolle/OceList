@@ -24,10 +24,18 @@ module.exports = {
                     light: '#E0FBFC',
                     dark: '#03080E',
                 },
+                'issue-state': {
+                    open: '#27C34A',
+                    closed: '#F53E3E',
+                },
+            },
+            width: {
+                'mobile-card': '261px',
             },
             maxWidth: {
                 tablet: '556px',
                 desktop: '1280px',
+                'mobile-card': '261px',
             },
             fontFamily: {
                 roboto: ['Roboto', 'sans serif'],

@@ -3,47 +3,36 @@ import CardAvatar from './CardAvatar';
 
 export default function IssueCard({ issue }: IssueCardProps) {
     return (
-        <article className="w-full max-w-lg border-2 border-secondary-dark rounded-md p-6">
-            <div className="h-12 flex justify-between items-center">
-                {issue?.repository?.owner?.avatar_url && (
-                    <CardAvatar
-                        src={issue?.repository?.owner?.avatar_url}
-                        alt="parent repo owner"
-                    />
-                )}
-                <div>
-                    <div className="flex items-center gap-3">
-                        <div
-                            className={`w-3 h-3 rounded-full ${
-                                issue?.state === 'open'
-                                    ? 'bg-secondary-dark'
-                                    : 'bg-red-600'
-                            }`}
-                        />
-                        <p
-                            className={`font-paragraph text-xs text-secondary-dark ${
-                                issue?.state === 'open'
-                                    ? 'text-secondary-dark'
-                                    : 'text-red-600'
-                            }`}
-                        >
-                            {issue?.state}
-                        </p>
-                    </div>
-                </div>
-            </div>
+        <article className="p-8 bg-white rounded-md border-2 border-accent-light max-md:mx-auto">
             <div>
-                <h2 className="line-cutoff-1 font-title text-lg mt-2 md:text-2xl font-bold">
-                    {issue?.title}
-                </h2>
-                <a
-                    href={`/projects/${issue?.repository?.id}`}
-                    className="duration-150 cursor-pointer hover:opacity-60"
-                >
-                    <p className="font-paragraph text-sm text-accent-dark font-light">
+                <a href={issue?.html_url} className="mb-3">
+                    <p className="font-roboto font-bold text-primary-light text-xl line-cutoff-1 w-mobile-card duration-200 hover:underline">
+                        {issue?.title}
+                    </p>
+                </a>
+                <a href={issue?.repository?.html_url}>
+                    <p className="font-poppins font-medium text-default-light text-sm duration-200 hover:underline">
                         {issue?.repository?.name}
                     </p>
                 </a>
+            </div>
+            <div className="flex items-center gap-2 mt-5">
+                <div
+                    className={`w-2 h-2 rounded-full ${
+                        issue?.state === 'open'
+                            ? 'bg-issue-state-open'
+                            : 'bg-issue-state-closed'
+                    }`}
+                />
+                <p
+                    className={`font-poppins font-normal text-base ${
+                        issue?.state === 'open'
+                            ? 'text-issue-state-open'
+                            : 'text-issue-state-closed'
+                    }`}
+                >
+                    {issue?.state}
+                </p>
             </div>
         </article>
     );

@@ -108,7 +108,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     }, [currentUser, currentUserData]);
 
     return (
-        <article className="w-full max-w-[261px] bg-white p-8 pb-0 border-2 border-accent-light rounded-md grid grid-rows-3 max-h-80 max-md:mx-auto">
+        <article className="w-full max-w-mobile-card bg-white p-8 pb-0 border-2 border-accent-light rounded-md grid grid-rows-3 max-h-80 max-md:mx-auto">
             <div className="mb-6">
                 <a href={`/projects/${project?.id}`}>
                     <p className="font-roboto font-bold text-xl text-primary-light line-cutoff-1">
