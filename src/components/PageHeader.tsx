@@ -3,11 +3,13 @@ import { useState } from 'react';
 import { NavItemProps } from '@/types/props';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export const PageHeader = () => {
     const router = useRouter();
     const { currentUser } = useAuth();
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+    const [openProfileMenu, setOpenProfileMenu] = useState<boolean>(false);
 
     const NavItem = ({ label, href, active }: NavItemProps) => (
         <a
@@ -17,7 +19,7 @@ export const PageHeader = () => {
                 href === '/'
                     ? 'md:font-bold mt:text-3xl lg:text-4xl'
                     : 'md:font-normal md:text-lg'
-            }`}
+            } duration-150 hover:text-secondary-light`}
             href={href}
         >
             {label}
@@ -84,17 +86,57 @@ export const PageHeader = () => {
                                         'favorites'
                                     }
                                 />
-                                <button className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-default-light">
-                                    {currentUser ? (
-                                        <Image
-                                            src={currentUser?.photoURL!}
-                                            alt="user avatar image"
-                                            fill
-                                        />
-                                    ) : (
-                                        <div className="absolute top-0 left-0 w-full h-full bg-slate-400 animate-pulse" />
+                                <div className="md:hidden flex flex-col gap-4">
+                                    <NavItem
+                                        label="Profile"
+                                        href={`/${currentUser?.displayName}`}
+                                        active={false}
+                                    />
+                                    <NavItem
+                                        label="Settings"
+                                        href="/profile/settings"
+                                        active={
+                                            router.asPath.split('/')[3] ===
+                                            'settings'
+                                        }
+                                    />
+                                </div>
+                                <div className="relative max-md:hidden">
+                                    <button
+                                        className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-default-light"
+                                        onClick={() =>
+                                            setOpenProfileMenu(!openProfileMenu)
+                                        }
+                                    >
+                                        {currentUser ? (
+                                            <Image
+                                                src={currentUser?.photoURL!}
+                                                alt="user avatar image"
+                                                fill
+                                            />
+                                        ) : (
+                                            <div className="absolute top-0 left-0 w-full h-full bg-slate-400 animate-pulse" />
+                                        )}
+                                    </button>
+                                    {openProfileMenu && (
+                                        <div className="absolute -bottom-full translate-y-3/4 right-0 flex flex-col items-end gap-5 bg-background-light backdrop-blur-sm bg-opacity-90 p-6 rounded-sm">
+                                            <NavItem
+                                                label="Profile"
+                                                href={`/${currentUser?.displayName}`}
+                                                active={false}
+                                            />
+                                            <NavItem
+                                                label="Settings"
+                                                href="/profile/settings"
+                                                active={
+                                                    router.asPath.split(
+                                                        '/'
+                                                    )[3] === 'settings'
+                                                }
+                                            />
+                                        </div>
                                     )}
-                                </button>
+                                </div>
                             </>
                         ) : (
                             <NavItem
