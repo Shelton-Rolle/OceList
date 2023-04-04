@@ -117,13 +117,13 @@ export default function ProjectPage({
                                 className="mt-2 flex items-center gap-5 w-full"
                             >
                                 <button
-                                    className="border-2 border-default-light rounded-md flex items-center gap-4 p-3 text-xs"
+                                    className="border-2 border-default-light rounded-md flex items-center gap-4 p-3 text-xs lg:gap-2 lg:text-base"
                                     onClick={Delete}
                                 >
                                     <MdDelete /> Delete Project
                                 </button>
                                 <button
-                                    className="border-2 border-default-light rounded-md flex items-center gap-4 p-3 text-xs"
+                                    className="border-2 border-default-light rounded-md flex items-center gap-4 p-3 text-xs lg:gap-2 lg:text-base"
                                     onClick={Reload}
                                 >
                                     <TfiReload /> Reload Project
