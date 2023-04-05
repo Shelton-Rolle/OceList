@@ -9,9 +9,7 @@ import UpdateUser from '@/database/UpdateUser';
 import { GetGithubUserRepos } from '@/firebase/auth/gitHubAuth/octokit';
 import { Project, DatabaseProjectData, IUser } from '@/types/dataObjects';
 import Image from 'next/image';
-import { NewPost } from '@/components/modals/NewPost';
 import { ChangeBanner } from '@/components/modals/ChangeBanner';
-import { ChangeAvatar } from '@/components/modals/ChangeAvatar';
 import { AddProjects } from '@/components/modals/AddProjects';
 import ProjectCard from '@/components/ProjectCard';
 import { PageLoader } from '@/components/PageLoader';
@@ -28,15 +26,13 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
     const [viewProjects, setViewProjects] = useState<boolean>(true);
     const [viewActivity, setViewActivity] = useState<boolean>(false);
     const [viewPosts, setViewPosts] = useState<boolean>(false);
-    const { projects, assignedIssues } = data;
+    const { projects } = data;
     const [modalProjects, setModalProjects] = useState<Project[]>();
     const [projectsList, setProjectsList] = useState<DatabaseProjectData[]>();
     const [openProjectModal, setOpenProjectModal] = useState<boolean>(false);
-    const [openAvatarModal, setOpenAvatarModal] = useState<boolean>(false);
     const [openBannerModal, setOpenBannerModal] = useState<boolean>(false);
     const [loadingFollow, setLoadingFollow] = useState<boolean>(false);
     const [isFollowing, setIsFollowing] = useState<boolean>();
-    const [openNewPostModal, setOpenNewPostModal] = useState<boolean>(false);
 
     async function FollowUser() {
         setLoadingFollow(true);
@@ -358,6 +354,11 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+    context.res.setHeader(
+        'Cache-Control',
+        'public, s-maxage=10, stale-while-revalidate=59'
+    );
+
     const params = context?.params;
     const username: string = params?.username as string;
 

@@ -4,7 +4,6 @@ import { useAuth } from '@/context/AuthContext';
 import { useEffect, useState } from 'react';
 import { DatabaseProjectData, Project } from '@/types/dataObjects';
 import ProjectCard from '@/components/ProjectCard';
-import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { PageLoader } from '@/components/PageLoader';
 
 export default function Favorites() {

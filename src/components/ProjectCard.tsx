@@ -1,5 +1,4 @@
 import { ProjectCardProps } from '@/types/props';
-import CardAvatar from './CardAvatar';
 import { MdFavorite } from 'react-icons/md';
 import { IoIosHeartDislike } from 'react-icons/io';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';

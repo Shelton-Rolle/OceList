@@ -2,7 +2,7 @@ import IssueCard from '@/components/IssueCard';
 import ProjectCard from '@/components/ProjectCard';
 import database from '@/firebase/database/databaseInit';
 import { PageLayout } from '@/layouts/PageLayout';
-import { DatabaseProjectData, Issue, Project } from '@/types/dataObjects';
+import { DatabaseProjectData, Issue } from '@/types/dataObjects';
 import { BrowsePageProps } from '@/types/props';
 import { get, child, ref } from 'firebase/database';
 import { GetServerSideProps } from 'next';
@@ -186,6 +186,10 @@ export default function BrowsePage({ projects, issues }: BrowsePageProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+    context.res.setHeader(
+        'Cache-Control',
+        'public, s-maxage=10, stale-while-revalidate=59'
+    );
     const projects = await get(child(ref(database), '/projects'))
         .then((snapshot) => {
             if (snapshot.exists()) {

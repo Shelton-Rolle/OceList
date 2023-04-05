@@ -1,5 +1,4 @@
 import { IssueCardProps } from '@/types/props';
-import CardAvatar from './CardAvatar';
 
 export default function IssueCard({ issue }: IssueCardProps) {
     return (
