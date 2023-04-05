@@ -144,7 +144,7 @@ export default function Settings() {
                                 github username. This helps prevent users from
                                 taking usernames that might belong to someone
                                 else on github thus preventing confusion on who
-                                owns which projects here on Simu.
+                                owns which projects here on OceList.
                             </p>
                         </section>
                         <section className="mt-10">
