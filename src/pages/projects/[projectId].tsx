@@ -5,7 +5,7 @@ import database from '@/firebase/database/databaseInit';
 import { PageLayout } from '@/layouts/PageLayout';
 import { ProjectPageProps } from '@/types/props';
 import { ref, get, child } from 'firebase/database';
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -22,6 +22,7 @@ import {
 } from 'react-icons/go';
 import remarkGfm from 'remark-gfm';
 import Script from 'next/script';
+import { DatabaseProjectData } from '@/types/dataObjects';
 
 export default function ProjectPage({
     projectId,
@@ -307,12 +308,31 @@ export default function ProjectPage({
     );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    context.res.setHeader(
-        'Cache-Control',
-        'public, s-maxage=10, stale-while-revalidate=59'
-    );
-    const projectId = context?.params?.projectId;
+export const getStaticPaths: GetStaticPaths = async () => {
+    const projects = await get(child(ref(database), '/projects'))
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                return Object.values(snapshot.val()) as DatabaseProjectData[];
+            } else {
+                return [];
+            }
+        })
+        .catch((error) => {
+            return [];
+        });
+
+    const paths = projects?.map((project: DatabaseProjectData) => ({
+        params: { projectId: project?.id!.toString() },
+    }));
+
+    return {
+        paths,
+        fallback: false,
+    };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+    const projectId = params?.projectId;
 
     const project = await get(child(ref(database), `projects/${projectId}`))
         .then((snapshot) => {

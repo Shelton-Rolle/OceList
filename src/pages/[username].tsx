@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { GetServerSideProps } from 'next';
+import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import { PageLayout } from '@/layouts/PageLayout';
 import database from '@/firebase/database/databaseInit';
@@ -331,13 +331,30 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
     );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    context.res.setHeader(
-        'Cache-Control',
-        'public, s-maxage=10, stale-while-revalidate=59'
-    );
+export const getStaticPaths: GetStaticPaths = async () => {
+    const users = await get(child(ref(database), '/users'))
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                return Object.values(snapshot.val()) as IUser[];
+            } else {
+                return [];
+            }
+        })
+        .catch((error) => {
+            return [];
+        });
 
-    const params = context?.params;
+    const paths = users?.map((user: IUser) => ({
+        params: { username: user?.displayName! },
+    }));
+
+    return {
+        paths,
+        fallback: false,
+    };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
     const username: string = params?.username as string;
 
     const data = await get(child(ref(database), `users/${username}`))
