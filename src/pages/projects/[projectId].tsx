@@ -201,13 +201,19 @@ export default function ProjectPage({
 
                                 if (totalContributors > 500) {
                                     return (
-                                        <div className="relative w-10 h-10 rounded-full overflow-hidden text-xs flex justify-center items-center bg-slate-200">
+                                        <div
+                                            key={index}
+                                            className="relative w-10 h-10 rounded-full overflow-hidden text-xs flex justify-center items-center bg-slate-200"
+                                        >
                                             500+
                                         </div>
                                     );
                                 } else {
                                     return (
-                                        <div className="relative w-10 h-10 rounded-full overflow-hidden text-xs flex justify-center items-center bg-slate-200">
+                                        <div
+                                            key={index}
+                                            className="relative w-10 h-10 rounded-full overflow-hidden text-xs flex justify-center items-center bg-slate-200"
+                                        >
                                             {totalContributors}
                                         </div>
                                     );
