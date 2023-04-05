@@ -110,11 +110,6 @@ export default function BrowsePage({ projects, issues }: BrowsePageProps) {
                     name="description"
                     content="Browse a collection of Open Source projects"
                 />
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1"
-                />
-                <link rel="icon" href="/favicon.ico" />
             </Head>
             <PageLayout>
                 <div className="relative text-base md:text-xl mb-9 max-w-sm lg:mt-11">
