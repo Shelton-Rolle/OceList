@@ -8,7 +8,6 @@ import { ref, get, child } from 'firebase/database';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
@@ -299,6 +298,10 @@ export default function ProjectPage({
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+    context.res.setHeader(
+        'Cache-Control',
+        'public, s-maxage=10, stale-while-revalidate=59'
+    );
     const projectId = context?.params?.projectId;
 
     const project = await get(child(ref(database), `projects/${projectId}`))

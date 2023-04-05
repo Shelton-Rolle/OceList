@@ -1,30 +1,15 @@
 import Head from 'next/head';
 import { useAuth } from '@/context/AuthContext';
-import Image from 'next/image';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import UpdateUser from '@/database/UpdateUser';
-import {
-    DatabaseProjectData,
-    GithubUserObject,
-    IUser,
-} from '@/types/dataObjects';
+import { IUser } from '@/types/dataObjects';
 import { useRouter } from 'next/router';
-import AuthenticateWithGitHub from '@/firebase/auth/gitHubAuth/auth';
-import { GetGitHubUser } from '@/firebase/auth/gitHubAuth/octokit';
-import { IGithubUser } from '@/types/interfaces';
 import {
-    EmailAuthCredential,
     EmailAuthProvider,
-    linkWithPopup,
     reauthenticateWithCredential,
-    reauthenticateWithPopup,
     sendPasswordResetEmail,
-    unlink,
 } from 'firebase/auth';
 import auth from '@/firebase/auth/authInit';
-import githubProvider from '@/firebase/auth/gitHubAuth/githubInit';
-import UploadImage from '@/firebase/storage/UploadImage';
-import RemoveProjects from '@/database/RemoveProjects';
 import { PageLayout } from '@/layouts/PageLayout';
 import { PageLoader } from '@/components/PageLoader';
 
@@ -33,18 +18,14 @@ export default function Settings() {
     const {
         currentUser,
         currentUserData,
-        setCurrentUserData,
         updateUserEmail,
         logout,
         DeleteAccount,
-        UpdateProfile,
     } = useAuth();
 
     const [previousEmail, setPreviousEmail] = useState<string>();
     const [userPassword, setUserPassword] = useState<string>();
     const [email, setEmail] = useState<string>();
-    const [profileChanged, setProfileChanged] = useState<boolean>(false);
-    const [isGithubConnected, setIsGithubConnected] = useState<boolean>();
     const [reAuthenticateErrors, setReAuthenticateErrors] = useState<string[]>(
         []
     );
@@ -103,17 +84,6 @@ export default function Settings() {
                 setReAuthenticateErrors([error.code]);
             });
     }
-
-    useEffect(() => {
-        let isConnected = false;
-        currentUser?.providerData.map((provider) => {
-            if (provider?.providerId === 'github.com') {
-                isConnected = true;
-            }
-        });
-
-        setIsGithubConnected(isConnected);
-    }, [currentUser]);
 
     return (
         <>
