@@ -31,6 +31,10 @@ export default function Favorites() {
                     name="description"
                     content="Page containing a list of projects that the current user has favorited."
                 />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
             </Head>
             <PageLayout>
                 {loadingData ? (

@@ -53,6 +53,10 @@ export default function Login() {
             <Head>
                 <title>Login</title>
                 <meta name="description" content="Login page" />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
             </Head>
             <PageLayout>
                 <section className="flex justify-center items-center h-full">

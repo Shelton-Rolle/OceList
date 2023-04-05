@@ -8,6 +8,7 @@ import { FormEvent, useEffect, useState } from 'react';
 
 export const ChangeBanner = ({ setModal, userData }: ChangeBannerProps) => {
     const [banner, setBanner] = useState<File | null>(null);
+    const [missingBanner, setMissingBanner] = useState<boolean>(false);
 
     async function UpdateBanner(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -26,7 +27,7 @@ export const ChangeBanner = ({ setModal, userData }: ChangeBannerProps) => {
                 }
             );
         } else {
-            console.log('No Banner Selected');
+            setMissingBanner(true);
         }
     }
 
@@ -79,7 +80,7 @@ export const ChangeBanner = ({ setModal, userData }: ChangeBannerProps) => {
                         />
                     </label>
                 </div>
-
+                {missingBanner && <p>No Banner Selected.</p>}
                 <div className="mt-10 flex items-center gap-6">
                     <button
                         className="border-2 border-primary-light rounded-sm py-2 px-5 text-background-light bg-primary-light"
