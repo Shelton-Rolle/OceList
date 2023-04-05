@@ -3,6 +3,7 @@ import UploadBanner from '@/firebase/storage/UploadBanner';
 import { ModalLayout } from '@/layouts/ModalLayout';
 import { IUser } from '@/types/dataObjects';
 import { ChangeBannerProps } from '@/types/props';
+import Image from 'next/image';
 import router from 'next/router';
 import { FormEvent, useEffect, useState } from 'react';
 
@@ -81,6 +82,7 @@ export const ChangeBanner = ({ setModal, userData }: ChangeBannerProps) => {
                     </label>
                 </div>
                 {missingBanner && <p>No Banner Selected.</p>}
+                {banner && <p>{banner?.name}</p>}
                 <div className="mt-10 flex items-center gap-6">
                     <button
                         className="border-2 border-primary-light rounded-sm py-2 px-5 text-background-light bg-primary-light"
