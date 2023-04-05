@@ -15,7 +15,9 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
     async function HandleFavorite() {
         setUpdatingFavorites(true);
-        const { favorite_projects, favorite_projects_count } = currentUserData!;
+        const favorite_projects = currentUserData?.favorite_projects;
+        const favorite_projects_count =
+            currentUserData?.favorite_projects_count;
 
         if (favorite_projects) {
             if (isFavorited) {
@@ -157,6 +159,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                                 <AiOutlineLoading3Quarters
                                     color="#EE6C4D"
                                     size={22}
+                                    className="animate-spin"
                                 />
                             </div>
                         ) : (

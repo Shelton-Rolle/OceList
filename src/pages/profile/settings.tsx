@@ -12,6 +12,7 @@ import {
 import auth from '@/firebase/auth/authInit';
 import { PageLayout } from '@/layouts/PageLayout';
 import { PageLoader } from '@/components/PageLoader';
+import Script from 'next/script';
 
 export default function Settings() {
     const router = useRouter();
@@ -97,11 +98,11 @@ export default function Settings() {
                     name="viewport"
                     content="width=device-width, initial-scale=1"
                 />
-                <script
+                <Script
                     async
                     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1203308068531230"
                     crossOrigin="anonymous"
-                ></script>
+                ></Script>
             </Head>
             <PageLayout>
                 {currentUser ? (

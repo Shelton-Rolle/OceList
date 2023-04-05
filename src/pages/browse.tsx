@@ -8,6 +8,7 @@ import { get, child, ref } from 'firebase/database';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
+import Script from 'next/script';
 
 export default function BrowsePage({ projects, issues }: BrowsePageProps) {
     const [searchProjects, setSearchProjects] = useState<boolean>(true);
@@ -114,11 +115,11 @@ export default function BrowsePage({ projects, issues }: BrowsePageProps) {
                     name="viewport"
                     content="width=device-width, initial-scale=1"
                 />
-                <script
+                <Script
                     async
                     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1203308068531230"
                     crossOrigin="anonymous"
-                ></script>
+                ></Script>
             </Head>
             <PageLayout>
                 <div className="relative text-base md:text-xl mb-9 max-w-sm lg:mt-11">

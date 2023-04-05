@@ -21,7 +21,7 @@ export default function RequireEmail() {
     return (
         <section className="w-screen h-screen flex justify-center items-center px-5">
             <div className="max-w-sm lg:max-w-lg">
-                {currentUser ? (
+                {currentUser?.email ? (
                     <>
                         <h1 className="font-roboto font-bold text-xl mb-3 text-primary-light md:text-2xl lg:text-4xl">
                             Already Done!

@@ -14,6 +14,7 @@ import { AddProjects } from '@/components/modals/AddProjects';
 import ProjectCard from '@/components/ProjectCard';
 import { PageLoader } from '@/components/PageLoader';
 import { RiUserFollowFill } from 'react-icons/ri';
+import Script from 'next/script';
 
 interface ProfilePageProps {
     profileName: string;
@@ -225,11 +226,11 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                     name="viewport"
                     content="width=device-width, initial-scale=1"
                 />
-                <script
+                <Script
                     async
                     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1203308068531230"
                     crossOrigin="anonymous"
-                ></script>
+                ></Script>
             </Head>
             <PageLayout modalOpen={openProjectModal}>
                 {data === null ? (

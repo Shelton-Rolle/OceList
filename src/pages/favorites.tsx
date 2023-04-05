@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { DatabaseProjectData, Project } from '@/types/dataObjects';
 import ProjectCard from '@/components/ProjectCard';
 import { PageLoader } from '@/components/PageLoader';
+import Script from 'next/script';
 
 export default function Favorites() {
     const { currentUserData } = useAuth();
@@ -12,16 +13,17 @@ export default function Favorites() {
     const [favorites, setFavorites] = useState<Project[]>();
 
     useEffect(() => {
+        setLoadingData(true);
         if (currentUserData) {
             if (currentUserData?.favorite_projects) {
                 setFavorites(currentUserData?.favorite_projects);
             } else {
                 setFavorites([]);
             }
-            setLoadingData(false);
         } else {
-            setLoadingData(true);
+            setFavorites([]);
         }
+        setLoadingData(false);
     }, [currentUserData]);
     return (
         <>
@@ -35,11 +37,11 @@ export default function Favorites() {
                     name="viewport"
                     content="width=device-width, initial-scale=1"
                 />
-                <script
+                <Script
                     async
                     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1203308068531230"
                     crossOrigin="anonymous"
-                ></script>
+                ></Script>
             </Head>
             <PageLayout>
                 {loadingData ? (
@@ -47,7 +49,7 @@ export default function Favorites() {
                 ) : (
                     <>
                         {favorites?.length! > 0 ? (
-                            <div className="mt-3 grid lg:grid-cols-2 gap-4">
+                            <div className="mt-3 flex flex-wrap gap-4">
                                 {favorites?.map((favorite, index) => (
                                     <ProjectCard
                                         project={
