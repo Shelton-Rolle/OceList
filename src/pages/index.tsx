@@ -16,6 +16,11 @@ export default function Home() {
                     name="viewport"
                     content="width=device-width, initial-scale=1"
                 />
+                <script
+                    async
+                    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1203308068531230"
+                    crossOrigin="anonymous"
+                ></script>
             </Head>
             <PageLayout>
                 <section id="welcome" className="mb-12 lg:mb-32 lg:pt-20">
