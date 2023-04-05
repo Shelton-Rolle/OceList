@@ -226,12 +226,12 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                     name="viewport"
                     content="width=device-width, initial-scale=1"
                 />
-                <Script
-                    async
-                    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1203308068531230"
-                    crossOrigin="anonymous"
-                ></Script>
             </Head>
+            <Script
+                async
+                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1203308068531230"
+                crossOrigin="anonymous"
+            ></Script>
             <PageLayout modalOpen={openProjectModal}>
                 {data === null ? (
                     <h1>User Not Found</h1>

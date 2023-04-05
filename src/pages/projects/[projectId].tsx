@@ -103,12 +103,12 @@ export default function ProjectPage({
                     name="viewport"
                     content="width=device-width, initial-scale=1"
                 />
-                <Script
-                    async
-                    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1203308068531230"
-                    crossOrigin="anonymous"
-                ></Script>
             </Head>
+            <Script
+                async
+                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1203308068531230"
+                crossOrigin="anonymous"
+            ></Script>
             <PageLayout>
                 <div>
                     {isOwner && (
