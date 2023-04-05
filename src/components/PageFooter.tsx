@@ -14,7 +14,7 @@ export default function PageFooter() {
                         <BsTwitter /> @dev_rolle
                     </a>
                     <p className="flex items-center gap-2">
-                        <MdOutlineEmail /> sheltonrolle7@gmail.com
+                        <MdOutlineEmail /> contact.support@ocelist.com
                     </p>
                 </div>
                 <section

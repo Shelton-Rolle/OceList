@@ -29,13 +29,13 @@ export default function Home() {
                         </h2>
                     </div>
                     <p className="font-poppins font-light leading-7 text-xs lg:text-base lg:w-3/4 lg:leading-8">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                        sed do eiusmod tempor incididunt ut labore et dolore
-                        magna aliqua. Ut enim ad minim veniam, quis nostrud
-                        exercitation ullamco laboris nisi ut aliquip ex ea
-                        commodo consequat. Duis aute irure dolor in
-                        reprehenderit in voluptate velit esse cillum dolore eu
-                        fugiat nulla pariatur.
+                        OceList is your new one-stop shop for Open Source
+                        projects! With a fully community driven inventory, we
+                        provide a wide range of open source projects of all
+                        kinds for you to view and start collaborating on, as
+                        well as provide a free platform for developers to list
+                        their very own open source projects and get new
+                        collaborators! Start browsing now!
                     </p>
                 </section>
                 <section
@@ -46,13 +46,13 @@ export default function Home() {
                         Why OceList?
                     </h3>
                     <p className="font-poppins font-light leading-7 text-xs lg:text-base lg:leading-8 lg:w-3/4">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                        sed do eiusmod tempor incididunt ut labore et dolore
-                        magna aliqua. Ut enim ad minim veniam, quis nostrud
-                        exercitation ullamco laboris nisi ut aliquip ex ea
-                        commodo consequat. Duis aute irure dolor in
-                        reprehenderit in voluptate velit esse cillum dolore eu
-                        fugiat nulla pariatur.
+                        OceList is fully community driven, meaning all projects
+                        listed were provided by likeminded developers just like
+                        you who are looking to be apart of the world of Open
+                        Source! We also provide a free and easy platform for
+                        developers with their very own open source projects, to
+                        get their project in the eyes of other developers
+                        looking for new projects to contribute to.
                     </p>
                 </section>
                 <section id="find-contributors">
@@ -60,13 +60,12 @@ export default function Home() {
                         Looking For Contributors?
                     </h4>
                     <p className="font-poppins font-light leading-7 text-xs lg:text-base lg:leading-8 lg:w-3/4">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                        sed do eiusmod tempor incididunt ut labore et dolore
-                        magna aliqua. Ut enim ad minim veniam, quis nostrud
-                        exercitation ullamco laboris nisi ut aliquip ex ea
-                        commodo consequat. Duis aute irure dolor in
-                        reprehenderit in voluptate velit esse cillum dolore eu
-                        fugiat nulla pariatur.
+                        Well you&apos;ve come to the right place. Here on
+                        OceList, you can list your open source project
+                        completely for free for all users to see. The process is
+                        fully automatic and as easy as 1, 2, 3! Head over to the
+                        Login page to login with GitHub and get your projects
+                        out there!
                     </p>
                     <Link
                         href="/login"

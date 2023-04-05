@@ -140,21 +140,23 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                 </ul>
             </div>
 
-            <div className="flex items-center gap-4">
-                <a href={project?.html_url} target="_blank">
-                    <GoMarkGithub color="#9381FF" size={22} />
-                </a>
-                {project?.homepage && (
-                    <a href={project?.homepage} target="_blank">
-                        <GoBrowser color="#9381FF" size={22} />
+            <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                    <a href={project?.html_url} target="_blank">
+                        <GoMarkGithub color="#9381FF" size={22} />
                     </a>
-                )}
+                    {project?.homepage && (
+                        <a href={project?.homepage} target="_blank">
+                            <GoBrowser color="#9381FF" size={22} />
+                        </a>
+                    )}
+                </div>
                 {!isCurrentUserProject && currentUser && (
                     <button onClick={HandleFavorite}>
                         {updatingFavorites ? (
                             <div>
                                 <AiOutlineLoading3Quarters
-                                    color="#9381FF"
+                                    color="#EE6C4D"
                                     size={22}
                                 />
                             </div>
@@ -162,11 +164,11 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                             <>
                                 {isFavorited ? (
                                     <IoIosHeartDislike
-                                        color="#9381FF"
+                                        color="#EE6C4D"
                                         size={22}
                                     />
                                 ) : (
-                                    <MdFavorite color="#9381FF" size={22} />
+                                    <MdFavorite color="#EE6C4D" size={22} />
                                 )}
                             </>
                         )}
