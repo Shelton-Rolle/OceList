@@ -112,6 +112,7 @@ export const PageHeader = () => {
                                                 src={currentUser?.photoURL!}
                                                 alt="user avatar image"
                                                 fill
+                                                sizes="100%"
                                             />
                                         ) : (
                                             <div className="absolute top-0 left-0 w-full h-full bg-slate-400 animate-pulse" />

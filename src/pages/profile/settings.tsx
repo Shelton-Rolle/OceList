@@ -93,6 +93,10 @@ export default function Settings() {
                     name="description"
                     content={`Settings page for ${currentUser?.displayName}`}
                 />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
             </Head>
             <PageLayout>
                 {currentUser ? (

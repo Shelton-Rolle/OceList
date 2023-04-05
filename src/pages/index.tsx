@@ -12,6 +12,10 @@ export default function Home() {
                     name="description"
                     content="Landing page to introduce the user to the platform."
                 />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
             </Head>
             <PageLayout>
                 <section id="welcome" className="mb-12 lg:mb-32 lg:pt-20">
