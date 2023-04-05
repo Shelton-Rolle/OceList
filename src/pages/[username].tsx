@@ -24,9 +24,6 @@ interface ProfilePageProps {
 export default function ProfilePage({ profileName, data }: ProfilePageProps) {
     const { currentUser, currentUserData } = useAuth();
     const [isCurrentUser, setIsCurrentUser] = useState<boolean>(false);
-    const [viewProjects, setViewProjects] = useState<boolean>(true);
-    const [viewActivity, setViewActivity] = useState<boolean>(false);
-    const [viewPosts, setViewPosts] = useState<boolean>(false);
     const { projects } = data;
     const [modalProjects, setModalProjects] = useState<Project[]>();
     const [projectsList, setProjectsList] = useState<DatabaseProjectData[]>();
@@ -150,35 +147,6 @@ export default function ProfilePage({ profileName, data }: ProfilePageProps) {
                     );
                 }
             });
-        }
-    }
-
-    async function ChangeView(newType: string) {
-        switch (newType) {
-            case 'project':
-                if (viewActivity) {
-                    setViewActivity(false);
-                } else if (viewPosts) {
-                    setViewPosts(false);
-                }
-                setViewProjects(true);
-                break;
-            case 'activity':
-                if (viewProjects) {
-                    setViewProjects(false);
-                } else if (viewPosts) {
-                    setViewPosts(false);
-                }
-                setViewActivity(true);
-                break;
-            case 'posts':
-                if (viewProjects) {
-                    setViewProjects(false);
-                } else if (viewActivity) {
-                    setViewActivity(false);
-                }
-                setViewPosts(true);
-                break;
         }
     }
 
