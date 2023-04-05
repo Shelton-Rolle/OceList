@@ -7,16 +7,11 @@ export default function Home() {
     return (
         <>
             <Head>
-                <title>Home</title>
+                <title>OceList</title>
                 <meta
                     name="description"
                     content="Landing page to introduce the user to the platform."
                 />
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1"
-                />
-                <link rel="icon" href="/favicon.ico" />
             </Head>
             <PageLayout>
                 <section id="welcome" className="mb-12 lg:mb-32 lg:pt-20">
