@@ -13,6 +13,7 @@ import auth from '@/firebase/auth/authInit';
 import { PageLayout } from '@/layouts/PageLayout';
 import { PageLoader } from '@/components/PageLoader';
 import Script from 'next/script';
+import { IoNotificationsSharp } from 'react-icons/io5';
 
 export default function Settings() {
     const router = useRouter();
@@ -121,7 +122,7 @@ export default function Settings() {
                                 <input
                                     type="text"
                                     id="email"
-                                    className="px-4 py-2 border-2 border-accent-dark rounded-md bg-transparent font-paragraph font-light text-sm placeholder:font-paragraph placeholder:font-light placeholder:text-sm placeholder:opacity-40 outline-none"
+                                    className="px-4 py-2 border-2 border-accent-dark rounded-md bg-transparent font-paragraph font-light text-sm placeholder:font-paragraph placeholder:font-light placeholder:text-sm placeholder:opacity-40 outline-none placeholder:text-gray-500"
                                     placeholder={currentUser?.email!}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
@@ -134,10 +135,105 @@ export default function Settings() {
                                 </button>
                             </form>
                         </section>
+                        {requiresReAuthenticate && (
+                            <section className="my-4 pl-4 py-4 border-l-2 border-accent-light">
+                                <h2 className="font-roboto font-bold text-lg">
+                                    Whoops!
+                                </h2>
+                                <p className="font-poppins font-normal leading-8 text-base">
+                                    We&apos;ll need you to re-authenticate
+                                    before you can update the email.
+                                </p>
+                                <p className="font-poppins font-light leading-6 text-sm">
+                                    If you haven&apos;t set a password yet,
+                                    click forgot password
+                                </p>
+                                {reAuthenticateErrors.includes(
+                                    'auth/wrong-password'
+                                ) && (
+                                    <div className="my-3 text-default-light max-w-xs">
+                                        <div className="flex items-center gap-5">
+                                            <p className="font-poppins font-medium text-lg">
+                                                Incorrect Password
+                                            </p>
+                                            {reAuthenticateNotifications.includes(
+                                                'email-sent'
+                                            ) && (
+                                                <p className="flex items-center gap-2 text-green-500">
+                                                    <IoNotificationsSharp />
+                                                    Email Sent
+                                                </p>
+                                            )}
+                                        </div>
+                                        <button
+                                            className="font-poppins font-light text-sm underline hover:text-secondary-light"
+                                            onClick={async () => {
+                                                await sendPasswordResetEmail(
+                                                    auth,
+                                                    currentUser?.email!
+                                                ).then(() => {
+                                                    setReAuthenticateNotifications(
+                                                        ['email-sent']
+                                                    );
+                                                });
+                                            }}
+                                        >
+                                            Reset Password
+                                        </button>
+                                    </div>
+                                )}
+                                <form
+                                    onSubmit={ReAuthenticate}
+                                    className="flex flex-col gap-2 mt-5"
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <input
+                                            type="text"
+                                            id="previousEmail"
+                                            placeholder="Email"
+                                            onChange={(e) =>
+                                                setPreviousEmail(e.target.value)
+                                            }
+                                            className="text-default-light px-3 py-1 rounded-sm text-base bg-transparent border border-default-light placeholder:text-accent-light outline-none"
+                                        />
+                                        <input
+                                            type="password"
+                                            id="password"
+                                            placeholder="Password"
+                                            onChange={(e) =>
+                                                setUserPassword(e.target.value)
+                                            }
+                                            className="text-default-light px-3 py-1 rounded-sm text-base bg-transparent border border-default-light placeholder:text-accent-light outline-none"
+                                        />
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        className="w-fit px-4 py-2 rounded-md text-sm mt-3 border-2 border-primary-light text-primary-light hover:text-background-light hover:bg-primary-light duration-200"
+                                    >
+                                        Authenticate
+                                    </button>
+                                    <button
+                                        className="font-poppins font-light text-sm underline hover:text-secondary-light w-fit"
+                                        onClick={async () => {
+                                            await sendPasswordResetEmail(
+                                                auth,
+                                                currentUser?.email!
+                                            ).then(() => {
+                                                setReAuthenticateNotifications([
+                                                    'email-sent',
+                                                ]);
+                                            });
+                                        }}
+                                    >
+                                        Forgot Password
+                                    </button>
+                                </form>
+                            </section>
+                        )}
                         <section className="mt-10">
-                            <h2 className="font-title font-medium text-xl mb-4 md:text-2xl">
+                            <h3 className="font-title font-medium text-xl mb-4 md:text-2xl">
                                 Why can I not change my username?
-                            </h2>
+                            </h3>
                             <p className="font-paragraph font-light leading-8 text-sm md:text-base">
                                 To ensure consistency between projects and
                                 users, we require that your username match your
@@ -166,62 +262,6 @@ export default function Settings() {
                                 </button>
                             </div>
                         </section>
-                        {requiresReAuthenticate && (
-                            <div>
-                                <h1>
-                                    You need to re-authenticate to complete that
-                                </h1>
-                                {reAuthenticateErrors.includes(
-                                    'auth/wrong-password'
-                                ) && (
-                                    <div>
-                                        <p>incorrect password</p>
-                                        <button
-                                            onClick={async () => {
-                                                await sendPasswordResetEmail(
-                                                    auth,
-                                                    currentUser?.email!
-                                                ).then(() => {
-                                                    setReAuthenticateNotifications(
-                                                        ['email-sent']
-                                                    );
-                                                });
-                                            }}
-                                        >
-                                            Reset Password
-                                        </button>
-                                    </div>
-                                )}
-                                {reAuthenticateNotifications.includes(
-                                    'email-sent'
-                                ) && <p>Email Sent</p>}
-                                <form onSubmit={ReAuthenticate}>
-                                    <label htmlFor="previousEmail">
-                                        Enter Previous Email:{' '}
-                                        <input
-                                            type="text"
-                                            id="previousEmail"
-                                            placeholder="previous email"
-                                            onChange={(e) =>
-                                                setPreviousEmail(e.target.value)
-                                            }
-                                        />
-                                    </label>
-                                    <label htmlFor="password">
-                                        Enter Password:{' '}
-                                        <input
-                                            type="text"
-                                            id="password"
-                                            placeholder="password"
-                                            onChange={(e) =>
-                                                setUserPassword(e.target.value)
-                                            }
-                                        />
-                                    </label>
-                                    <button type="submit">Update</button>
-                                </form>
-                            </div>
-                        )}
                     </>
                 ) : (
                     <PageLoader size={60} color="#9381FF" />
